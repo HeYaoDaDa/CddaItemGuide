@@ -1,5 +1,8 @@
 <template>
   <span>User Config</span>
+  <q-list>
+    <version-select />
+  </q-list>
 </template>
 
 <script lang="ts">
@@ -8,4 +11,8 @@ export default {
   inheritAttrs: false,
   customOptions: {},
 };
+</script>
+
+<script setup lang="ts">
+import VersionSelect from './VersionSelect.vue';
 </script>
