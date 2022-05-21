@@ -17,31 +17,26 @@
     </q-page-container>
 
     <q-drawer side="right" bordered show-if-above>
-      <p>test</p>
+      <fast-navigation />
     </q-drawer>
   </q-layout>
 </template>
 
 <script lang="ts">
-import UserConfig from 'src/components/userConfig/UserConfig.vue';
-import { defineComponent, ref } from 'vue';
-
-export default defineComponent({
+export default {
   name: 'MainLayout',
+  inheritAttrs: false,
+  customOptions: {},
+};
+</script>
 
-  components: {
-    UserConfig,
-  },
+<script setup lang="ts">
+import UserConfig from 'src/components/userConfig/UserConfig.vue';
+import FastNavigation from 'src/components/fastNavigation/FastNavigation.vue';
+import { ref } from 'vue';
 
-  setup() {
-    const leftDrawerOpen = ref(false);
-
-    return {
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
-});
+const leftDrawerOpen = ref(false);
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
+}
 </script>
