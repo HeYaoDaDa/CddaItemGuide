@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { getVersions } from 'src/apis/versionApi';
-import { KEY_USER_CONFIG_OPTIONS, LANGUAGE_OPTIONS } from 'src/constants/appConstant';
+import { logger } from 'src/boot/logger';
+import { LANGUAGE_OPTIONS } from 'src/constants/appConstant';
+import { KEY_USER_CONFIG_OPTIONS } from 'src/constants/storeConstant';
 import { BaseMod } from 'src/types/BaseMod';
 import { Version } from 'src/types/Version';
 import { arrayIsEmpty } from 'src/utils/commonUtil';
@@ -15,7 +17,7 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
   },
   actions: {
     updateVersions(newVersions: Version[]) {
-      this.versions.splice(0, this.versions.length, ...newVersions);
+      this.versions = newVersions;
     },
     findVersionById(id: string) {
       return this.versions.find((version) => version.id === id);
@@ -37,9 +39,11 @@ function initConfigValue() {
   };
 }
 
-loadVersion();
-
-async function loadVersion() {
-  const versions = await getVersions();
-  useConfigOptionsStore().updateVersions(versions);
-}
+/**
+ * from remote load all version to options
+ */
+getVersions()
+  .then((versions) => {
+    useConfigOptionsStore().updateVersions(versions);
+  })
+  .catch((e) => logger.error(e));

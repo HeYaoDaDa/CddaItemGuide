@@ -2,8 +2,6 @@ export const LATEST_VERSION = 'latest';
 export const ALL_MOD = 'all';
 export const DDA_MOD_ID = 'dda';
 export const DEFAULT_LANGUAGE_CODE = 'en-US';
-export const KEY_USER_CONFIG = 'userConfig';
-export const KEY_USER_CONFIG_OPTIONS = 'userConfigOptions';
 
 export const itemJsonTypes = [
   'ammo',

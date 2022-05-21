@@ -4,11 +4,11 @@ export interface Version {
   releaseDescribe: string;
   targetCommit: string;
   branch: number;
-  createDate: Date;
-  publishDate: Date;
+  createDate: number;
+  publishDate: number;
   tagName: string;
   tagMessage: string;
-  tagDate: Date;
+  tagDate: number;
   jsonUrls: string[];
   languages: { code: string; urls: string[] }[];
 }
