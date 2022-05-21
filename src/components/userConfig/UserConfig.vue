@@ -4,6 +4,8 @@
     <version-select />
 
     <language-select />
+
+    <mods-select />
   </q-list>
 </template>
 
@@ -18,4 +20,5 @@ export default {
 <script setup lang="ts">
 import VersionSelect from './VersionSelect.vue';
 import LanguageSelect from './LanguageSelect.vue';
+import ModsSelect from './ModsSelect.vue';
 </script>

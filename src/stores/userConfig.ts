@@ -1,10 +1,13 @@
 import { defineStore } from 'pinia';
 import { getAllJsonItems } from 'src/apis/jsonItemApi';
 import { logger } from 'src/boot/logger';
+import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import { DDA_MOD_ID, LANGUAGE_OPTIONS, LATEST_VERSION } from 'src/constants/appConstant';
-import { KEY_USER_CONFIG, KEY_USER_CONFIG_VERSION_ID } from 'src/constants/storeConstant';
-import { saveJsonItemSet } from 'src/services/jsonItemSetService';
+import { KEY_CONFIG_OPTIONS_VERSIONS, KEY_USER_CONFIG, KEY_USER_CONFIG_VERSION_ID } from 'src/constants/storeConstant';
+import { getJsonItemSetByVersionId, saveJsonItemSet } from 'src/services/jsonItemSetService';
 import { hasVersionById, saveVersion } from 'src/services/versionsService';
+import { JsonItem } from 'src/types/JsonItem';
+import { replaceArray } from 'src/utils/commonUtil';
 import { useConfigOptionsStore } from './configOptions';
 
 export const useUserConfigStore = defineStore(KEY_USER_CONFIG, {
@@ -36,8 +39,9 @@ function initUserConfig(): { versionId: string; languageCode: string; modIds: st
 }
 
 const configOptions = useConfigOptionsStore();
+const userConfigOptions = useUserConfigStore();
 
-useUserConfigStore().$subscribe(async (mutation, state) => {
+userConfigOptions.$subscribe(async (mutation, state) => {
   const stateJson = JSON.stringify(state);
   const event = mutation.events;
 
@@ -46,28 +50,47 @@ useUserConfigStore().$subscribe(async (mutation, state) => {
 
   // userConfig's versionId is change
   if (!Array.isArray(event) && event.key === KEY_USER_CONFIG_VERSION_ID) {
-    const newVersion = configOptions.findVersionById(state.versionId);
-    logger.debug("user config's version is change");
-    if (await hasVersionById(state.versionId)) {
-      logger.debug(`version id ${state.versionId} is has in db.`);
+    await versionUpdate();
+  }
+});
+
+configOptions.$subscribe(async (mutation, state) => {
+  const event = mutation.events;
+  const userConfig = useUserConfigStore();
+
+  if (!Array.isArray(event) && event.key === KEY_CONFIG_OPTIONS_VERSIONS) {
+    // in options update, change default versionId
+    if (userConfig.versionId === LATEST_VERSION) {
+      logger.debug('change lastest version to normal version');
+      userConfig.selectVersion(state.versions.reduce((l, r) => (l.publishDate > r.publishDate ? l : r)).id);
     } else {
-      logger.debug(`version id ${state.versionId} is no in db. start save`);
-      if (newVersion) {
-        const remoteJsonItems = await getAllJsonItems(newVersion);
-        await saveJsonItemSet({ versionId: state.versionId, jsonItems: remoteJsonItems });
-        await saveVersion(newVersion);
-      } else {
-        logger.error(`new version ${state.versionId} is no find in config Options, Why?`);
-      }
+      // init start, because configOptions can update version
+      await versionUpdate();
     }
   }
 });
 
-configOptions.$subscribe((mutation, state) => {
-  const userConfig = useUserConfigStore();
-  // in options update, change default versionId
-  if (userConfig.versionId === LATEST_VERSION) {
-    logger.debug('change lastest version to normal version');
-    userConfig.selectVersion(state.versions.reduce((l, r) => (l.publishDate > r.publishDate ? l : r)).id);
+async function versionUpdate() {
+  const jsonItems = [] as JsonItem[];
+  if (await hasVersionById(userConfigOptions.versionId)) {
+    logger.debug(`version id ${userConfigOptions.versionId} is has in db.`);
+    const dbJsonItemSet = await getJsonItemSetByVersionId(userConfigOptions.versionId);
+    if (dbJsonItemSet) {
+      replaceArray(jsonItems, dbJsonItemSet.jsonItems);
+    }
+  } else {
+    const newVersion = configOptions.findVersionById(userConfigOptions.versionId);
+    logger.debug(`version id ${userConfigOptions.versionId} is no in db. start save`);
+    if (newVersion) {
+      const remoteJsonItems = await getAllJsonItems(newVersion);
+      await saveJsonItemSet({ versionId: userConfigOptions.versionId, jsonItems: remoteJsonItems });
+      await saveVersion(newVersion);
+      replaceArray(jsonItems, remoteJsonItems);
+    } else {
+      logger.error(`new version ${userConfigOptions.versionId} is no find in config Options, Why?`);
+    }
   }
-});
+  cddaItemIndexer.clear();
+  cddaItemIndexer.addJsonItems(jsonItems);
+  configOptions.updateMods(cddaItemIndexer.modinfos);
+}

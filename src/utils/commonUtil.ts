@@ -21,3 +21,7 @@ export function toArray<T>(val: T | T[]): T[] {
     return [val];
   }
 }
+
+export function replaceArray<T>(soure: T[], newArr: T[]) {
+  return soure.splice(0, soure.length, ...newArr);
+}
