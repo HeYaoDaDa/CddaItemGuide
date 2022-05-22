@@ -1,5 +1,6 @@
 import { logger } from 'src/boot/logger';
 import { gettext } from 'src/gettext';
+import { reactive } from 'vue';
 
 export class GettextString {
   str?: string;
@@ -16,6 +17,7 @@ export class GettextString {
     this.str_pl = val.str_pl;
     this.male = val.male;
     this.female = val.female;
+    return reactive(this);
   }
 
   static parseGetTextTransation(value: unknown, ctx?: string): GettextString | undefined {

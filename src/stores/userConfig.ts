@@ -100,6 +100,7 @@ async function versionUpdate() {
       logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
     }
   }
+  //language is base in version
   await languageUpdate();
   cddaItemIndexer.clear();
   cddaItemIndexer.addJsonItems(jsonItems);
