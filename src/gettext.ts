@@ -1,7 +1,7 @@
 import Jed from '@tannin/compat';
 import { markRaw, reactive } from 'vue';
 
-export class MyGettext {
+class MyGettext {
   version = 0;
   enabled = false;
   jed = markRaw(new Jed({}));
