@@ -9,7 +9,7 @@ import { reactive } from 'vue';
 import { JsonItem } from './JsonItem';
 
 export abstract class CddaItem {
-  finalize = false;
+  finalized = false;
   isLoad = false;
 
   json!: object;
@@ -76,7 +76,15 @@ export abstract class CddaItem {
     return true;
   }
 
-  abstract parseJson(data: object, util: JsonParseUtil): void;
+  finalize() {
+    if (this.finalized) return;
+    this.doFinalize();
+    this.finalized = true;
+  }
 
   abstract parseId(): string[];
+
+  abstract parseJson(data: object, util: JsonParseUtil): void;
+
+  abstract doFinalize(): void;
 }

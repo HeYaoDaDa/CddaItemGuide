@@ -107,6 +107,7 @@ async function versionUpdate() {
   logger.debug(`addJsonItems end, mods ${cddaItemIndexer.modinfos.length}`, cddaItemIndexer.byModIdAndJsonTypeAndId);
   configOptions.updateMods(cddaItemIndexer.modinfos);
   cddaItemIndexer.processCopyFroms();
+  cddaItemIndexer.finalizeAllCddaItem();
   logger.debug('init end');
 }
 

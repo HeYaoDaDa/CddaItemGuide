@@ -3,6 +3,9 @@ import { CddaItem } from './CddaItem';
 
 export class DummyCddaItem extends CddaItem {
   data = {};
+  doFinalize(): void {
+    return;
+  }
   parseJson(): void {
     return;
   }

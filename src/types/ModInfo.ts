@@ -32,6 +32,10 @@ export class ModInfo extends CddaItem {
     data.obsolete = util.getBoolean('obsolete');
     data.category = util.getGettextString('category');
   }
+
+  doFinalize(): void {
+    return;
+  }
 }
 
 interface ModInfoData {

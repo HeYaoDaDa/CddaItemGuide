@@ -61,15 +61,20 @@ export class CddaItemIndexer {
   }
 
   processCopyFroms() {
-    this.byModIdAndJsonTypeAndId.forEach((byJsonTypeById) =>
-      byJsonTypeById.forEach((byId) =>
-        byId.forEach((cddaItem) => {
-          this.processLoad(cddaItem);
-        })
-      )
-    );
+    this.foreachALlCddaItem((cddaItem) => {
+      this.processLoad(cddaItem);
+    });
     logger.warn('deferred has ', this.deferred.length, this.deferred);
     logger.debug('processCopyFroms end');
+  }
+
+  finalizeAllCddaItem() {
+    this.foreachALlCddaItem((cddaItem) => cddaItem.finalize());
+    logger.debug('finalizeAllCddaItem end');
+  }
+
+  private foreachALlCddaItem(fu: (cddaItem: CddaItem) => void) {
+    this.byModIdAndJsonTypeAndId.forEach((byJsonTypeById) => byJsonTypeById.forEach((byId) => byId.forEach(fu)));
   }
 
   private processLoad(cddaItem: CddaItem) {
