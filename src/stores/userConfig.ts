@@ -10,7 +10,7 @@ import {
   KEY_USER_CONFIG_LANGUAGE_CODE,
   KEY_USER_CONFIG_VERSION_ID,
 } from 'src/constants/storeConstant';
-import { changeGettext } from 'src/gettext';
+import { gettext } from 'src/gettext';
 import { getJsonItemSetByVersionId, saveJsonItemSet } from 'src/services/jsonItemSetService';
 import { getSavePoFileByVersion, savePoFile } from 'src/services/poFileService';
 import { hasVersionById, saveVersion } from 'src/services/versionsService';
@@ -111,12 +111,13 @@ async function languageUpdate() {
   logger.debug('start updateLanguage');
   if (userConfig.languageCode === LANGUAGE_OPTIONS[0].value) {
     logger.debug(`language code is ${userConfig.languageCode}, no need use gettext.`);
+    gettext.clear();
     return;
   }
   let poStr = (await getSavePoFileByVersion(userConfig.versionId, userConfig.languageCode))?.po;
   if (poStr) {
     logger.debug('db has po ', userConfig.languageCode);
-    changeGettext(poStr);
+    gettext.changeGettext(poStr);
   } else {
     logger.debug('db no has po ', userConfig.languageCode);
     const version = configOptions.findVersionById(userConfig.versionId);
@@ -127,6 +128,5 @@ async function languageUpdate() {
       logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
     }
   }
-  configOptions.updateMods(cddaItemIndexer.modinfos);
   logger.debug('end updateLanguage');
 }

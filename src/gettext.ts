@@ -1,19 +1,31 @@
 import Jed from '@tannin/compat';
+import { markRaw, reactive } from 'vue';
 
-export let gettext = new Jed({
-  locale_data: {
-    'cataclysm-dda': {
-      '': {
-        domain: 'cataclysm-dda',
-        lang: 'zh_CN',
-        plural_forms: 'nplurals=1; plural=0;',
-      },
-      test: ['OK singular test', 'OK plural test'],
-    },
-  },
-  domain: 'cataclysm-dda',
-});
+export class MyGettext {
+  version = 0;
+  enabled = false;
+  jed = markRaw(new Jed({}));
 
-export function changeGettext(poStr: string) {
-  gettext = new Jed(JSON.parse(poStr));
+  constructor() {
+    return reactive(this);
+  }
+
+  changeGettext(poStr: string) {
+    this.jed = new Jed(JSON.parse(poStr));
+    this.version++;
+    this.enabled = true;
+  }
+
+  clear() {
+    this.jed = new Jed({});
+    this.version++;
+    this.enabled = false;
+  }
+
+  pgettext(ctx: string | undefined, key: string): string {
+    if (this.enabled) return this.jed.pgettext(ctx, key);
+    else return key;
+  }
 }
+
+export const gettext = new MyGettext();

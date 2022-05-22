@@ -8,7 +8,6 @@ export class GettextString {
   str_pl?: string;
   male?: string;
   female?: string;
-  cacheStr?: string;
 
   constructor(val: GettextStringInterface) {
     this.str = val.str;
@@ -32,9 +31,7 @@ export class GettextString {
   }
 
   translate(): string {
-    if (!this.cacheStr)
-      this.cacheStr = gettext.pgettext(this.ctx, this.str ?? this.str_sp ?? this.str_sp ?? this.male ?? this.female);
-    return this.cacheStr as string;
+    return gettext.pgettext(this.ctx, this.str ?? this.str_sp ?? this.str_sp ?? this.male ?? this.female ?? '');
   }
 }
 
