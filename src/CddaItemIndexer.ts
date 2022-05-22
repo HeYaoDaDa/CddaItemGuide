@@ -10,6 +10,7 @@ export class CddaItemIndexer {
   byModIdAndJsonTypeAndId: Map<string, Map<string, Map<string, CddaItem>>> = new Map();
   modinfos: CddaItem[] = [];
   deferred: CddaItem[] = [];
+  searchs: CddaItem[] = [];
 
   findByModsByTypeAndId(modIds: string[], type: string, id: string): CddaItem[] {
     const jsonTypes = convertToJsonType(type);
@@ -26,6 +27,8 @@ export class CddaItemIndexer {
   clear() {
     this.byModIdAndJsonTypeAndId.clear();
     this.modinfos.length = 0;
+    this.deferred.length = 0;
+    this.searchs.length = 0;
   }
 
   addJsonItems(jsonItems: JsonItem[]) {
@@ -69,8 +72,15 @@ export class CddaItemIndexer {
   }
 
   finalizeAllCddaItem() {
-    this.foreachALlCddaItem((cddaItem) => cddaItem.finalize());
+    this.foreachALlCddaItem((cddaItem) => {
+      cddaItem.finalize();
+      if (cddaItem.doSearch()) this.searchs.push(cddaItem);
+    });
     logger.debug('finalizeAllCddaItem end');
+  }
+
+  resetSearchs() {
+    this.searchs.forEach((cddaItem) => cddaItem.doSearch());
   }
 
   private foreachALlCddaItem(fu: (cddaItem: CddaItem) => void) {

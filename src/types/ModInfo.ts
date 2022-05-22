@@ -36,6 +36,12 @@ export class ModInfo extends CddaItem {
   doFinalize(): void {
     return;
   }
+
+  doSearch(): boolean {
+    this.sreachParam = { one: this.data.name.translate(), two: this.data.description.translate() };
+    console.log('sreachParam ', this.sreachParam.one);
+    return true;
+  }
 }
 
 interface ModInfoData {

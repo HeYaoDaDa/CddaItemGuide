@@ -18,7 +18,7 @@ export abstract class CddaItem {
   jsonType!: string;
   type!: string;
   id!: string;
-  sreachParam?: {
+  sreachParam!: {
     one: string;
     two: string;
   };
@@ -87,4 +87,6 @@ export abstract class CddaItem {
   abstract parseJson(data: object, util: JsonParseUtil): void;
 
   abstract doFinalize(): void;
+
+  abstract doSearch(): boolean;
 }

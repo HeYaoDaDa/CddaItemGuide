@@ -5,6 +5,8 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title> Quasar App </q-toolbar-title>
+
+        <search-input />
       </q-toolbar>
     </q-header>
 
@@ -34,6 +36,7 @@ export default {
 import UserConfig from 'src/components/userConfig/UserConfig.vue';
 import FastNavigation from 'src/components/fastNavigation/FastNavigation.vue';
 import { ref } from 'vue';
+import SearchInput from 'src/components/SearchInput.vue';
 
 const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {

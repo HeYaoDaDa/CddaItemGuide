@@ -116,6 +116,7 @@ async function languageUpdate() {
   if (userConfig.languageCode === LANGUAGE_OPTIONS[0].value) {
     logger.debug(`language code is ${userConfig.languageCode}, no need use gettext.`);
     gettext.clear();
+    cddaItemIndexer.resetSearchs();
     return;
   }
   let poStr = (await getSavePoFileByVersion(userConfig.versionId, userConfig.languageCode))?.po;
@@ -132,5 +133,6 @@ async function languageUpdate() {
       logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
     }
   }
+  cddaItemIndexer.resetSearchs();
   logger.debug('end updateLanguage');
 }
