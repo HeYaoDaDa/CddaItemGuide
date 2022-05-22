@@ -1,10 +1,18 @@
 import { defineStore } from 'pinia';
 import { getAllJsonItems } from 'src/apis/jsonItemApi';
+import { getPoFileByVersionAndLanguageCode } from 'src/apis/poFileApi';
 import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import { DDA_MOD_ID, LANGUAGE_OPTIONS, LATEST_VERSION } from 'src/constants/appConstant';
-import { KEY_CONFIG_OPTIONS_VERSIONS, KEY_USER_CONFIG, KEY_USER_CONFIG_VERSION_ID } from 'src/constants/storeConstant';
+import {
+  KEY_CONFIG_OPTIONS_VERSIONS,
+  KEY_USER_CONFIG,
+  KEY_USER_CONFIG_LANGUAGE_CODE,
+  KEY_USER_CONFIG_VERSION_ID,
+} from 'src/constants/storeConstant';
+import { changeGettext } from 'src/gettext';
 import { getJsonItemSetByVersionId, saveJsonItemSet } from 'src/services/jsonItemSetService';
+import { getSavePoFileByVersion, savePoFile } from 'src/services/poFileService';
 import { hasVersionById, saveVersion } from 'src/services/versionsService';
 import { JsonItem } from 'src/types/JsonItem';
 import { replaceArray } from 'src/utils/commonUtil';
@@ -39,9 +47,9 @@ function initUserConfig(): { versionId: string; languageCode: string; modIds: st
 }
 
 const configOptions = useConfigOptionsStore();
-const userConfigOptions = useUserConfigStore();
+const userConfig = useUserConfigStore();
 
-userConfigOptions.$subscribe(async (mutation, state) => {
+userConfig.$subscribe(async (mutation, state) => {
   const stateJson = JSON.stringify(state);
   const event = mutation.events;
 
@@ -51,6 +59,8 @@ userConfigOptions.$subscribe(async (mutation, state) => {
   // userConfig's versionId is change
   if (!Array.isArray(event) && event.key === KEY_USER_CONFIG_VERSION_ID) {
     await versionUpdate();
+  } else if (!Array.isArray(event) && event.key === KEY_USER_CONFIG_LANGUAGE_CODE) {
+    await languageUpdate();
   }
 });
 
@@ -72,25 +82,49 @@ configOptions.$subscribe(async (mutation, state) => {
 
 async function versionUpdate() {
   const jsonItems = [] as JsonItem[];
-  if (await hasVersionById(userConfigOptions.versionId)) {
-    logger.debug(`version id ${userConfigOptions.versionId} is has in db.`);
-    const dbJsonItemSet = await getJsonItemSetByVersionId(userConfigOptions.versionId);
+  if (await hasVersionById(userConfig.versionId)) {
+    logger.debug(`version id ${userConfig.versionId} is has in db.`);
+    const dbJsonItemSet = await getJsonItemSetByVersionId(userConfig.versionId);
     if (dbJsonItemSet) {
       replaceArray(jsonItems, dbJsonItemSet.jsonItems);
     }
   } else {
-    const newVersion = configOptions.findVersionById(userConfigOptions.versionId);
-    logger.debug(`version id ${userConfigOptions.versionId} is no in db. start save`);
+    const newVersion = configOptions.findVersionById(userConfig.versionId);
+    logger.debug(`version id ${userConfig.versionId} is no in db. start save`);
     if (newVersion) {
       const remoteJsonItems = await getAllJsonItems(newVersion);
-      await saveJsonItemSet({ versionId: userConfigOptions.versionId, jsonItems: remoteJsonItems });
+      await saveJsonItemSet({ versionId: userConfig.versionId, jsonItems: remoteJsonItems });
       await saveVersion(newVersion);
       replaceArray(jsonItems, remoteJsonItems);
     } else {
-      logger.error(`new version ${userConfigOptions.versionId} is no find in config Options, Why?`);
+      logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
     }
   }
   cddaItemIndexer.clear();
   cddaItemIndexer.addJsonItems(jsonItems);
   configOptions.updateMods(cddaItemIndexer.modinfos);
+  await languageUpdate();
+  logger.debug('init end');
+}
+
+async function languageUpdate() {
+  logger.debug('start updateLanguage');
+  if (userConfig.languageCode === LANGUAGE_OPTIONS[0].value) {
+    logger.debug(`language code is ${userConfig.languageCode}, no need use gettext.`);
+    return;
+  }
+  let poStr = (await getSavePoFileByVersion(userConfig.versionId, userConfig.languageCode))?.po;
+  if (poStr) {
+    logger.debug('db has po ', userConfig.languageCode);
+    changeGettext(poStr);
+  } else {
+    logger.debug('db no has po ', userConfig.languageCode);
+    const version = configOptions.findVersionById(userConfig.versionId);
+    if (version) {
+      poStr = await getPoFileByVersionAndLanguageCode(version);
+      await savePoFile({ versionId: userConfig.versionId, languageCode: userConfig.languageCode, po: poStr });
+    } else {
+      logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
+    }
+  }
 }

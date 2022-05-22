@@ -28,18 +28,19 @@ const userConfig = useUserConfigStore();
  * @param newLanguageCode new Language Code
  */
 function changeLanguage(newLanguageCode: string) {
-  logger.debug('change to new language ', newLanguageCode);
   locale.value = newLanguageCode;
   void import('quasar/lang/' + newLanguageCode).then((lang: typeof import('quasar/lang/*')) => {
     Quasar.lang.set(lang.default);
   });
 }
 
+logger.debug('init language ', userConfig.languageCode);
 changeLanguage(userConfig.languageCode);
 
 const selectedLanguage = computed({
   get: () => userConfig.languageCode,
   set: (val) => {
+    logger.debug('user change to new language ', val);
     userConfig.selectLanguage(val);
     changeLanguage(val);
   },
