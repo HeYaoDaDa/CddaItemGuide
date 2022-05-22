@@ -32,12 +32,12 @@ export class CddaItemIndexer {
     jsonItems.forEach((jsonItem) => this.addJsonItem(jsonItem));
   }
 
-  addJsonItem(jsonItem: JsonItem) {
+  private addJsonItem(jsonItem: JsonItem) {
     const cddaItem = cddaItemFactory.generateCddaItem(jsonItem);
     this.addCddaItem(cddaItem);
   }
 
-  addCddaItem(cddaItem: CddaItem) {
+  private addCddaItem(cddaItem: CddaItem) {
     cddaItem.parseId().forEach((jsonId, index) => {
       if (index > 0) {
         const newCddaItem = cloneDeep(cddaItem);
@@ -50,7 +50,7 @@ export class CddaItemIndexer {
     });
   }
 
-  addCddaItemWithJsonId(cddaItem: CddaItem) {
+  private addCddaItemWithJsonId(cddaItem: CddaItem) {
     if (!this.byModIdAndJsonTypeAndId.has(cddaItem.modId)) this.byModIdAndJsonTypeAndId.set(cddaItem.modId, new Map());
     const byJsonTypeById = this.byModIdAndJsonTypeAndId.get(cddaItem.modId) as Map<string, Map<string, CddaItem>>;
     if (!byJsonTypeById.has(cddaItem.jsonType)) byJsonTypeById.set(cddaItem.jsonType, new Map());
@@ -72,7 +72,7 @@ export class CddaItemIndexer {
     logger.debug('processCopyFroms end');
   }
 
-  processLoad(cddaItem: CddaItem) {
+  private processLoad(cddaItem: CddaItem) {
     if (cddaItem.load()) {
       this.addCddaItemWithJsonId(cddaItem);
       this.processSubInDeferred(cddaItem.modId, cddaItem.jsonType, cddaItem.id);
