@@ -35,3 +35,22 @@ export enum jsonTypes {
   terrain = 'terrain',
   flag = 'json_flag',
 }
+
+export const itemJsonTypes = [
+  'ammo',
+  'gun',
+  'armor',
+  'pet_armor',
+  'tool',
+  'toolmod',
+  'tool_armor',
+  'book',
+  'comestible',
+  'engine',
+  'wheel',
+  'gunmod',
+  'magazine',
+  'battery',
+  'generic',
+  'bionic_item',
+];

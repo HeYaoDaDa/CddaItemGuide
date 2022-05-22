@@ -104,7 +104,9 @@ async function versionUpdate() {
   await languageUpdate();
   cddaItemIndexer.clear();
   cddaItemIndexer.addJsonItems(jsonItems);
+  logger.debug(`addJsonItems end, mods ${cddaItemIndexer.modinfos.length}`, cddaItemIndexer.byModIdAndJsonTypeAndId);
   configOptions.updateMods(cddaItemIndexer.modinfos);
+  cddaItemIndexer.processCopyFroms();
   logger.debug('init end');
 }
 

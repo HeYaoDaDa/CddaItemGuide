@@ -13,10 +13,13 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "@tannin/compat": "^1.1.0",
+    "@types/fuzzy-search": "^2.1.2",
+    "@types/lodash": "^4.14.182",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "dexie": "^3.2.2",
     "fs": "^0.0.1-security",
+    "fuzzy-search": "^3.2.1",
     "lodash": "^4.17.21",
     "pako": "^2.0.4",
     "pinia": "^2.0.11",

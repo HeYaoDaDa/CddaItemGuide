@@ -35,8 +35,8 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
       });
       this.mods = newMods;
     },
-    findModById(id: string) {
-      return this.mods.find((mod) => mod.id === id);
+    findModById(modId: string) {
+      return this.mods.find((mod) => mod.id.toLowerCase() === modId.toLowerCase());
     },
   },
 });

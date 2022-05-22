@@ -1,10 +1,8 @@
-import { CddaItem } from './CddaItem';
 import { CddaItemFactory } from './CddaItemFactory';
+import { ModInfo } from './ModInfo';
 
 export class RealCddaItemFactory extends CddaItemFactory {
-  findCddaItemType(): CddaItem | undefined {
-    return undefined;
-  }
+  cddaItemTypes = [new ModInfo()];
 }
 
 export const cddaItemFactory = new RealCddaItemFactory();
