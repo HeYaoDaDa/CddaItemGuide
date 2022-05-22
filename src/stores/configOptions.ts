@@ -29,7 +29,7 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
     //TODO:todo
     updateMods(newModJsonItems: JsonItem[]) {
       const newMods = newModJsonItems.map((jsonItem) => {
-        const mod = jsonItem.json as BaseMod;
+        const mod = new BaseMod(jsonItem);
         if (!Array.isArray(mod.dependencies)) mod.dependencies = [mod.dependencies];
         return mod;
       });
