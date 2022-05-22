@@ -16,7 +16,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import FuzzySearch from 'fuzzy-search';
+import Fuse from 'fuse.js';
 import { Loading } from 'quasar';
 import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
@@ -27,15 +27,15 @@ import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
 const searchResultItems = reactive(new Array<CddaItem>());
 const route = useRoute();
-const searcher = new FuzzySearch(cddaItemIndexer.searchs, ['sreachParam.one', 'sreachParam.two'], {
-  sort: true,
-});
+const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['sreachParam.one', 'sreachParam.two'] });
 
 function updateSearchResultItems(newroute: typeof route) {
   Loading.show();
-  //TODO:
-  searcher.haystack = cddaItemIndexer.searchs;
-  replaceArray(searchResultItems, searcher.search(newroute.query.content as string));
+  searcher.setCollection(cddaItemIndexer.searchs);
+  replaceArray(
+    searchResultItems,
+    searcher.search(newroute.query.content as string).map((a) => a.item)
+  );
   Loading.hide();
 }
 
