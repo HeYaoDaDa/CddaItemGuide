@@ -33,10 +33,7 @@ export class GettextString {
 
   translate(): string {
     if (!this.cacheStr)
-      this.cacheStr = gettext.value.pgettext(
-        this.ctx,
-        this.str ?? this.str_sp ?? this.str_sp ?? this.male ?? this.female
-      );
+      this.cacheStr = gettext.pgettext(this.ctx, this.str ?? this.str_sp ?? this.str_sp ?? this.male ?? this.female);
     return this.cacheStr as string;
   }
 }

@@ -127,4 +127,6 @@ async function languageUpdate() {
       logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
     }
   }
+  configOptions.updateMods(cddaItemIndexer.modinfos);
+  logger.debug('end updateLanguage');
 }
