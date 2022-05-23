@@ -19,8 +19,10 @@ export abstract class CddaItem {
   type!: string;
   id!: string;
   sreachParam!: {
-    one: string;
-    two: string;
+    category: string;
+    weight: number;
+    name: string;
+    description?: string;
   };
   copyFromInfo?: {
     modIds: string[];

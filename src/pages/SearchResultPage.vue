@@ -1,9 +1,12 @@
 <template>
-  <q-page class="row justify-around content-start">
-    <q-card v-for="searchResultItem in searchResultItems" :key="searchResultItem.id" class="col-6">
-      {{ searchResultItem.sreachParam.one }}
-      <q-badge>{{ searchResultItem.modId }}</q-badge>
-    </q-card>
+  <q-page class="row justify-around content-start" :style="{ display: 'grid', 'grid-template-columns': 'max' }">
+    <template v-for="searchResults in searchResultLists" :key="searchResults[0].type">
+      <p>{{ searchResults[0].sreachParam.category }}</p>
+
+      <q-list>
+        <search-item v-for="searchResult in searchResults" :key="searchResult.id" :cddaItem="searchResult" />
+      </q-list>
+    </template>
   </q-page>
 </template>
 
@@ -18,31 +21,39 @@ export default {
 <script setup lang="ts">
 import Fuse from 'fuse.js';
 import { Loading } from 'quasar';
-import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
+import SearchItem from 'src/components/SearchItem.vue';
 import { CddaItem } from 'src/types/CddaItem';
-import { replaceArray } from 'src/utils/commonUtil';
 import { reactive } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
-const searchResultItems = reactive(new Array<CddaItem>());
+const searchResultLists = reactive(new Array<Array<CddaItem>>());
 const route = useRoute();
-const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['sreachParam.one', 'sreachParam.two'] });
+const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['sreachParam.name', 'sreachParam.description'] });
 
 function updateSearchResultItems(newroute: typeof route) {
   Loading.show();
+
   searcher.setCollection(cddaItemIndexer.searchs);
-  replaceArray(
-    searchResultItems,
-    searcher.search(newroute.query.content as string).map((a) => a.item)
-  );
+  const allSearchResults = searcher.search(newroute.query.content as string).map((a) => a.item);
+
+  const tempMap: Map<string, CddaItem[]> = new Map();
+  allSearchResults.forEach((searchResult) => {
+    if (!tempMap.has(searchResult.type)) tempMap.set(searchResult.type, []);
+    tempMap.get(searchResult.type)?.push(searchResult);
+  });
+
+  searchResultLists.length = 0;
+  tempMap.forEach((searchResults) => searchResultLists.push(searchResults));
+  searchResultLists.sort((a, b) => a[0].sreachParam.weight - b[0].sreachParam.weight);
+  console.log('search Rsult ', searchResultLists.length);
+
   Loading.hide();
 }
 
 updateSearchResultItems(route);
 
 onBeforeRouteUpdate((to, from) => {
-  logger.debug('search onBeforeRouteUpdate');
   if (to.query !== from.query) {
     updateSearchResultItems(to);
   }

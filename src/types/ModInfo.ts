@@ -38,8 +38,12 @@ export class ModInfo extends CddaItem {
   }
 
   doSearch(): boolean {
-    this.sreachParam = { one: this.data.name.translate(), two: this.data.description.translate() };
-    console.log('sreachParam ', this.sreachParam.one);
+    this.sreachParam = {
+      category: 'Mod',
+      weight: 0,
+      name: this.data.name.translate(),
+      description: this.data.description.translate(),
+    };
     return true;
   }
 }
