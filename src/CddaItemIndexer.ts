@@ -4,12 +4,12 @@ import { jsonTypes } from './constants/jsonTypesConstant';
 import { CddaItem } from './types/CddaItem';
 import { JsonItem } from './types/JsonItem';
 import { cddaItemFactory } from './types/RealCddaItemFactory';
-import { convertToJsonType, popFilter } from './utils/commonUtil';
+import { arrayIsEmpty, convertToJsonType, popFilter } from './utils/commonUtil';
 
 export class CddaItemIndexer {
   byModIdAndJsonTypeAndId: Map<string, Map<string, Map<string, CddaItem>>> = new Map();
   modinfos: CddaItem[] = [];
-  deferred: CddaItem[] = [];
+  deferred: Map<string, CddaItem[]> = new Map();
   searchs: CddaItem[] = [];
 
   findByModsByTypeAndId(modIds: string[], type: string, id: string): CddaItem[] {
@@ -27,7 +27,7 @@ export class CddaItemIndexer {
   clear() {
     this.byModIdAndJsonTypeAndId.clear();
     this.modinfos.length = 0;
-    this.deferred.length = 0;
+    this.deferred.clear();
     this.searchs.length = 0;
   }
 
@@ -67,7 +67,7 @@ export class CddaItemIndexer {
     this.foreachALlCddaItem((cddaItem) => {
       this.processLoad(cddaItem);
     });
-    logger.warn('deferred has ', this.deferred.length, this.deferred);
+    logger.warn('deferred has ', this.deferred.size, this.deferred);
     logger.debug('processCopyFroms end');
   }
 
@@ -92,20 +92,32 @@ export class CddaItemIndexer {
       this.addCddaItemWithJsonId(cddaItem);
       this.processSubInDeferred(cddaItem.modId, cddaItem.jsonType, cddaItem.id);
     } else {
-      this.deferred.push(cddaItem);
+      this.addDeferred(cddaItem);
+    }
+  }
+
+  private addDeferred(cddaItem: CddaItem) {
+    const info = cddaItem.copyFromInfo;
+    if (info) {
+      if (!this.deferred.has(info.id)) this.deferred.set(info.id, []);
+      this.deferred.get(info.id)?.push(cddaItem);
     }
   }
 
   private processSubInDeferred(modId: string, jsonType: string, id: string) {
-    popFilter(this.deferred, (deferredItem) => {
-      const info = deferredItem.copyFromInfo;
-      if (info) {
-        return includes(info.modIds, modId) && includes(info.jsonTypes, jsonType) && info.id === id;
-      } else {
-        logger.error('why a no copyFromInfo cddaItem in deferred?', deferredItem);
-        return false;
-      }
-    }).forEach((deferredItem) => this.processLoad(deferredItem));
+    const deferreds = this.deferred.get(id);
+    if (deferreds) {
+      popFilter(deferreds, (deferredItem) => {
+        const info = deferredItem.copyFromInfo;
+        if (info) {
+          return includes(info.modIds, modId) && includes(info.jsonTypes, jsonType);
+        } else {
+          logger.error('why a no copyFromInfo cddaItem in deferred?', deferredItem);
+          return false;
+        }
+      }).forEach((deferredItem) => this.processLoad(deferredItem));
+      if (arrayIsEmpty(deferreds)) this.deferred.delete(id);
+    }
   }
 }
 
