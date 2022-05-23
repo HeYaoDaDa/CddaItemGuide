@@ -20,9 +20,11 @@ export default {
 
 <script setup lang="ts">
 import Fuse from 'fuse.js';
+import { includes } from 'lodash';
 import { Loading } from 'quasar';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import SearchItem from 'src/components/SearchItem.vue';
+import { useUserConfigStore } from 'src/stores/userConfig';
 import { CddaItem } from 'src/types/CddaItem';
 import { reactive } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
@@ -30,12 +32,16 @@ import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 const searchResultLists = reactive(new Array<Array<CddaItem>>());
 const route = useRoute();
 const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['sreachParam.name', 'sreachParam.description'] });
+const userConfig = useUserConfigStore();
 
 function updateSearchResultItems(newroute: typeof route) {
   Loading.show();
 
   searcher.setCollection(cddaItemIndexer.searchs);
-  const allSearchResults = searcher.search(newroute.query.content as string).map((a) => a.item);
+  const allSearchResults = searcher
+    .search(newroute.query.content as string)
+    .map((a) => a.item)
+    .filter((result) => includes(userConfig.modIds, result.modId));
 
   const tempMap: Map<string, CddaItem[]> = new Map();
   allSearchResults.forEach((searchResult) => {
