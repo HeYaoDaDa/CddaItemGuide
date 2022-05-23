@@ -5,7 +5,9 @@ import { useConfigOptionsStore } from 'src/stores/configOptions';
 import { convertToJsonType, convertToType } from 'src/utils/commonUtil';
 import { getOptionalString } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
-import { reactive } from 'vue';
+import { ViewUtil } from 'src/utils/viewUtil';
+import { reactive, VNode } from 'vue';
+import { RouteLocationRaw } from 'vue-router';
 import { JsonItem } from './JsonItem';
 
 export abstract class CddaItem {
@@ -84,6 +86,22 @@ export abstract class CddaItem {
     this.finalized = true;
   }
 
+  getRoute(): RouteLocationRaw {
+    return {
+      name: 'cddaItem',
+      params: {
+        type: this.type,
+        id: this.id,
+      },
+    };
+  }
+
+  view(): VNode[] {
+    const util = new ViewUtil();
+    this.doView(util);
+    return util.result;
+  }
+
   abstract parseId(): string[];
 
   abstract parseJson(data: object, util: JsonParseUtil): void;
@@ -91,4 +109,6 @@ export abstract class CddaItem {
   abstract doFinalize(): void;
 
   abstract doSearch(): boolean;
+
+  abstract doView(util: ViewUtil): void;
 }

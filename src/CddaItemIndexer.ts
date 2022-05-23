@@ -1,6 +1,7 @@
 import { cloneDeep, includes } from 'lodash';
 import { logger } from './boot/logger';
 import { jsonTypes } from './constants/jsonTypesConstant';
+import { useUserConfigStore } from './stores/userConfig';
 import { CddaItem } from './types/CddaItem';
 import { JsonItem } from './types/JsonItem';
 import { cddaItemFactory } from './types/RealCddaItemFactory';
@@ -11,6 +12,11 @@ export class CddaItemIndexer {
   modinfos: CddaItem[] = [];
   deferred: Map<string, CddaItem[]> = new Map();
   searchs: CddaItem[] = [];
+
+  findByTypeAndId(type: string, id: string): CddaItem[] {
+    const userConfig = useUserConfigStore();
+    return this.findByModsByTypeAndId(userConfig.modIds, type, id);
+  }
 
   findByModsByTypeAndId(modIds: string[], type: string, id: string): CddaItem[] {
     const jsonTypes = convertToJsonType(type);

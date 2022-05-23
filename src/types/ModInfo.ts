@@ -46,6 +46,10 @@ export class ModInfo extends CddaItem {
     };
     return true;
   }
+
+  doView(): void {
+    return;
+  }
 }
 
 interface ModInfoData {

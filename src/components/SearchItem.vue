@@ -1,13 +1,15 @@
 <template>
-  <q-card width="100%">
-    <p>
-      <span>{{ cddaItem.sreachParam.name }}</span>
+  <router-link :to="cddaItem.getRoute()">
+    <q-card width="100%">
+      <p>
+        <span>{{ cddaItem.sreachParam.name }}</span>
 
-      <q-badge>{{ configOptions.findModById(cddaItem.modId)?.name.translate() }}</q-badge>
-    </p>
+        <q-badge>{{ configOptions.findModById(cddaItem.modId)?.name.translate() }}</q-badge>
+      </p>
 
-    <p v-if="cddaItem.sreachParam.description">{{ cddaItem.sreachParam.description }}</p>
-  </q-card>
+      <p v-if="cddaItem.sreachParam.description">{{ cddaItem.sreachParam.description }}</p>
+    </q-card>
+  </router-link>
 </template>
 
 <script lang="ts">

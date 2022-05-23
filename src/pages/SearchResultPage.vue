@@ -1,5 +1,5 @@
 <template>
-  <q-page class="row justify-around content-start" :style="{ display: 'grid', 'grid-template-columns': 'max' }">
+  <q-page class="row justify-around content-start" :style="{ display: 'grid', 'grid-template-columns': '99%' }">
     <template v-for="searchResults in searchResultLists" :key="searchResults[0].type">
       <p>{{ searchResults[0].sreachParam.category }}</p>
 

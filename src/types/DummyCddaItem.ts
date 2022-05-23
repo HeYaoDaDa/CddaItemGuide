@@ -23,4 +23,8 @@ export class DummyCddaItem extends CddaItem {
   validate(): boolean {
     return true;
   }
+
+  doView(): void {
+    return;
+  }
 }

@@ -11,6 +11,11 @@ const routes: RouteRecordRaw[] = [
         path: 'search',
         component: () => import('pages/SearchResultPage.vue'),
       },
+      {
+        name: 'cddaItem',
+        path: 'cddaItems/:type/:id',
+        component: () => import('pages/CddaItemPage.vue'),
+      },
     ],
   },
 
