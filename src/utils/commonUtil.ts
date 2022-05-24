@@ -17,7 +17,7 @@ export function stringIsNotEmpty(value: string | undefined): boolean {
 }
 
 export function toArray<T>(val: T | T[]): T[] {
-  if (val instanceof Array) {
+  if (Array.isArray(val)) {
     return val;
   } else {
     return [val];

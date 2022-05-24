@@ -14,6 +14,7 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { computed } from '@vue/reactivity';
 import { useQuasar } from 'quasar';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import MegerVNodesVue from 'src/components/base/MegerVNodes.vue';
@@ -27,11 +28,13 @@ const quasar = useQuasar();
 
 const show = ref(false);
 const cddaItems: CddaItem[] = reactive([]);
-const cddaItemViews = h(MegerVNodesVue, null, () => {
-  const views = new Array<VNode>();
-  cddaItems.forEach((cddaItem) => views.push(...cddaItem.view(), h(JsonCardVue, { cddaItem })));
-  return views;
-});
+const cddaItemViews = computed(() =>
+  h(MegerVNodesVue, null, () => {
+    const views = new Array<VNode>();
+    cddaItems.forEach((cddaItem) => views.push(...cddaItem.view(), h(JsonCardVue, { cddaItem })));
+    return views;
+  })
+);
 
 function updateView(type: string, id: string) {
   show.value = false;

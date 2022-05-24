@@ -98,7 +98,7 @@ export abstract class CddaItem {
 
   view(): VNode[] {
     const util = new ViewUtil();
-    this.doView(util);
+    this.doView(this.data, util);
     return util.result;
   }
 
@@ -110,5 +110,5 @@ export abstract class CddaItem {
 
   abstract doSearch(): boolean;
 
-  abstract doView(util: ViewUtil): void;
+  abstract doView(data: object, util: ViewUtil): void;
 }

@@ -1,7 +1,6 @@
 import { logger } from 'src/boot/logger';
-import { GettextString } from 'src/types/GettextString';
 
-function commonConvert(o: unknown): Record<string, unknown> | undefined {
+export function commonConvert(o: unknown): Record<string, unknown> | undefined {
   if (typeof o === 'object') {
     return o as Record<string, unknown>;
   }
@@ -122,13 +121,4 @@ export function getOptionalBoolean(value: unknown, key: string): boolean | undef
 
 export function getBoolean(value: unknown, key: string, def?: boolean): boolean {
   return getOptionalBoolean(value, key) ?? def ?? false;
-}
-
-export function getOptionalGettextString(value: unknown, key: string): GettextString | undefined {
-  const optionalUnknown = getOptionalUnknown(value, key);
-  return GettextString.parseGetTextTransation(optionalUnknown);
-}
-
-export function getGettextString(value: unknown, key: string, def?: GettextString): GettextString {
-  return getOptionalGettextString(value, key) ?? def ?? new GettextString({ str: key });
 }

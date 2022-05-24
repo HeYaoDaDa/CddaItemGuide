@@ -1,33 +1,7 @@
-import { CddaItemRef } from 'src/types/CddaItemRef';
 import { MyClass } from 'src/types/EqualClass';
-import { getArray, getOptionalArray, getOptionalString } from './baseJsonUtil';
+import { arrayIsNotEmpty } from '../commonUtil';
+import { getOptionalArray, getOptionalString, getOptionalUnknown } from './baseJsonUtil';
 import { parseLengthToCm, parseTimeToS, parseVolumeToMl, parseWeightToG } from './dataUtil';
-
-export function getOptionalCddaItemRef(
-  jsonObject: Record<string, unknown>,
-  key: string,
-  type: string
-): CddaItemRef | undefined {
-  const field = getOptionalString(jsonObject, key);
-  if (field) {
-    return new CddaItemRef(field, type);
-  } else {
-    return undefined;
-  }
-}
-
-export function getCddaItemRef(
-  jsonObject: Record<string, unknown>,
-  key: string,
-  type: string,
-  def?: CddaItemRef
-): CddaItemRef {
-  return getOptionalCddaItemRef(jsonObject, key, type) ?? def ?? new CddaItemRef(key, type);
-}
-
-export function getCddaItemRefs(jsonObject: Record<string, unknown>, key: string, type: string): CddaItemRef[] {
-  return getArray(jsonObject, key, []).map((value) => new CddaItemRef(<string>value, type));
-}
 
 export function getOptionalWeight(jsonObject: Record<string, unknown>, key: string): number | undefined {
   const field = getOptionalString(jsonObject, key);
@@ -89,7 +63,27 @@ export function getOptionalArrayWithType<T>(
 ): Array<T> | undefined {
   const temps = getOptionalArray(jsonObject, key);
   if (ins instanceof MyClass) {
-    return temps?.map((temp) => ins.fromJson(temp, extend) as T);
+    return temps?.map((temp) => callFromJson(temp, ins, extend) as T);
   }
   return temps?.map((temp) => temp as T);
+}
+
+export function getOptionalMyClass<T extends MyClass<T>>(
+  jsonObject: unknown,
+  key: string,
+  ins: T,
+  ...extend: unknown[]
+): T | undefined {
+  const optionalUnknown = getOptionalUnknown(jsonObject, key);
+  return callFromJson(optionalUnknown, ins, ...extend);
+}
+
+function callFromJson<T extends MyClass<T>>(jsonObject: unknown | undefined, ins: T, ...extend: unknown[]) {
+  if (!jsonObject) return undefined;
+  if (arrayIsNotEmpty(extend)) return ins.fromJson(jsonObject, ...extend);
+  else return ins.fromJson(jsonObject);
+}
+
+export function getMyClass<T extends MyClass<T>>(jsonObject: unknown, key: string, def: T, ...extend: unknown[]): T {
+  return getOptionalMyClass(jsonObject, key, def, ...extend) ?? def;
 }

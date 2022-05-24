@@ -52,7 +52,6 @@ function updateSearchResultItems(newroute: typeof route) {
   searchResultLists.length = 0;
   tempMap.forEach((searchResults) => searchResultLists.push(searchResults));
   searchResultLists.sort((a, b) => a[0].sreachParam.weight - b[0].sreachParam.weight);
-  console.log('search Rsult ', searchResultLists.length);
 
   Loading.hide();
 }

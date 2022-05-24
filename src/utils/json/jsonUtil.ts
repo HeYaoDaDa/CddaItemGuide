@@ -1,7 +1,6 @@
 import { isEqual } from 'lodash';
 import { CddaItem } from 'src/types/CddaItem';
 import { MyClass } from 'src/types/EqualClass';
-import { GettextString } from 'src/types/GettextString';
 import { arrayIsNotEmpty, replaceArray } from '../commonUtil';
 import {
   getOptionalBoolean,
@@ -10,7 +9,7 @@ import {
   getOptionalString,
   getOptionalUnknown,
 } from './baseJsonUtil';
-import { getOptionalArrayWithType } from './dataJsonUtil';
+import { getOptionalArrayWithType, getOptionalMyClass } from './dataJsonUtil';
 
 export class JsonParseUtil {
   relative?: Record<string, number>;
@@ -91,13 +90,12 @@ export class JsonParseUtil {
     return this.getOptionalBoolean(key) ?? def ?? false;
   }
 
-  getOptionalGettextString(key: string): GettextString | undefined {
-    const optionalUnknown = getOptionalUnknown(this.jsonObject, key);
-    return GettextString.parseGetTextTransation(optionalUnknown);
+  getOptionalMyClass<T extends MyClass<T>>(key: string, ins: T, ...extend: unknown[]): T | undefined {
+    return getOptionalMyClass(this.jsonObject, key, ins, ...extend);
   }
 
-  getGettextString(key: string, def?: GettextString): GettextString {
-    return this.getOptionalGettextString(key) ?? def ?? new GettextString({ str: key });
+  getMyClass<T extends MyClass<T>>(key: string, def: T, ...extend: unknown[]): T {
+    return this.getOptionalMyClass<T>(key, def, ...extend) ?? def;
   }
 
   private _processProportinalAndRelative(result: number, key: string) {
