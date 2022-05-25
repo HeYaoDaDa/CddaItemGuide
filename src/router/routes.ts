@@ -12,6 +12,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/SearchResultPage.vue'),
       },
       {
+        name: 'gridByCddaItemType',
+        path: 'gride/cddaItemType/:type',
+        component: () => import('src/pages/GridByType.vue'),
+      },
+      {
         name: 'cddaItem',
         path: 'cddaItems/:type/:id',
         component: () => import('pages/CddaItemPage.vue'),

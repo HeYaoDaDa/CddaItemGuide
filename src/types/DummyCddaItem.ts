@@ -20,11 +20,15 @@ export class DummyCddaItem extends CddaItem {
     return ids;
   }
 
-  validate(): boolean {
+  validate() {
     return true;
   }
 
-  doView(): void {
+  doView() {
     return;
+  }
+
+  gridColumnDefine() {
+    return [];
   }
 }

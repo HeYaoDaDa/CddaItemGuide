@@ -3,7 +3,7 @@ export const ALL_MOD = 'all';
 export const DDA_MOD_ID = 'dda';
 export const DEFAULT_LANGUAGE_CODE = 'en-US';
 
-export const jsonTypes = [
+export const jsonItemTypes = [
   'ammo',
   'gun',
   'armor',

@@ -9,6 +9,7 @@ import { ViewUtil } from 'src/utils/viewUtil';
 import { reactive, VNode } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import { JsonItem } from './JsonItem';
+import { ColDef, ColGroupDef } from 'ag-grid-community';
 
 export abstract class CddaItem {
   finalized = false;
@@ -111,4 +112,6 @@ export abstract class CddaItem {
   abstract doSearch(): boolean;
 
   abstract doView(data: object, util: ViewUtil): void;
+
+  abstract gridColumnDefine(): (ColGroupDef | ColDef)[];
 }

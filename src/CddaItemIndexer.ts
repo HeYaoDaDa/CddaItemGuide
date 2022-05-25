@@ -9,6 +9,7 @@ import { arrayIsEmpty, convertToJsonType, popFilter } from './utils/commonUtil';
 
 export class CddaItemIndexer {
   byModIdAndJsonTypeAndId: Map<string, Map<string, Map<string, CddaItem>>> = new Map();
+  byModIdAndJsonType: Map<string, Map<string, CddaItem[]>> = new Map();
   modinfos: CddaItem[] = [];
   deferred: Map<string, CddaItem[]> = new Map();
   searchs: CddaItem[] = [];
@@ -30,8 +31,26 @@ export class CddaItemIndexer {
     return result;
   }
 
+  findByType(type: string): CddaItem[] {
+    const userConfig = useUserConfigStore();
+    return this.findByModsByType(userConfig.modIds, type);
+  }
+
+  findByModsByType(modIds: string[], type: string): CddaItem[] {
+    const jsonTypes = convertToJsonType(type);
+    const result = new Array<CddaItem>();
+    modIds.forEach((modId) =>
+      jsonTypes.forEach((fJsonType) => {
+        const find = this.byModIdAndJsonType.get(modId)?.get(fJsonType);
+        if (find) result.push(...find);
+      })
+    );
+    return result;
+  }
+
   clear() {
     this.byModIdAndJsonTypeAndId.clear();
+    this.byModIdAndJsonType.clear();
     this.modinfos.length = 0;
     this.deferred.clear();
     this.searchs.length = 0;
@@ -67,6 +86,12 @@ export class CddaItemIndexer {
     if (!byId.has(cddaItem.id)) byId.set(cddaItem.id, cddaItem);
 
     if (cddaItem.jsonType === jsonTypes.modInfo) this.modinfos.push(cddaItem);
+
+    if (!this.byModIdAndJsonType.has(cddaItem.modId)) this.byModIdAndJsonType.set(cddaItem.modId, new Map());
+    const byJsonType = this.byModIdAndJsonType.get(cddaItem.modId) as Map<string, CddaItem[]>;
+    if (!byJsonType.has(cddaItem.jsonType)) byJsonType.set(cddaItem.jsonType, []);
+    const cddaItems = byJsonType.get(cddaItem.jsonType) as CddaItem[];
+    cddaItems.push(cddaItem);
   }
 
   processCopyFroms() {
@@ -95,7 +120,6 @@ export class CddaItemIndexer {
 
   private processLoad(cddaItem: CddaItem) {
     if (cddaItem.load()) {
-      this.addCddaItemWithJsonId(cddaItem);
       this.processSubInDeferred(cddaItem.modId, cddaItem.jsonType, cddaItem.id);
     } else {
       this.addDeferred(cddaItem);

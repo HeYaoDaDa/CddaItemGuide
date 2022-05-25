@@ -1,3 +1,4 @@
+import { ColGroupDef, ColDef } from 'ag-grid-community';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { getArray } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
@@ -99,6 +100,21 @@ export class ModInfo extends CddaItem {
     if (data.version) cardUtil.addField({ label: 'version', content: data.version });
     if (data.core) cardUtil.addField({ label: 'core', content: data.core });
     if (data.obsolete) cardUtil.addField({ label: 'obsolete', content: data.obsolete });
+  }
+
+  gridColumnDefine(): (ColGroupDef | ColDef)[] {
+    return [
+      { headerName: 'name', valueGetter: (value) => value.data.data.name.translate() },
+      { headerName: 'mod', valueGetter: (value) => value.data.modId },
+      { headerName: 'category', valueGetter: (value) => value.data.data.showCategory.translate() },
+      { headerName: 'authors', valueGetter: (value) => value.data.data.authors.join(', ') },
+      { headerName: 'maintainers', field: 'data.maintainers' },
+      { headerName: 'dependencies', field: 'data.dependencies' },
+      { headerName: 'path', field: 'data.path' },
+      { headerName: 'version', field: 'data.version' },
+      { headerName: 'core', field: 'data.core' },
+      { headerName: 'obsolete', field: 'data.obsolete' },
+    ];
   }
 }
 
