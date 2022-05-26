@@ -4,19 +4,13 @@
       <p>{{ searchResults[0].sreachParam.category }}</p>
 
       <q-list>
-        <search-item v-for="searchResult in searchResults" :key="searchResult.id" :cddaItem="searchResult" />
+        <template v-for="searchResult in searchResults" :key="searchResult.id">
+          <search-item :cddaItem="searchResult" />
+        </template>
       </q-list>
     </template>
   </q-page>
 </template>
-
-<script lang="ts">
-export default {
-  name: 'SearchResultPage',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
 
 <script setup lang="ts">
 import Fuse from 'fuse.js';
@@ -36,12 +30,11 @@ const route = useRoute();
 const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['sreachParam.name', 'sreachParam.description'] });
 const userConfig = useUserConfigStore();
 
-function updateSearchResultItems(newroute: typeof route) {
+function updateSearchResultItems(newRoute: typeof route) {
   Loading.show();
 
-  searcher.setCollection(cddaItemIndexer.searchs);
   const allSearchResults = searcher
-    .search(newroute.query.content as string)
+    .search(newRoute.query.content as string)
     .map((a) => a.item)
     .filter((result) => includes(userConfig.modIds, result.modId));
 
@@ -69,5 +62,8 @@ onBeforeRouteUpdate((to, from) => {
 watch(gettext, () => {
   logger.debug('gettext change, refesh search params.');
   cddaItemIndexer.resetSearchs();
+  searcher.setCollection(cddaItemIndexer.searchs);
+  logger.debug(cddaItemIndexer.searchs);
+  updateSearchResultItems(route);
 });
 </script>

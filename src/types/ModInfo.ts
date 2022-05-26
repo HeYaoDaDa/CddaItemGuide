@@ -1,4 +1,4 @@
-import { ColGroupDef, ColDef } from 'ag-grid-community';
+import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { getArray } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
@@ -11,6 +11,11 @@ import { JsonItem } from './JsonItem';
 
 export class ModInfo extends CddaItem {
   data = reactive({} as ModInfoData);
+
+  constructor() {
+    super();
+    return reactive(this);
+  }
 
   validate(jsonItem: JsonItem): boolean {
     return jsonItem.jsonType === jsonTypes.modInfo;

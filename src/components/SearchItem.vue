@@ -12,14 +12,6 @@
   </router-link>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'SearchItem',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
 import { useConfigOptionsStore } from 'src/stores/configOptions';
 import { CddaItem } from 'src/types/CddaItem';
