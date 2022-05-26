@@ -24,19 +24,11 @@
   </q-layout>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'MainLayout',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
-import UserConfig from 'src/components/userConfig/UserConfig.vue';
 import FastNavigation from 'src/components/fastNavigation/FastNavigation.vue';
-import { ref } from 'vue';
 import SearchInput from 'src/components/SearchInput.vue';
+import UserConfig from 'src/components/userConfig/UserConfig.vue';
+import { ref } from 'vue';
 
 const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
