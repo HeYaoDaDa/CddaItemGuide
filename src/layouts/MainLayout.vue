@@ -25,13 +25,27 @@
 </template>
 
 <script setup lang="ts">
+import { getVersions } from 'src/apis/versionApi';
+import { logger } from 'src/boot/logger';
 import FastNavigation from 'src/components/fastNavigation/FastNavigation.vue';
 import SearchInput from 'src/components/SearchInput.vue';
 import UserConfig from 'src/components/userConfig/UserConfig.vue';
+import { useConfigOptionsStore } from 'src/stores/configOptions';
 import { ref } from 'vue';
 
 const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+/**
+ * init start
+ */
+logger.debug('start init versions');
+getVersions()
+  .then((versions) => {
+    useConfigOptionsStore().updateVersions(versions);
+    logger.debug('init versions success, all versions size is ', versions.length);
+  })
+  .catch((e) => logger.error(e));
 </script>

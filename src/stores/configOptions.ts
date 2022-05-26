@@ -1,6 +1,4 @@
 import { defineStore } from 'pinia';
-import { getVersions } from 'src/apis/versionApi';
-import { logger } from 'src/boot/logger';
 import { LANGUAGE_OPTIONS } from 'src/constants/appConstant';
 import { KEY_USER_CONFIG_OPTIONS } from 'src/constants/storeConstant';
 import { BaseMod } from 'src/types/BaseMod';
@@ -48,12 +46,3 @@ function initConfigValue() {
     mods: [] as BaseMod[],
   };
 }
-
-/**
- * from remote load all version to options
- */
-getVersions()
-  .then((versions) => {
-    useConfigOptionsStore().updateVersions(versions);
-  })
-  .catch((e) => logger.error(e));
