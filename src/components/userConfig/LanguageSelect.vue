@@ -34,7 +34,6 @@ function changeLanguage(newLanguageCode: string) {
   });
 }
 
-logger.debug('init language ', userConfig.languageCode);
 changeLanguage(userConfig.languageCode);
 
 const selectedLanguage = computed({

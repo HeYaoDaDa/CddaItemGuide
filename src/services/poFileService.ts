@@ -1,5 +1,10 @@
+import { getPoFileByVersionAndLanguageCode } from 'src/apis/poFileApi';
 import { logger } from 'src/boot/logger';
+import { LANGUAGE_OPTIONS } from 'src/constants/appConstant';
 import { db } from 'src/db';
+import { gettext } from 'src/gettext';
+import { useConfigOptionsStore } from 'src/stores/configOptions';
+import { useUserConfigStore } from 'src/stores/userConfig';
 import { PoFile } from 'src/types/db/PoFile';
 
 export async function savePoFile(poFile: PoFile) {
@@ -13,4 +18,32 @@ export async function getSavePoFileByVersion(versionId: string, languageCode: st
 
 export async function hasPoFileByVersionIdAndLanguageCode(versionId: string, languageCode: string) {
   return (await getSavePoFileByVersion(versionId, languageCode)) != undefined;
+}
+
+export async function initGettext() {
+  const start = performance.now();
+  logger.debug('start init gettext');
+  const userConfig = useUserConfigStore();
+  const configOptions = useConfigOptionsStore();
+  if (userConfig.languageCode === LANGUAGE_OPTIONS[0].value) {
+    logger.debug(`language code is ${userConfig.languageCode}, no need use gettext.`);
+    gettext.clear();
+    return;
+  }
+  let poStr = (await getSavePoFileByVersion(userConfig.versionId, userConfig.languageCode))?.po;
+  if (poStr) {
+    logger.debug('db has po ', userConfig.languageCode);
+    gettext.changeGettext(poStr);
+  } else {
+    logger.debug('db no has po ', userConfig.languageCode);
+    const version = configOptions.findVersionById(userConfig.versionId);
+    if (version) {
+      poStr = await getPoFileByVersionAndLanguageCode(version);
+      await savePoFile({ versionId: userConfig.versionId, languageCode: userConfig.languageCode, po: poStr });
+    } else {
+      logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
+    }
+  }
+  const end = performance.now();
+  logger.debug(`init gettext success, cost time is ${end - start}ms, language is ${userConfig.languageCode}`);
 }

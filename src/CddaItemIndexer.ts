@@ -1,11 +1,15 @@
 import { cloneDeep, includes } from 'lodash';
+import { getAllJsonItems } from './apis/jsonItemApi';
 import { logger } from './boot/logger';
 import { jsonTypes } from './constants/jsonTypesConstant';
+import { getJsonItemSetByVersionId, saveJsonItemSet } from './services/jsonItemSetService';
+import { hasVersionById, saveVersion } from './services/versionsService';
+import { useConfigOptionsStore } from './stores/configOptions';
 import { useUserConfigStore } from './stores/userConfig';
 import { CddaItem } from './types/CddaItem';
 import { JsonItem } from './types/JsonItem';
 import { cddaItemFactory } from './types/RealCddaItemFactory';
-import { arrayIsEmpty, convertToJsonType, popFilter } from './utils/commonUtil';
+import { arrayIsEmpty, convertToJsonType, popFilter, replaceArray } from './utils/commonUtil';
 
 export class CddaItemIndexer {
   byModIdAndJsonTypeAndId: Map<string, Map<string, Map<string, CddaItem>>> = new Map();
@@ -56,7 +60,42 @@ export class CddaItemIndexer {
     this.searchs.length = 0;
   }
 
-  addJsonItems(jsonItems: JsonItem[]) {
+  async init() {
+    const start = performance.now();
+    const userConfig = useUserConfigStore();
+    const configOptions = useConfigOptionsStore();
+    const jsonItems = [] as JsonItem[];
+    logger.debug('start init CddaItemIndexer');
+    if (await hasVersionById(userConfig.versionId)) {
+      logger.debug(`version id ${userConfig.versionId} is has in db.`);
+      const dbJsonItemSet = await getJsonItemSetByVersionId(userConfig.versionId);
+      if (dbJsonItemSet) {
+        replaceArray(jsonItems, dbJsonItemSet.jsonItems);
+      }
+    } else {
+      const newVersion = configOptions.findVersionById(userConfig.versionId);
+      logger.debug(`version id ${userConfig.versionId} is no in db. start save`);
+      if (newVersion) {
+        const remoteJsonItems = await getAllJsonItems(newVersion);
+        await saveJsonItemSet({ versionId: userConfig.versionId, jsonItems: remoteJsonItems });
+        await saveVersion(newVersion);
+        replaceArray(jsonItems, remoteJsonItems);
+      } else {
+        logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
+      }
+    }
+    this.clear();
+    this.addJsonItems(jsonItems);
+    configOptions.updateMods();
+    this.processCopyFroms();
+    this.finalizeAllCddaItem();
+    const end = performance.now();
+    logger.debug(
+      `init CddaItemIndexer success, cost time is ${end - start}ms, input jsonItem size is ${jsonItems.length}`
+    );
+  }
+
+  private addJsonItems(jsonItems: JsonItem[]) {
     jsonItems.forEach((jsonItem) => this.addJsonItem(jsonItem));
   }
 
@@ -94,7 +133,7 @@ export class CddaItemIndexer {
     cddaItems.push(cddaItem);
   }
 
-  processCopyFroms() {
+  private processCopyFroms() {
     this.foreachALlCddaItem((cddaItem) => {
       this.processLoad(cddaItem);
     });
@@ -102,7 +141,7 @@ export class CddaItemIndexer {
     logger.debug('processCopyFroms end');
   }
 
-  finalizeAllCddaItem() {
+  private finalizeAllCddaItem() {
     this.foreachALlCddaItem((cddaItem) => {
       cddaItem.finalize();
       if (cddaItem.doSearch()) this.searchs.push(cddaItem);

@@ -22,11 +22,13 @@ export default {
 import Fuse from 'fuse.js';
 import { includes } from 'lodash';
 import { Loading } from 'quasar';
+import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import SearchItem from 'src/components/SearchItem.vue';
+import { gettext } from 'src/gettext';
 import { useUserConfigStore } from 'src/stores/userConfig';
 import { CddaItem } from 'src/types/CddaItem';
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
 const searchResultLists = reactive(new Array<Array<CddaItem>>());
@@ -62,5 +64,10 @@ onBeforeRouteUpdate((to, from) => {
   if (to.query !== from.query) {
     updateSearchResultItems(to);
   }
+});
+
+watch(gettext, () => {
+  logger.debug('gettext change, refesh search params.');
+  cddaItemIndexer.resetSearchs();
 });
 </script>

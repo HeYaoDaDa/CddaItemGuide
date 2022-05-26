@@ -25,7 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import { getVersions } from 'src/apis/versionApi';
 import { logger } from 'src/boot/logger';
 import FastNavigation from 'src/components/fastNavigation/FastNavigation.vue';
 import SearchInput from 'src/components/SearchInput.vue';
@@ -41,11 +40,7 @@ function toggleLeftDrawer() {
 /**
  * init start
  */
-logger.debug('start init versions');
-getVersions()
-  .then((versions) => {
-    useConfigOptionsStore().updateVersions(versions);
-    logger.debug('init versions success, all versions size is ', versions.length);
-  })
+useConfigOptionsStore()
+  .initVersions()
   .catch((e) => logger.error(e));
 </script>
