@@ -103,7 +103,7 @@ export class ModInfo extends CddaItem {
   }
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
-    return [
+    return reactive([
       { headerName: 'name', valueGetter: (value) => value.data.data.name.translate() },
       { headerName: 'mod', valueGetter: (value) => value.data.modId },
       { headerName: 'category', valueGetter: (value) => value.data.data.showCategory.translate() },
@@ -114,7 +114,7 @@ export class ModInfo extends CddaItem {
       { headerName: 'version', field: 'data.version' },
       { headerName: 'core', field: 'data.core' },
       { headerName: 'obsolete', field: 'data.obsolete' },
-    ];
+    ]);
   }
 }
 
