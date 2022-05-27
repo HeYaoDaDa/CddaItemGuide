@@ -28,13 +28,13 @@ import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import { gettext } from 'src/gettext';
 import { CddaItem } from 'src/types/CddaItem';
 import { arrayIsNotEmpty, replaceArray } from 'src/utils/commonUtil';
-import { reactive, ref, watch } from 'vue';
+import { ref, shallowReactive, watch } from 'vue';
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
 const gridApi = ref(undefined as GridApi | undefined);
-const cddaItems = reactive(new Array<CddaItem>());
+const cddaItems = shallowReactive(new Array<CddaItem>());
 
 function update(myRoute: typeof route) {
   const type = myRoute.params.type as string;

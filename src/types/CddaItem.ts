@@ -7,7 +7,7 @@ import { convertToJsonType, convertToType } from 'src/utils/commonUtil';
 import { getOptionalString } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
-import { reactive, VNode } from 'vue';
+import { VNode } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import { JsonItem } from './JsonItem';
 
@@ -66,7 +66,7 @@ export abstract class CddaItem {
           .find((cddaItem) => cddaItem.isLoad);
         if (soure) {
           this.copyFromInfo = undefined;
-          this.data = reactive(cloneDeep(soure.data));
+          this.data = cloneDeep(soure.data);
         } else {
           return false;
         }

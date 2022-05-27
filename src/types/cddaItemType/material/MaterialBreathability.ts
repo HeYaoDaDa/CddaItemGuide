@@ -1,6 +1,5 @@
 import { MyClass } from 'src/types/EqualClass';
 import { ViewUtil } from 'src/utils/viewUtil';
-import { reactive } from 'vue';
 
 export class MaterialBreathability extends MyClass<MaterialBreathability> {
   str!: string;
@@ -10,7 +9,6 @@ export class MaterialBreathability extends MyClass<MaterialBreathability> {
     super();
     this.str = str ?? BreathabilityRating[0];
     this.num = breathabilityToNumber(this.str);
-    return reactive(this);
   }
 
   equal(v: object): boolean {

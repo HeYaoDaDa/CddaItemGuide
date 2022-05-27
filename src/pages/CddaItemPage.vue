@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from '@vue/reactivity';
 import { useQuasar } from 'quasar';
 import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
@@ -15,14 +14,14 @@ import MegerVNodesVue from 'src/components/base/MegerVNodes.vue';
 import JsonCardVue from 'src/components/JsonCard.vue';
 import { CddaItem } from 'src/types/CddaItem';
 import { replaceArray } from 'src/utils/commonUtil';
-import { h, reactive, ref, VNode, watch } from 'vue';
+import { computed, h, ref, shallowReactive, VNode, watch } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
 const route = useRoute();
 const quasar = useQuasar();
 
 const show = ref(false);
-const cddaItems: CddaItem[] = reactive([]);
+const cddaItems: CddaItem[] = shallowReactive([]);
 const cddaItemViews = computed(() =>
   h(MegerVNodesVue, null, () => {
     const views = new Array<VNode>();
@@ -33,12 +32,12 @@ const cddaItemViews = computed(() =>
 
 function updateView(type: string, id: string) {
   show.value = false;
-  let loadingConsole = !quasar.loading.isActive;
-  if (loadingConsole) quasar.loading.show();
+  let loadLock = !quasar.loading.isActive;
+  if (loadLock) quasar.loading.show();
 
   replaceArray(cddaItems, cddaItemIndexer.findByTypeAndId(type, id));
 
-  if (loadingConsole) quasar.loading.hide();
+  if (loadLock) quasar.loading.hide();
   show.value = true;
 }
 

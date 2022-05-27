@@ -5,7 +5,8 @@
         <p>{{ searchResults[0].type }}</p>
 
         <q-list>
-          <template v-for="searchResult in searchResults" :key="searchResult.id">
+          <!-- becase name is can change, so key need add name -->
+          <template v-for="searchResult in searchResults" :key="searchResult.id + searchResult.name">
             <search-item :cddaItem="searchResult" />
           </template>
         </q-list>
@@ -28,7 +29,7 @@ import SearchItem from 'src/components/SearchItem.vue';
 import { gettext } from 'src/gettext';
 import { useUserConfigStore } from 'src/stores/userConfig';
 import { CddaItem } from 'src/types/CddaItem';
-import { reactive, watch } from 'vue';
+import { reactive, shallowReactive, watch } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
 const quasar = useQuasar();
@@ -49,7 +50,7 @@ function updateSearchResultItems(newRoute: typeof route) {
 
   const tempMap: Map<string, CddaItem[]> = new Map();
   allSearchResults.forEach((searchResult) => {
-    if (!tempMap.has(searchResult.type)) tempMap.set(searchResult.type, []);
+    if (!tempMap.has(searchResult.type)) tempMap.set(searchResult.type, shallowReactive([]));
     tempMap.get(searchResult.type)?.push(searchResult);
   });
 
@@ -72,7 +73,6 @@ watch([gettext, cddaItemIndexer.finalized], () => {
   logger.debug('gettext change, refesh search params.');
   cddaItemIndexer.resetSearchs();
   searcher.setCollection(cddaItemIndexer.searchs);
-  logger.debug(cddaItemIndexer.searchs);
   updateSearchResultItems(route);
 });
 </script>

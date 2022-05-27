@@ -1,17 +1,17 @@
-import MyField from 'components/base/MyField.vue';
 import MyCard from 'components/base/MyCard.vue';
+import MyField from 'components/base/MyField.vue';
 import MyText from 'components/base/MyText/MyText.vue';
 import { MyCardProp, MyFieldProp, MyTextProp } from 'src/types/MyFieldProp';
-import { h, reactive, VNode } from 'vue';
+import { h, shallowReactive, VNode } from 'vue';
 export class ViewUtil {
-  result: VNode[] = reactive([]);
+  result: VNode[] = shallowReactive([]);
 
   add(v: VNode) {
     this.result.push(v);
   }
 
   addCard(props: MyCardProp) {
-    const cardUtil = reactive(new ViewUtil());
+    const cardUtil = new ViewUtil();
     this.add(h(MyCard, props, () => cardUtil.result));
     return cardUtil;
   }

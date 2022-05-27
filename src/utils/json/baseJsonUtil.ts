@@ -67,7 +67,7 @@ export function getOptionalString(value: unknown, key: string): string | undefin
     if (typeof result === 'string' || typeof result === 'number') {
       return result as string;
     } else {
-      console.warn('getOptionalString is no string jsonObject: %o, key: %s, result: %s', jsonObject, key, result);
+      logger.warn('getOptionalString is no string jsonObject: %o, key: %s, result: %s', jsonObject, key, result);
       return result as string;
     }
   } else {
@@ -89,7 +89,7 @@ export function getOptionalNumber(value: unknown, key: string): number | undefin
     if (typeof result === 'number') {
       return result;
     } else {
-      console.warn('getOptionalNumber is no string jsonObject: %o, key: %s, result: %s', jsonObject, key, result);
+      logger.warn('getOptionalNumber is no string jsonObject: %o, key: %s, result: %s', jsonObject, key, result);
       return result as number;
     }
   } else {
@@ -111,7 +111,7 @@ export function getOptionalBoolean(value: unknown, key: string): boolean | undef
     if (typeof result === 'boolean') {
       return result;
     } else {
-      console.warn('getOptionalBoolean is no boolean jsonObject: %o, key: %s, result: %s', jsonObject, key, result);
+      logger.warn('getOptionalBoolean is no boolean jsonObject: %o, key: %s, result: %s', jsonObject, key, result);
       return false;
     }
   } else {
