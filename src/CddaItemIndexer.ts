@@ -141,16 +141,14 @@ export class CddaItemIndexer {
     if (!this.byModIdAndJsonTypeAndId.has(cddaItem.modId)) this.byModIdAndJsonTypeAndId.set(cddaItem.modId, new Map());
     const byJsonTypeById = this.byModIdAndJsonTypeAndId.get(cddaItem.modId) as Map<string, Map<string, CddaItem>>;
     if (!byJsonTypeById.has(cddaItem.jsonType)) byJsonTypeById.set(cddaItem.jsonType, new Map());
-    const byId = byJsonTypeById.get(cddaItem.jsonType) as Map<string, CddaItem>;
-    if (!byId.has(cddaItem.id)) byId.set(cddaItem.id, cddaItem);
-
-    if (cddaItem.jsonType === jsonTypes.modInfo) this.modinfos.push(cddaItem);
+    byJsonTypeById.get(cddaItem.jsonType)?.set(cddaItem.id, cddaItem);
 
     if (!this.byModIdAndJsonType.has(cddaItem.modId)) this.byModIdAndJsonType.set(cddaItem.modId, new Map());
     const byJsonType = this.byModIdAndJsonType.get(cddaItem.modId) as Map<string, CddaItem[]>;
     if (!byJsonType.has(cddaItem.jsonType)) byJsonType.set(cddaItem.jsonType, []);
-    const cddaItems = byJsonType.get(cddaItem.jsonType) as CddaItem[];
-    cddaItems.push(cddaItem);
+    byJsonType.get(cddaItem.jsonType)?.push(cddaItem);
+
+    if (cddaItem.jsonType === jsonTypes.modInfo) this.modinfos.push(cddaItem);
   }
 
   private processCopyFroms() {

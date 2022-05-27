@@ -34,10 +34,6 @@ export abstract class CddaItem {
   };
   data!: object;
 
-  constructor() {
-    return reactive(this);
-  }
-
   /**
    * validate is match JsonItem
    * @param jsonItem jsonItem object

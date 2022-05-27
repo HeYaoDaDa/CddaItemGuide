@@ -5,19 +5,13 @@ import { formatBooleanAndNumber } from 'src/utils/commonUtil';
 import { commonParseId } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
-import { reactive } from 'vue';
 import { CddaItem } from './CddaItem';
 import { CddaItemRef } from './CddaItemRef';
 import { GettextString } from './GettextString';
 import { JsonItem } from './JsonItem';
 
 export class ModInfo extends CddaItem {
-  data = reactive({} as ModInfoData);
-
-  constructor() {
-    super();
-    return reactive(this);
-  }
+  data = {} as ModInfoData;
 
   validate(jsonItem: JsonItem): boolean {
     return jsonItem.jsonType === jsonTypes.modInfo;
@@ -109,7 +103,7 @@ export class ModInfo extends CddaItem {
   }
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
-    return reactive([
+    return [
       {
         headerValueGetter: () => i18n.global.t('label.name'),
         valueGetter: (value) => value.data.data.name.translate(),
@@ -135,7 +129,7 @@ export class ModInfo extends CddaItem {
         headerValueGetter: () => i18n.global.t('label.obsolete'),
         valueGetter: (value) => formatBooleanAndNumber(value.data.data.obsolete),
       },
-    ]);
+    ];
   }
 }
 

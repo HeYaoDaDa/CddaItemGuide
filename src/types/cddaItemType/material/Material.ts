@@ -9,13 +9,13 @@ import { arrayIsEmpty } from 'src/utils/commonUtil';
 import { commonParseId } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
-import { h, reactive } from 'vue';
+import { h } from 'vue';
 import { Fuel } from './Fuel';
 import { MaterialBreathability } from './MaterialBreathability';
 import { MaterialBurn } from './MaterialBurn';
 
 export class Material extends CddaItem {
-  data = reactive({} as MaterialData);
+  data = {} as MaterialData;
 
   validate(jsonItem: JsonItem): boolean {
     return jsonItem.jsonType === jsonTypes.material;
