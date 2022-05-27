@@ -1,7 +1,7 @@
 <template>
   <template v-if="!(typeof props.isHide === 'function' ? props.isHide() : props.isHide)">
     <dt>
-      <optional-route :content="$t(props.transfer ?? 'label.' + props.label)" $route="props.route" />
+      <optional-route :content="$t(props.translate ?? 'label.' + props.label)" :route="props.route" />
     </dt>
 
     <dd>
@@ -18,20 +18,13 @@
   </template>
 </template>
 
-<script lang="ts">
-import { RouteLocationRaw } from 'vue-router';
-import OptionalRoute from 'src/components/base/OptionalRoute.vue';
-export default {
-  name: 'MyLabel',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
+import OptionalRoute from 'src/components/base/OptionalRoute.vue';
+import { RouteLocationRaw } from 'vue-router';
+
 const props = defineProps<{
   label: string;
-  transfer?: string;
+  translate?: string;
   isHide?: boolean | (() => boolean);
   route?: RouteLocationRaw;
   dl?: boolean;

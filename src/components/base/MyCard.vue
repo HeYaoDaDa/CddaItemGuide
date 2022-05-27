@@ -1,7 +1,11 @@
 <template>
   <q-card class="col q-my-sm q-mx-xs" :style="{ 'min-width': props.width ?? '25%' }">
     <q-card-section>
-      <optional-route v-if="props.label" :content="$t(props.transfer ?? 'label.' + props.label)" :route="props.route" />
+      <optional-route
+        v-if="props.label"
+        :content="$t(props.translate ?? 'label.' + props.label)"
+        :route="props.route"
+      />
 
       <slot name="befor" />
 
@@ -12,21 +16,14 @@
   </q-card>
 </template>
 
-<script lang="ts">
-import { RouteLocationRaw } from 'vue-router';
-import OptionalRoute from 'src/components/base/OptionalRoute.vue';
-export default {
-  name: 'MyCard',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
+import OptionalRoute from 'src/components/base/OptionalRoute.vue';
+import { RouteLocationRaw } from 'vue-router';
+
 const props = defineProps<{
   label?: string;
   width?: string;
-  transfer?: string;
+  translate?: string;
   route?: RouteLocationRaw;
 }>();
 </script>

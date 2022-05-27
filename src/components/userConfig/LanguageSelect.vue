@@ -4,14 +4,6 @@
   </q-select>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'LanguageSelect',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
 import { Quasar } from 'quasar';
 import { logger } from 'src/boot/logger';

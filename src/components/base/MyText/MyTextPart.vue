@@ -24,27 +24,21 @@
   </template>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import OptionalRoute from 'src/components/base/OptionalRoute.vue';
 import { ContentProp } from 'src/types/MyFieldProp';
 import { computed, h } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouteLocationRaw } from 'vue-router';
 import MegerVNodesVue from '../MegerVNodes.vue';
-export default {
-  name: 'MyTextPart',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
 
-<script setup lang="ts">
 const props = defineProps<{
   content?: ContentProp;
   route?: RouteLocationRaw;
   p?: boolean;
   li?: boolean;
 }>();
+
 function formatContent(content?: ContentProp) {
   switch (typeof content) {
     case 'string':

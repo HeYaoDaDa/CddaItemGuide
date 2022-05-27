@@ -13,18 +13,11 @@
   </q-select>
 </template>
 
-<script lang="ts">
-import { useUserConfigStore } from 'src/stores/userConfig';
-import { useConfigOptionsStore } from 'src/stores/configOptions';
-import { computed } from 'vue';
-export default {
-  name: 'VersionSelect',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
+import { useConfigOptionsStore } from 'src/stores/configOptions';
+import { useUserConfigStore } from 'src/stores/userConfig';
+import { computed } from 'vue';
+
 const userConfig = useUserConfigStore();
 const configOptions = useConfigOptionsStore();
 

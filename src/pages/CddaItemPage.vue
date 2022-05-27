@@ -5,14 +5,6 @@
   </q-page>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'CddaItemPage',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
 import { computed } from '@vue/reactivity';
 import { useQuasar } from 'quasar';

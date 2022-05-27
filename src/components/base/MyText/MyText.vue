@@ -8,20 +8,13 @@
   </template>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'MyText',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
 import { ContentProps } from 'src/types/MyFieldProp';
 import { toArray } from 'src/utils/commonUtil';
 import { computed } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import MyTextPart from './MyTextPart.vue';
+
 //TODO:https://github.com/vuejs/core/issues/4294
 const props = defineProps<{
   content?: ContentProps;
@@ -30,6 +23,7 @@ const props = defineProps<{
   p?: boolean;
   li?: boolean;
 }>();
+
 const normalContent = computed(() => toArray(props.content));
 const normalRoute = computed(() => toArray(props.route));
 </script>

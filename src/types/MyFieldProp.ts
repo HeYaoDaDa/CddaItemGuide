@@ -3,7 +3,7 @@ import { MyClass } from './EqualClass';
 
 export interface MyFieldProp {
   label: string;
-  transfer?: string;
+  translate?: string;
   isHide?: boolean | (() => boolean);
   labelRoute?: RouteLocationRaw;
   dl?: boolean;
@@ -29,6 +29,6 @@ export interface MyTextProp {
 export interface MyCardProp {
   label?: string;
   width?: string;
-  transfer?: string;
+  translate?: string;
   route?: RouteLocationRaw;
 }

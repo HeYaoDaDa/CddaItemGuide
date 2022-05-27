@@ -2,14 +2,6 @@
   <q-select filled emit-value map-options v-model="selectedMods" :options="options" label="mods" multiple use-chips />
 </template>
 
-<script lang="ts">
-export default {
-  name: 'ModsSelect',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
 import { logger } from 'src/boot/logger';
 import { useConfigOptionsStore } from 'src/stores/configOptions';

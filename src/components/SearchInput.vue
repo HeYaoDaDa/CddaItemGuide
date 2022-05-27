@@ -9,14 +9,6 @@
   </q-input>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'SearchInput',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';

@@ -8,17 +8,9 @@
   </q-card>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'JsonCard',
-  inheritAttrs: false,
-  customOptions: {},
-};
-</script>
-
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
 import { CddaItem } from 'src/types/CddaItem';
+import { reactive, ref } from 'vue';
 const props = defineProps<{
   cddaItem: CddaItem;
 }>();
