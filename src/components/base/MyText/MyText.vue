@@ -18,7 +18,8 @@ import MyTextPart from './MyTextPart.vue';
 //TODO:https://github.com/vuejs/core/issues/4294
 const props = defineProps<{
   content?: ContentProps;
-  route?: RouteLocationRaw | RouteLocationRaw[];
+  //TODO: should as RouteLocationRaw | RouteLocationRaw[]
+  route?: object | RouteLocationRaw[];
   separator?: string;
   p?: boolean;
   li?: boolean;

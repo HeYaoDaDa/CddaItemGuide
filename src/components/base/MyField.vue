@@ -10,7 +10,7 @@
   >
     <my-text
       :content="props.content"
-      :route="props.valueRoute"
+      :route="(props.valueRoute as object|undefined)"
       :separator="props.separator"
       :p="props.p"
       :li="props.ul"

@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import { computed } from '@vue/reactivity';
 import { useQuasar } from 'quasar';
+import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import MegerVNodesVue from 'src/components/base/MegerVNodes.vue';
 import JsonCardVue from 'src/components/JsonCard.vue';
@@ -45,6 +46,7 @@ updateView(route.params.type as string, route.params.id as string);
 
 onBeforeRouteUpdate((to, from) => {
   if (to.params !== from.params) {
+    logger.debug('onBeforeRouteUpdate', to);
     updateView(to.params.type as string, to.params.id as string);
   }
 });

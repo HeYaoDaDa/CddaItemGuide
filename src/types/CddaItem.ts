@@ -1,3 +1,4 @@
+import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { cloneDeep } from 'lodash';
 import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
@@ -9,7 +10,6 @@ import { ViewUtil } from 'src/utils/viewUtil';
 import { reactive, VNode } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import { JsonItem } from './JsonItem';
-import { ColDef, ColGroupDef } from 'ag-grid-community';
 
 export abstract class CddaItem {
   finalized = false;
@@ -33,6 +33,10 @@ export abstract class CddaItem {
     id: string;
   };
   data!: object;
+
+  constructor() {
+    return reactive(this);
+  }
 
   /**
    * validate is match JsonItem

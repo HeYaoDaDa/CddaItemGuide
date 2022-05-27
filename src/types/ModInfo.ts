@@ -2,7 +2,7 @@ import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { i18n } from 'src/boot/i18n';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { formatBooleanAndNumber } from 'src/utils/commonUtil';
-import { getArray } from 'src/utils/json/baseJsonUtil';
+import { commonParseId } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
 import { reactive } from 'vue';
@@ -24,8 +24,7 @@ export class ModInfo extends CddaItem {
   }
 
   parseId(): string[] {
-    const jsonObject = this.json as Record<string, unknown>;
-    return getArray(jsonObject, 'id').map((id) => id as string);
+    return commonParseId(this.json);
   }
 
   parseJson(data: ModInfoData, util: JsonParseUtil): void {

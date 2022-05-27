@@ -122,3 +122,10 @@ export function getOptionalBoolean(value: unknown, key: string): boolean | undef
 export function getBoolean(value: unknown, key: string, def?: boolean): boolean {
   return getOptionalBoolean(value, key) ?? def ?? false;
 }
+
+export function commonParseId(json: unknown) {
+  const jsonObject = json as Record<string, unknown>;
+  const ids = getArray(jsonObject, 'id').map((id) => id as string);
+  const abstractId = getArray(jsonObject, 'abstract').map((id) => id as string);
+  return [...ids, ...abstractId];
+}

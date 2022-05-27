@@ -1,7 +1,10 @@
 import { ViewUtil } from 'src/utils/viewUtil';
-import { VNode } from 'vue';
+import { reactive, VNode } from 'vue';
 
 export abstract class MyClass<T extends MyClass<T>> {
+  constructor() {
+    return reactive(this);
+  }
   view(): VNode[] {
     const util = new ViewUtil();
     this.doView(util);

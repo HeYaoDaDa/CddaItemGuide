@@ -17,10 +17,10 @@ export class CddaItemRef extends MyClass<CddaItemRef> {
       this.name = val.id;
       this.type = val.type;
       this.route = {
-        name: 'jsonItem',
+        name: 'cddaItem',
         params: {
-          jsonType: val.type,
-          jsonId: val.id,
+          type: val.type,
+          id: val.id,
         },
       };
     }

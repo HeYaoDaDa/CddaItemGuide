@@ -8,7 +8,7 @@ export async function getPoFileByVersionAndLanguageCode(version: Version, langua
   const myLanguageCode = languageCode ?? useUserConfigStore().languageCode;
   //TODO:the jsonUrls should to process
   const url = version.languages.find((language) => language.code === myLanguageCode)?.urls[0];
-  console.log('po url', url, version.languages);
+  logger.debug('po url', url, version.languages);
   if (url) {
     const response = await api.get(url, { responseType: 'arraybuffer', decompress: false });
     return unzip(response.data);

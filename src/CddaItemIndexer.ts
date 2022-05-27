@@ -142,7 +142,7 @@ export class CddaItemIndexer {
   }
 
   private processCopyFroms() {
-    this.foreachALlCddaItem((cddaItem) => {
+    this.foreachAllCddaItem((cddaItem) => {
       this.processLoad(cddaItem);
     });
     logger.warn('deferred has ', this.deferred.size, this.deferred);
@@ -150,7 +150,7 @@ export class CddaItemIndexer {
   }
 
   private finalizeAllCddaItem() {
-    this.foreachALlCddaItem((cddaItem) => {
+    this.foreachAllCddaItem((cddaItem) => {
       cddaItem.finalize();
       if (cddaItem.doSearch()) this.searchs.push(cddaItem);
     });
@@ -161,7 +161,7 @@ export class CddaItemIndexer {
     this.searchs.forEach((cddaItem) => cddaItem.doSearch());
   }
 
-  private foreachALlCddaItem(fu: (cddaItem: CddaItem) => void) {
+  private foreachAllCddaItem(fu: (cddaItem: CddaItem) => void) {
     this.byModIdAndJsonTypeAndId.forEach((byJsonTypeById) => byJsonTypeById.forEach((byId) => byId.forEach(fu)));
   }
 

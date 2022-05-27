@@ -1,5 +1,5 @@
 <template>
-  <template v-if="normalContent">
+  <template v-if="normalContent !== undefined">
     <template v-if="typeof normalContent === 'object'">
       <normal-content />
     </template>

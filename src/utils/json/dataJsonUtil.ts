@@ -1,9 +1,10 @@
 import { MyClass } from 'src/types/EqualClass';
 import { arrayIsNotEmpty } from '../commonUtil';
-import { getOptionalArray, getOptionalString, getOptionalUnknown } from './baseJsonUtil';
+import { commonConvert, getOptionalArray, getOptionalString, getOptionalUnknown } from './baseJsonUtil';
 import { parseLengthToCm, parseTimeToS, parseVolumeToMl, parseWeightToG } from './dataUtil';
 
-export function getOptionalWeight(jsonObject: Record<string, unknown>, key: string): number | undefined {
+export function getOptionalWeight(value: unknown, key: string): number | undefined {
+  const jsonObject = commonConvert(value);
   const field = getOptionalString(jsonObject, key);
   if (field) {
     return parseWeightToG(field);
@@ -12,11 +13,13 @@ export function getOptionalWeight(jsonObject: Record<string, unknown>, key: stri
   }
 }
 
-export function getWeight(jsonObject: Record<string, unknown>, key: string, def?: number): number {
+export function getWeight(value: unknown, key: string, def?: number): number {
+  const jsonObject = commonConvert(value);
   return getOptionalWeight(jsonObject, key) ?? def ?? 0;
 }
 
-export function getOptionalVolume(jsonObject: Record<string, unknown>, key: string): number | undefined {
+export function getOptionalVolume(value: unknown, key: string): number | undefined {
+  const jsonObject = commonConvert(value);
   const field = getOptionalString(jsonObject, key);
   if (field) {
     return parseVolumeToMl(field);
@@ -25,11 +28,13 @@ export function getOptionalVolume(jsonObject: Record<string, unknown>, key: stri
   }
 }
 
-export function getVolume(jsonObject: Record<string, unknown>, key: string, def?: number): number {
+export function getVolume(value: unknown, key: string, def?: number): number {
+  const jsonObject = commonConvert(value);
   return getOptionalVolume(jsonObject, key) ?? def ?? 0;
 }
 
-export function getOptionalLength(jsonObject: Record<string, unknown>, key: string): number | undefined {
+export function getOptionalLength(value: unknown, key: string): number | undefined {
+  const jsonObject = commonConvert(value);
   const field = getOptionalString(jsonObject, key);
   if (field) {
     return parseLengthToCm(field);
@@ -38,11 +43,13 @@ export function getOptionalLength(jsonObject: Record<string, unknown>, key: stri
   }
 }
 
-export function getLength(jsonObject: Record<string, unknown>, key: string, def?: number): number {
+export function getLength(value: unknown, key: string, def?: number): number {
+  const jsonObject = commonConvert(value);
   return getOptionalLength(jsonObject, key) ?? def ?? 0;
 }
 
-export function getOptionalTime(jsonObject: Record<string, unknown>, key: string): number | undefined {
+export function getOptionalTime(value: unknown, key: string): number | undefined {
+  const jsonObject = commonConvert(value);
   const field = getOptionalString(jsonObject, key);
   if (field) {
     return parseTimeToS(field);
@@ -51,7 +58,8 @@ export function getOptionalTime(jsonObject: Record<string, unknown>, key: string
   }
 }
 
-export function getTime(jsonObject: Record<string, unknown>, key: string, def?: number): number {
+export function getTime(value: unknown, key: string, def?: number): number {
+  const jsonObject = commonConvert(value);
   return getOptionalTime(jsonObject, key) ?? def ?? 0;
 }
 
