@@ -1,5 +1,6 @@
 import { cloneDeep, includes } from 'lodash';
 import { Loading } from 'quasar';
+import { ref } from 'vue';
 import { getAllJsonItems } from './apis/jsonItemApi';
 import { i18n } from './boot/i18n';
 import { logger } from './boot/logger';
@@ -19,6 +20,7 @@ export class CddaItemIndexer {
   modinfos: CddaItem[] = [];
   deferred: Map<string, CddaItem[]> = new Map();
   searchs: CddaItem[] = [];
+  finalized = ref(false);
 
   findByTypeAndId(type: string, id: string): CddaItem[] {
     const userConfig = useUserConfigStore();
@@ -93,6 +95,7 @@ export class CddaItemIndexer {
     configOptions.updateMods();
     this.processCopyFroms();
     this.finalizeAllCddaItem();
+    this.finalized.value = true;
     const end = performance.now();
     logger.debug(
       `init CddaItemIndexer success, cost time is ${end - start}ms, input jsonItem size is ${jsonItems.length}`

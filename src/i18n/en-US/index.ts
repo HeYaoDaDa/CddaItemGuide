@@ -3,6 +3,8 @@ export default {
     hello: 'Good news anyone!',
     i18n: 'Loading I18n...',
     gameData: 'Loading game data...',
+    searching: 'Searching...',
+    noFind: 'no find data',
   },
   label: {
     name: 'Name',

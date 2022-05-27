@@ -1,7 +1,8 @@
 <template>
   <q-page class="row justify-around content-start">
     <cdda-item-views />
-    <p v-if="cddaItems.length === 0">no find</p>
+
+    <p v-if="cddaItems.length === 0">{{ $t('message.noFind') }}</p>
   </q-page>
 </template>
 
@@ -13,8 +14,9 @@ import MegerVNodesVue from 'src/components/base/MegerVNodes.vue';
 import JsonCardVue from 'src/components/JsonCard.vue';
 import { CddaItem } from 'src/types/CddaItem';
 import { replaceArray } from 'src/utils/commonUtil';
-import { h, reactive, ref, VNode } from 'vue';
+import { h, reactive, ref, VNode, watch } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+
 const route = useRoute();
 const quasar = useQuasar();
 
@@ -46,4 +48,6 @@ onBeforeRouteUpdate((to, from) => {
     updateView(to.params.type as string, to.params.id as string);
   }
 });
+
+watch(cddaItemIndexer.finalized, () => updateView(route.params.type as string, route.params.id as string));
 </script>

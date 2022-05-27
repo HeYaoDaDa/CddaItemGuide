@@ -3,6 +3,8 @@ export default {
     hello: '嗨，你好',
     i18n: '加载 翻译...',
     gameData: '加载 游戏数据...',
+    searching: '搜索中...',
+    noFind: '未找到数据',
   },
   label: {
     name: '名字',

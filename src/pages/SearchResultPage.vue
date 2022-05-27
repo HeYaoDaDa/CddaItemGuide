@@ -1,23 +1,29 @@
 <template>
   <q-page class="row justify-around content-start" :style="{ display: 'grid', 'grid-template-columns': '99%' }">
-    <template v-for="searchResults in searchResultLists" :key="searchResults[0].type">
-      <p>{{ searchResults[0].sreachParam.category }}</p>
+    <template v-if="searchResultLists.length > 0">
+      <template v-for="searchResults in searchResultLists" :key="searchResults[0].type">
+        <p>{{ searchResults[0].sreachParam.category }}</p>
 
-      <q-list>
-        <template v-for="searchResult in searchResults" :key="searchResult.id">
-          <search-item :cddaItem="searchResult" />
-        </template>
-      </q-list>
+        <q-list>
+          <template v-for="searchResult in searchResults" :key="searchResult.id">
+            <search-item :cddaItem="searchResult" />
+          </template>
+        </q-list>
+      </template>
     </template>
+
+    <my-text v-else :content="$t('message.noFind')" />
   </q-page>
 </template>
 
 <script setup lang="ts">
 import Fuse from 'fuse.js';
 import { includes } from 'lodash';
-import { Loading } from 'quasar';
+import { useQuasar } from 'quasar';
+import { i18n } from 'src/boot/i18n';
 import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
+import MyText from 'src/components/base/MyText/MyText.vue';
 import SearchItem from 'src/components/SearchItem.vue';
 import { gettext } from 'src/gettext';
 import { useUserConfigStore } from 'src/stores/userConfig';
@@ -25,13 +31,16 @@ import { CddaItem } from 'src/types/CddaItem';
 import { reactive, watch } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
+const quasar = useQuasar();
+
 const searchResultLists = reactive(new Array<Array<CddaItem>>());
 const route = useRoute();
 const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['sreachParam.name', 'sreachParam.description'] });
 const userConfig = useUserConfigStore();
 
 function updateSearchResultItems(newRoute: typeof route) {
-  Loading.show();
+  const loadLock = !quasar.loading.isActive;
+  if (loadLock) quasar.loading.show({ message: i18n.global.t('message.searching') });
 
   const allSearchResults = searcher
     .search(newRoute.query.content as string)
@@ -48,7 +57,7 @@ function updateSearchResultItems(newRoute: typeof route) {
   tempMap.forEach((searchResults) => searchResultLists.push(searchResults));
   searchResultLists.sort((a, b) => a[0].sreachParam.weight - b[0].sreachParam.weight);
 
-  Loading.hide();
+  if (loadLock) quasar.loading.hide();
 }
 
 updateSearchResultItems(route);
@@ -59,7 +68,7 @@ onBeforeRouteUpdate((to, from) => {
   }
 });
 
-watch(gettext, () => {
+watch([gettext, cddaItemIndexer.finalized], () => {
   logger.debug('gettext change, refesh search params.');
   cddaItemIndexer.resetSearchs();
   searcher.setCollection(cddaItemIndexer.searchs);

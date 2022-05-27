@@ -34,7 +34,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
-const gridApi = ref(new GridApi());
+const gridApi = ref(undefined as GridApi | undefined);
 
 const cddaItems = computed(() => {
   const type = route.params.type as string;
@@ -54,6 +54,8 @@ function defaultCellClick(event: CellClickedEvent) {
 // watch gettext
 watch(gettext, () => {
   logger.debug('gettext change, refesh cells.');
-  gridApi.value.refreshCells();
+  if (gridApi.value) gridApi.value.refreshCells();
 });
+
+watch(cddaItemIndexer.finalized, () => (gridApi.value ? gridApi.value.refreshCells() : undefined));
 </script>
