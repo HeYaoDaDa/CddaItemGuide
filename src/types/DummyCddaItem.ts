@@ -3,8 +3,8 @@ import { CddaItem } from './CddaItem';
 
 export class DummyCddaItem extends CddaItem {
   data = {};
-  doSearch(): boolean {
-    return false;
+  prepareSearch() {
+    return;
   }
   doFinalize(): void {
     return;

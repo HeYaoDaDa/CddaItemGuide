@@ -72,13 +72,10 @@ export class Material extends CddaItem {
     return;
   }
 
-  doSearch(): boolean {
-    this.sreachParam = {
-      category: jsonTypes.material,
-      weight: 1,
-      name: this.data.name.translate(),
-    };
-    return true;
+  prepareSearch() {
+    this.weight = 1;
+    this.isSearch = true;
+    this.name = this.data.name.translate();
   }
 
   doView(data: object, util: ViewUtil): void {

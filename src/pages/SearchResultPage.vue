@@ -2,7 +2,7 @@
   <q-page class="row justify-around content-start" :style="{ display: 'grid', 'grid-template-columns': '99%' }">
     <template v-if="searchResultLists.length > 0">
       <template v-for="searchResults in searchResultLists" :key="searchResults[0].type">
-        <p>{{ searchResults[0].sreachParam.category }}</p>
+        <p>{{ searchResults[0].type }}</p>
 
         <q-list>
           <template v-for="searchResult in searchResults" :key="searchResult.id">
@@ -35,7 +35,7 @@ const quasar = useQuasar();
 
 const searchResultLists = reactive(new Array<Array<CddaItem>>());
 const route = useRoute();
-const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['sreachParam.name', 'sreachParam.description'] });
+const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['name', 'description'] });
 const userConfig = useUserConfigStore();
 
 function updateSearchResultItems(newRoute: typeof route) {
@@ -55,7 +55,7 @@ function updateSearchResultItems(newRoute: typeof route) {
 
   searchResultLists.length = 0;
   tempMap.forEach((searchResults) => searchResultLists.push(searchResults));
-  searchResultLists.sort((a, b) => a[0].sreachParam.weight - b[0].sreachParam.weight);
+  searchResultLists.sort((a, b) => a[0].weight - b[0].weight);
 
   if (loadLock) quasar.loading.hide();
 }

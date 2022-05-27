@@ -78,14 +78,11 @@ export class ModInfo extends CddaItem {
     }
   }
 
-  doSearch(): boolean {
-    this.sreachParam = {
-      category: 'Mod',
-      weight: 0,
-      name: this.data.name.translate(),
-      description: this.data.description.translate(),
-    };
-    return true;
+  prepareSearch() {
+    this.weight = 0;
+    this.isSearch = true;
+    this.name = this.data.name.translate();
+    this.description = this.data.description.translate();
   }
 
   doView(data: ModInfoData, util: ViewUtil): void {

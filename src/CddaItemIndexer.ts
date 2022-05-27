@@ -129,9 +129,11 @@ export class CddaItemIndexer {
       if (index > 0) {
         const newCddaItem = cloneDeep(cddaItem);
         newCddaItem.id = jsonId;
+        newCddaItem.name = jsonId;
         this.addCddaItemWithJsonId(newCddaItem);
       } else {
         cddaItem.id = jsonId;
+        cddaItem.name = jsonId;
         this.addCddaItemWithJsonId(cddaItem);
       }
     });
@@ -156,7 +158,9 @@ export class CddaItemIndexer {
     this.foreachAllCddaItem((cddaItem) => {
       this.processLoad(cddaItem);
     });
-    logger.warn('deferred has ', this.deferred.size, this.deferred);
+    const deferreds = new Array<CddaItem>();
+    this.deferred.forEach((value) => deferreds.push(...value));
+    logger.warn('deferred has ', deferreds.length, deferreds);
     logger.debug('processCopyFroms end');
     const end = performance.now();
     logger.debug(`cddaItemIndexer load cost time is ${end - start}ms`);
@@ -166,14 +170,14 @@ export class CddaItemIndexer {
     const start = performance.now();
     this.foreachAllCddaItem((cddaItem) => {
       cddaItem.finalize();
-      if (cddaItem.doSearch()) this.searchs.push(cddaItem);
+      if (cddaItem.isSearch) this.searchs.push(cddaItem);
     });
     const end = performance.now();
     logger.debug(`cddaItemIndexer finalize cost time is ${end - start}ms`);
   }
 
   resetSearchs() {
-    this.searchs.forEach((cddaItem) => cddaItem.doSearch());
+    this.searchs.forEach((cddaItem) => cddaItem.prepareSearch());
   }
 
   private foreachAllCddaItem(fu: (cddaItem: CddaItem) => void) {

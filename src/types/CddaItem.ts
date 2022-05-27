@@ -21,12 +21,10 @@ export abstract class CddaItem {
   jsonType!: string;
   type!: string;
   id!: string;
-  sreachParam!: {
-    category: string;
-    weight: number;
-    name: string;
-    description?: string;
-  };
+  name!: string;
+  description?: string;
+  weight = 0;
+  isSearch = false;
   copyFromInfo?: {
     modIds: string[];
     jsonTypes: string[];
@@ -84,6 +82,7 @@ export abstract class CddaItem {
   finalize() {
     if (this.finalized) return;
     this.doFinalize();
+    this.prepareSearch();
     this.finalized = true;
   }
 
@@ -109,7 +108,7 @@ export abstract class CddaItem {
 
   abstract doFinalize(): void;
 
-  abstract doSearch(): boolean;
+  abstract prepareSearch(): void;
 
   abstract doView(data: object, util: ViewUtil): void;
 

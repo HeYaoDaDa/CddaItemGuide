@@ -4,7 +4,7 @@
 
     <my-field v-if="data.salvagedInto" label="salvagedInto" :content="data.salvagedInto" />
 
-    <my-field label="repairedWith" :content="data.repairedWith" />
+    <my-field v-if="data.repairedWith" label="repairedWith" :content="data.repairedWith" />
 
     <my-field label="bash" :content="data.bashResist" />
 
