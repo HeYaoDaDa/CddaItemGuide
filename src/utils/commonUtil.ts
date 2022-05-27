@@ -1,3 +1,4 @@
+import { i18n } from 'src/boot/i18n';
 import { itemJsonTypes } from 'src/constants/jsonTypesConstant';
 
 export function arrayIsEmpty(value: Array<unknown> | undefined): boolean {
@@ -55,4 +56,21 @@ export function popFilter<T>(soures: T[], fu: (soure: T) => boolean): T[] {
     }
   }
   return result;
+}
+
+export function formatBooleanAndNumber(value: unknown) {
+  switch (typeof value) {
+    case 'string':
+      return value;
+    case 'number':
+      if (Number.isInteger(value)) {
+        return Math.trunc(value);
+      } else {
+        return value.toFixed(2);
+      }
+    case 'boolean':
+      return i18n.global.t('base.' + (value ? 'true' : 'false'));
+    default:
+      return value;
+  }
 }

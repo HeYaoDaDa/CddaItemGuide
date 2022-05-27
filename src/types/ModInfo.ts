@@ -1,6 +1,7 @@
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { i18n } from 'src/boot/i18n';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
+import { formatBooleanAndNumber } from 'src/utils/commonUtil';
 import { getArray } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
@@ -127,8 +128,14 @@ export class ModInfo extends CddaItem {
       { headerValueGetter: () => i18n.global.t('label.dependency'), field: 'data.dependencies' },
       { headerValueGetter: () => i18n.global.t('label.path'), field: 'data.path' },
       { headerValueGetter: () => i18n.global.t('label.version'), field: 'data.version' },
-      { headerValueGetter: () => i18n.global.t('label.core'), field: 'data.core' },
-      { headerValueGetter: () => i18n.global.t('label.obsolete'), field: 'data.obsolete' },
+      {
+        headerValueGetter: () => i18n.global.t('label.core'),
+        valueGetter: (value) => formatBooleanAndNumber(value.data.data.core),
+      },
+      {
+        headerValueGetter: () => i18n.global.t('label.obsolete'),
+        valueGetter: (value) => formatBooleanAndNumber(value.data.data.obsolete),
+      },
     ]);
   }
 }
