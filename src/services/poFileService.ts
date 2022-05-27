@@ -33,7 +33,6 @@ export async function initGettext() {
   let poStr = (await getSavePoFileByVersion(userConfig.versionId, userConfig.languageCode))?.po;
   if (poStr) {
     logger.debug('db has po ', userConfig.languageCode);
-    gettext.changeGettext(poStr);
   } else {
     logger.debug('db no has po ', userConfig.languageCode);
     const version = configOptions.findVersionById(userConfig.versionId);
@@ -44,6 +43,7 @@ export async function initGettext() {
       logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
     }
   }
+  gettext.changeGettext(poStr as string);
   const end = performance.now();
   logger.debug(`init gettext success, cost time is ${end - start}ms, language is ${userConfig.languageCode}`);
 }
