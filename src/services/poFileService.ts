@@ -1,3 +1,4 @@
+import { Loading } from 'quasar';
 import { getPoFileByVersionAndLanguageCode } from 'src/apis/poFileApi';
 import { logger } from 'src/boot/logger';
 import { LANGUAGE_OPTIONS } from 'src/constants/appConstant';
@@ -21,6 +22,8 @@ export async function hasPoFileByVersionIdAndLanguageCode(versionId: string, lan
 }
 
 export async function initGettext() {
+  const loadLock = !Loading.isActive;
+  if (loadLock) Loading.show({ message: 'Loading I18n...' });
   const start = performance.now();
   logger.debug('start init gettext');
   const userConfig = useUserConfigStore();
@@ -28,6 +31,7 @@ export async function initGettext() {
   if (userConfig.languageCode === LANGUAGE_OPTIONS[0].value) {
     logger.debug(`language code is ${userConfig.languageCode}, no need use gettext.`);
     gettext.clear();
+    if (loadLock) Loading.hide();
     return;
   }
   let poStr = (await getSavePoFileByVersion(userConfig.versionId, userConfig.languageCode))?.po;
@@ -46,4 +50,5 @@ export async function initGettext() {
   gettext.changeGettext(poStr as string);
   const end = performance.now();
   logger.debug(`init gettext success, cost time is ${end - start}ms, language is ${userConfig.languageCode}`);
+  if (loadLock) Loading.hide();
 }

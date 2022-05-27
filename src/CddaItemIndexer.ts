@@ -1,4 +1,5 @@
 import { cloneDeep, includes } from 'lodash';
+import { Loading } from 'quasar';
 import { getAllJsonItems } from './apis/jsonItemApi';
 import { logger } from './boot/logger';
 import { jsonTypes } from './constants/jsonTypesConstant';
@@ -61,6 +62,8 @@ export class CddaItemIndexer {
   }
 
   async init() {
+    const loadLock = !Loading.isActive;
+    if (loadLock) Loading.show({ message: 'Loading Game Data...' });
     const start = performance.now();
     const userConfig = useUserConfigStore();
     const configOptions = useConfigOptionsStore();
@@ -93,6 +96,7 @@ export class CddaItemIndexer {
     logger.debug(
       `init CddaItemIndexer success, cost time is ${end - start}ms, input jsonItem size is ${jsonItems.length}`
     );
+    if (loadLock) Loading.hide();
   }
 
   private addJsonItems(jsonItems: JsonItem[]) {
