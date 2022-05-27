@@ -68,10 +68,27 @@ export class CddaItemIndexer {
     const loadLock = !Loading.isActive;
     if (loadLock) Loading.show({ message: i18n.global.t('message.gameData') });
     const start = performance.now();
+    logger.debug('start init CddaItemIndexer');
+    const configOptions = useConfigOptionsStore();
+    const jsonItems = await this.getJsonItems();
+    this.clear();
+    this.addJsonItems(jsonItems);
+    configOptions.updateMods();
+    this.processCopyFroms();
+    this.finalizeAllCddaItem();
+    this.finalized.value = true;
+    const end = performance.now();
+    logger.debug(
+      `init CddaItemIndexer success, cost time is ${end - start}ms, input jsonItem size is ${jsonItems.length}`
+    );
+    if (loadLock) Loading.hide();
+  }
+
+  private async getJsonItems() {
+    const start = performance.now();
     const userConfig = useUserConfigStore();
     const configOptions = useConfigOptionsStore();
     const jsonItems = [] as JsonItem[];
-    logger.debug('start init CddaItemIndexer');
     if (await hasVersionById(userConfig.versionId)) {
       logger.debug(`version id ${userConfig.versionId} is has in db.`);
       const dbJsonItemSet = await getJsonItemSetByVersionId(userConfig.versionId);
@@ -90,21 +107,16 @@ export class CddaItemIndexer {
         logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
       }
     }
-    this.clear();
-    this.addJsonItems(jsonItems);
-    configOptions.updateMods();
-    this.processCopyFroms();
-    this.finalizeAllCddaItem();
-    this.finalized.value = true;
     const end = performance.now();
-    logger.debug(
-      `init CddaItemIndexer success, cost time is ${end - start}ms, input jsonItem size is ${jsonItems.length}`
-    );
-    if (loadLock) Loading.hide();
+    logger.debug(`cddaItemIndexer getJsonItems cost time is ${end - start}ms`);
+    return jsonItems;
   }
 
   private addJsonItems(jsonItems: JsonItem[]) {
+    const start = performance.now();
     jsonItems.forEach((jsonItem) => this.addJsonItem(jsonItem));
+    const end = performance.now();
+    logger.debug(`cddaItemIndexer prepare cost time is ${end - start}ms`);
   }
 
   private addJsonItem(jsonItem: JsonItem) {
@@ -142,19 +154,24 @@ export class CddaItemIndexer {
   }
 
   private processCopyFroms() {
+    const start = performance.now();
     this.foreachAllCddaItem((cddaItem) => {
       this.processLoad(cddaItem);
     });
     logger.warn('deferred has ', this.deferred.size, this.deferred);
     logger.debug('processCopyFroms end');
+    const end = performance.now();
+    logger.debug(`cddaItemIndexer load cost time is ${end - start}ms`);
   }
 
   private finalizeAllCddaItem() {
+    const start = performance.now();
     this.foreachAllCddaItem((cddaItem) => {
       cddaItem.finalize();
       if (cddaItem.doSearch()) this.searchs.push(cddaItem);
     });
-    logger.debug('finalizeAllCddaItem end');
+    const end = performance.now();
+    logger.debug(`cddaItemIndexer finalize cost time is ${end - start}ms`);
   }
 
   resetSearchs() {
