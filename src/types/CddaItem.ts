@@ -9,6 +9,7 @@ import { JsonParseUtil } from 'src/utils/json/jsonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
 import { VNode } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
+import { BaseMod } from './BaseMod';
 import { JsonItem } from './JsonItem';
 
 export abstract class CddaItem {
@@ -31,6 +32,7 @@ export abstract class CddaItem {
     id: string;
   };
   data!: object;
+  mod?: BaseMod;
 
   /**
    * validate is match JsonItem
@@ -58,9 +60,9 @@ export abstract class CddaItem {
     if (this.isLoad) return true;
     if (this.copyFromInfo) {
       const configOptions = useConfigOptionsStore();
-      const currentMod = configOptions.findModById(this.modId);
-      if (currentMod) {
-        this.copyFromInfo.modIds = [this.modId, ...currentMod.dependencies];
+      if (!this.mod) this.mod = configOptions.findModById(this.modId);
+      if (this.mod) {
+        this.copyFromInfo.modIds = [this.modId, ...this.mod.dependencies];
         const soure = cddaItemIndexer
           .findByModsByTypeAndId(this.copyFromInfo.modIds, this.type, this.copyFromInfo.id)
           .find((cddaItem) => cddaItem.isLoad);

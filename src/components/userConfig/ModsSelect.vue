@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from 'src/boot/logger';
 import { useConfigOptionsStore } from 'src/stores/configOptions';
 import { useUserConfigStore } from 'src/stores/userConfig';
 import { computed } from 'vue';
@@ -11,15 +10,15 @@ import { computed } from 'vue';
 const userConfig = useUserConfigStore();
 const configOptions = useConfigOptionsStore();
 
-const options = computed({
-  get: () =>
-    configOptions.mods.map((mod) => {
-      return {
-        label: mod.name.translate(),
-        value: mod.id,
-      };
-    }),
-  set: () => logger.error('no change!!'),
+const options = computed(() => {
+  const result = new Array<{ label: string; value: string }>();
+  configOptions.mods.forEach((mod) => {
+    result.push({
+      label: mod.name.translate(),
+      value: mod.id,
+    });
+  });
+  return result;
 });
 
 const selectedMods = computed({

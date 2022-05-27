@@ -15,7 +15,7 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
     return {
       versions: [] as Version[],
       languages: LANGUAGE_OPTIONS,
-      mods: [] as BaseMod[],
+      mods: new Map<string, BaseMod>(),
     };
   },
   getters: {
@@ -55,11 +55,12 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
         if (!Array.isArray(mod.dependencies)) mod.dependencies = [mod.dependencies];
         return mod;
       });
-      this.mods = newMods;
+      this.mods.clear();
+      newMods.forEach((newMod) => this.mods.set(newMod.id.toLowerCase(), newMod));
       logger.debug('init mods success, mods size is ', newMods.length);
     },
     findModById(modId: string) {
-      return this.mods.find((mod) => mod.id.toLowerCase() === modId.toLowerCase());
+      return this.mods.get(modId.toLowerCase());
     },
   },
 });
