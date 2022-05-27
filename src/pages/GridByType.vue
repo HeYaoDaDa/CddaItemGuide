@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from '@vue/reactivity';
 import { CellClickedEvent, GridApi, GridReadyEvent } from 'ag-grid-community';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
@@ -28,34 +27,46 @@ import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import { gettext } from 'src/gettext';
 import { CddaItem } from 'src/types/CddaItem';
-import { arrayIsNotEmpty } from 'src/utils/commonUtil';
-import { watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { arrayIsNotEmpty, replaceArray } from 'src/utils/commonUtil';
+import { reactive, ref, watch } from 'vue';
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
 const gridApi = ref(undefined as GridApi | undefined);
+const cddaItems = reactive(new Array<CddaItem>());
 
-const cddaItems = computed(() => {
-  const type = route.params.type as string;
-  return cddaItemIndexer.findByType(type);
-});
+function update(myRoute: typeof route) {
+  const type = myRoute.params.type as string;
+  replaceArray(cddaItems, cddaItemIndexer.finalized ? cddaItemIndexer.findByType(type) : []);
+}
+
+update(route);
 
 function onGridReady(event: GridReadyEvent) {
   gridApi.value = event.api;
   gridApi.value.sizeColumnsToFit();
-  logger.debug('grid load success, rows size is ', cddaItems.value.length);
+  logger.debug('grid load success, rows size is ', cddaItems.length);
 }
 
 function defaultCellClick(event: CellClickedEvent) {
   router.push((<CddaItem>event.node.data).getRoute());
 }
 
-// watch gettext
-watch(gettext, () => {
-  logger.debug('gettext change, refesh cells.');
-  if (gridApi.value) gridApi.value.refreshCells();
+onBeforeRouteUpdate((to, from) => {
+  if (to.params !== from.params) {
+    update(to);
+  }
 });
 
-watch(cddaItemIndexer.finalized, () => (gridApi.value ? gridApi.value.refreshCells() : undefined));
+watch([gettext, cddaItemIndexer.finalized], (newValue, oldValue) => {
+  if (newValue[1] !== oldValue[1]) {
+    logger.debug('cddaItemIndexer change, update data.');
+    update(route);
+  } else if (gridApi.value) {
+    logger.debug('gettext change, refesh cells and header.');
+    gridApi.value.refreshCells();
+    gridApi.value.refreshHeader();
+  }
+});
 </script>

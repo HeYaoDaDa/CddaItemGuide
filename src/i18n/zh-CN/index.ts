@@ -17,6 +17,7 @@ export default {
     version: '版本',
     core: '核心',
     obsolete: '过时',
+    mod: 'Mod',
   },
   base: {
     true: '是',

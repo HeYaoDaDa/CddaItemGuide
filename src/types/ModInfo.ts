@@ -1,4 +1,5 @@
 import { ColDef, ColGroupDef } from 'ag-grid-community';
+import { i18n } from 'src/boot/i18n';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { getArray } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
@@ -109,16 +110,25 @@ export class ModInfo extends CddaItem {
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
     return reactive([
-      { headerName: 'name', valueGetter: (value) => value.data.data.name.translate() },
-      { headerName: 'mod', valueGetter: (value) => value.data.modId },
-      { headerName: 'category', valueGetter: (value) => value.data.data.showCategory.translate() },
-      { headerName: 'authors', valueGetter: (value) => value.data.data.authors.join(', ') },
-      { headerName: 'maintainers', field: 'data.maintainers' },
-      { headerName: 'dependencies', field: 'data.dependencies' },
-      { headerName: 'path', field: 'data.path' },
-      { headerName: 'version', field: 'data.version' },
-      { headerName: 'core', field: 'data.core' },
-      { headerName: 'obsolete', field: 'data.obsolete' },
+      {
+        headerValueGetter: () => i18n.global.t('label.name'),
+        valueGetter: (value) => value.data.data.name.translate(),
+      },
+      { headerValueGetter: () => i18n.global.t('label.mod'), valueGetter: (value) => value.data.modId },
+      {
+        headerValueGetter: () => i18n.global.t('label.category'),
+        valueGetter: (value) => value.data.data.showCategory.translate(),
+      },
+      {
+        headerValueGetter: () => i18n.global.t('label.author'),
+        valueGetter: (value) => value.data.data.authors.join(', '),
+      },
+      { headerValueGetter: () => i18n.global.t('label.maintainer'), field: 'data.maintainers' },
+      { headerValueGetter: () => i18n.global.t('label.dependency'), field: 'data.dependencies' },
+      { headerValueGetter: () => i18n.global.t('label.path'), field: 'data.path' },
+      { headerValueGetter: () => i18n.global.t('label.version'), field: 'data.version' },
+      { headerValueGetter: () => i18n.global.t('label.core'), field: 'data.core' },
+      { headerValueGetter: () => i18n.global.t('label.obsolete'), field: 'data.obsolete' },
     ]);
   }
 }

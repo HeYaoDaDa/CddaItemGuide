@@ -17,6 +17,7 @@ export default {
     version: 'Version',
     core: 'Core',
     obsolete: 'Obsolete',
+    mod: 'Mod',
   },
   base: {
     true: 'Yes',
