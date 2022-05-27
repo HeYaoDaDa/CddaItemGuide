@@ -1,5 +1,5 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <span>Good news anyone!</span>
+    <span>{{ $t('message.hello') }}</span>
   </q-page>
 </template>

@@ -26,7 +26,9 @@ function changeLanguage(newLanguageCode: string) {
   });
 }
 
+logger.debug('init app i18n');
 changeLanguage(userConfig.languageCode);
+logger.debug('init app i18n success, language is ', userConfig.languageCode);
 
 const selectedLanguage = computed({
   get: () => userConfig.languageCode,

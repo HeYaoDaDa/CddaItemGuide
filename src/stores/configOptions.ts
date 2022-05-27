@@ -74,7 +74,7 @@ useConfigOptionsStore().$subscribe(async (mutation, state) => {
       userConfig.selectVersion(state.versions.reduce((l, r) => (l.publishDate > r.publishDate ? l : r)).id);
       logger.debug('normal version is ', userConfig.versionId);
     } else {
-      await Promise.all([initGettext(), cddaItemIndexer.init()]);
+      await Promise.all([cddaItemIndexer.init(), initGettext()]);
     }
   }
 });

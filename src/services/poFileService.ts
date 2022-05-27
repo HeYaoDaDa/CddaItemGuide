@@ -1,5 +1,6 @@
 import { Loading } from 'quasar';
 import { getPoFileByVersionAndLanguageCode } from 'src/apis/poFileApi';
+import { i18n } from 'src/boot/i18n';
 import { logger } from 'src/boot/logger';
 import { LANGUAGE_OPTIONS } from 'src/constants/appConstant';
 import { db } from 'src/db';
@@ -23,7 +24,7 @@ export async function hasPoFileByVersionIdAndLanguageCode(versionId: string, lan
 
 export async function initGettext() {
   const loadLock = !Loading.isActive;
-  if (loadLock) Loading.show({ message: 'Loading I18n...' });
+  if (loadLock) Loading.show({ message: i18n.global.t('message.i18n') });
   const start = performance.now();
   logger.debug('start init gettext');
   const userConfig = useUserConfigStore();

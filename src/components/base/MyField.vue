@@ -1,5 +1,6 @@
 <template>
   <my-label
+    v-if="show"
     :label="props.label"
     :translate="props.translate"
     :isHide="props.isHide"
@@ -21,6 +22,7 @@
 
 <script setup lang="ts">
 import { ContentProps } from 'src/types/MyFieldProp';
+import { computed } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import MyLabel from './MyLabel.vue';
 import MyText from './MyText/MyText.vue';
@@ -37,5 +39,11 @@ const props = defineProps<{
   valueRoute?: RouteLocationRaw | RouteLocationRaw[];
   separator?: string;
   p?: boolean;
+  forceShow?: boolean;
 }>();
+const show = computed(() => {
+  if (props.forceShow) return true;
+  if (Array.isArray(props.content) && props.content.length === 0) return false;
+  return true;
+});
 </script>

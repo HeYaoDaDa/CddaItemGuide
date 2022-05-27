@@ -1,6 +1,7 @@
 import { cloneDeep, includes } from 'lodash';
 import { Loading } from 'quasar';
 import { getAllJsonItems } from './apis/jsonItemApi';
+import { i18n } from './boot/i18n';
 import { logger } from './boot/logger';
 import { jsonTypes } from './constants/jsonTypesConstant';
 import { getJsonItemSetByVersionId, saveJsonItemSet } from './services/jsonItemSetService';
@@ -63,7 +64,7 @@ export class CddaItemIndexer {
 
   async init() {
     const loadLock = !Loading.isActive;
-    if (loadLock) Loading.show({ message: 'Loading Game Data...' });
+    if (loadLock) Loading.show({ message: i18n.global.t('message.gameData') });
     const start = performance.now();
     const userConfig = useUserConfigStore();
     const configOptions = useConfigOptionsStore();

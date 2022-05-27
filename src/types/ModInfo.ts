@@ -97,11 +97,11 @@ export class ModInfo extends CddaItem {
     const cardUtil = util.addCard({});
     cardUtil.addField({ label: 'name', content: data.name });
     cardUtil.addField({ label: 'description', content: data.description });
-    cardUtil.addField({ label: 'authors', content: data.authors });
-    cardUtil.addField({ label: 'maintainers', content: data.maintainers });
+    cardUtil.addField({ label: 'author', content: data.authors });
+    cardUtil.addField({ label: 'maintainer', content: data.maintainers });
     cardUtil.addField({ label: 'category', content: data.showCategory });
     cardUtil.addField({ label: 'path', content: data.path });
-    cardUtil.addField({ label: 'dependencies', content: data.dependencies });
+    cardUtil.addField({ label: 'dependency', content: data.dependencies });
     if (data.version) cardUtil.addField({ label: 'version', content: data.version });
     if (data.core) cardUtil.addField({ label: 'core', content: data.core });
     if (data.obsolete) cardUtil.addField({ label: 'obsolete', content: data.obsolete });
