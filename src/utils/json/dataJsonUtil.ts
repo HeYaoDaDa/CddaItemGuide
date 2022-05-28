@@ -71,7 +71,7 @@ export function getOptionalArrayWithType<T>(
 ): Array<T> | undefined {
   const temps = getOptionalArray(jsonObject, key);
   if (ins instanceof MyClass) {
-    return temps?.map((temp) => callFromJson(temp, ins, extend) as T);
+    return temps?.map((temp) => callFromJson(temp, ins, ...extend) as T);
   }
   return temps?.map((temp) => temp as T);
 }
@@ -87,7 +87,7 @@ export function getOptionalMyClass<T extends MyClass<T>>(
 }
 
 function callFromJson<T extends MyClass<T>>(jsonObject: unknown | undefined, ins: T, ...extend: unknown[]) {
-  if (!jsonObject) return undefined;
+  if (jsonObject === undefined) return undefined;
   if (arrayIsNotEmpty(extend)) return ins.fromJson(jsonObject, ...extend);
   else return ins.fromJson(jsonObject);
 }

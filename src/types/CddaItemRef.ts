@@ -1,3 +1,4 @@
+import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import { arrayIsNotEmpty, stringIsNotEmpty } from 'src/utils/commonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
@@ -38,7 +39,6 @@ export class CddaItemRef extends MyClass<CddaItemRef> {
         name = cddaItems[0].getName();
       }
     }
-    console.log('name is ', name);
     if (stringIsNotEmpty(name)) return name;
     else return this.id;
   }
@@ -46,6 +46,8 @@ export class CddaItemRef extends MyClass<CddaItemRef> {
   fromJson(jsonObject: string, type: string): CddaItemRef | undefined {
     if (typeof jsonObject === 'string' && typeof type === 'string') {
       return new CddaItemRef({ id: jsonObject, type });
+    } else {
+      logger.warn('CddaItemRef fromJson is fail, param is ', jsonObject, type);
     }
     return undefined;
   }

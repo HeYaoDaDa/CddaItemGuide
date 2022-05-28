@@ -43,13 +43,13 @@ export class JsonParseUtil {
   }
 
   getOptionalArray<T>(key: string, ins: T, fromNotEmpty?: boolean, ...extend: unknown[]): Array<T> | undefined {
-    const result = getOptionalArrayWithType(this.jsonObject, key, ins, extend);
+    const result = getOptionalArrayWithType(this.jsonObject, key, ins, ...extend);
     if (!fromNotEmpty) {
       if (result) {
-        replaceArray(result, this._processDeleteAndExtend(result, key, ins, extend));
+        replaceArray(result, this._processDeleteAndExtend(result, key, ins, ...extend));
         return result;
       } else {
-        const newResult = this._processDeleteAndExtend([], key, ins, extend);
+        const newResult = this._processDeleteAndExtend([], key, ins, ...extend);
         if (arrayIsNotEmpty(newResult)) return newResult;
       }
     }
@@ -57,8 +57,8 @@ export class JsonParseUtil {
   }
 
   getArray<T>(key: string, ins: T, def?: Array<T>, ...extend: unknown[]): Array<T> {
-    const result: T[] = this.getOptionalArray(key, ins, true, extend) ?? def ?? [];
-    replaceArray(result, this._processDeleteAndExtend(result, key, ins, extend));
+    const result: T[] = this.getOptionalArray(key, ins, true, ...extend) ?? def ?? [];
+    replaceArray(result, this._processDeleteAndExtend(result, key, ins, ...extend));
     return result;
   }
 
@@ -119,7 +119,7 @@ export class JsonParseUtil {
   private _processDeleteAndExtend<T>(result: Array<T>, key: string, ins: T, ...extend: unknown[]): T[] {
     if (result && this.enabled) {
       if (this.extend) {
-        const extendItems = getOptionalArrayWithType(this.extend, key, ins, extend);
+        const extendItems = getOptionalArrayWithType(this.extend, key, ins, ...extend);
         if (extendItems) {
           extendItems.forEach((extendItem) => {
             result.push(extendItem);
@@ -127,7 +127,7 @@ export class JsonParseUtil {
         }
       }
       if (this.delete) {
-        const deleteItems = getOptionalArrayWithType(this.delete, key, ins, extend);
+        const deleteItems = getOptionalArrayWithType(this.delete, key, ins, ...extend);
         if (arrayIsNotEmpty(result) && deleteItems) {
           return result.filter((resultItem) => {
             if (resultItem instanceof MyClass) {
