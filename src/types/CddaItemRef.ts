@@ -1,20 +1,21 @@
-import { stringIsNotEmpty } from 'src/utils/commonUtil';
+import { cddaItemIndexer } from 'src/CddaItemIndexer';
+import { arrayIsNotEmpty, stringIsNotEmpty } from 'src/utils/commonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
 import { reactive } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
+import { CddaItem } from './CddaItem';
 import { MyClass } from './EqualClass';
 
 export class CddaItemRef extends MyClass<CddaItemRef> {
   id!: string;
-  name!: string;
   type!: string;
   route!: RouteLocationRaw;
+  cddaItem?: CddaItem;
 
   constructor(val?: { id: string; type: string }) {
     super();
     if (val) {
       this.id = val.id;
-      this.name = val.id;
       this.type = val.type;
       this.route = {
         name: 'cddaItem',
@@ -28,7 +29,18 @@ export class CddaItemRef extends MyClass<CddaItemRef> {
   }
 
   public getName(): string {
-    return stringIsNotEmpty(this.name) ? this.name : this.id;
+    let name = '';
+    if (this.cddaItem) {
+      name = this.cddaItem.getName();
+    } else {
+      const cddaItems = cddaItemIndexer.findByTypeAndId(this.type, this.id);
+      if (arrayIsNotEmpty(cddaItems)) {
+        name = cddaItems[0].getName();
+      }
+    }
+    console.log('name is ', name);
+    if (stringIsNotEmpty(name)) return name;
+    else return this.id;
   }
 
   fromJson(jsonObject: string, type: string): CddaItemRef | undefined {
@@ -45,6 +57,6 @@ export class CddaItemRef extends MyClass<CddaItemRef> {
   }
 
   doView(util: ViewUtil): void {
-    util.addText({ content: this.id, route: this.route });
+    util.addText({ content: this.getName(), route: this.route });
   }
 }

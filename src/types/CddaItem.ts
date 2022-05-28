@@ -106,6 +106,8 @@ export abstract class CddaItem {
 
   abstract parseId(): string[];
 
+  abstract getName(): string;
+
   abstract parseJson(data: object, util: JsonParseUtil): void;
 
   abstract doFinalize(): void;

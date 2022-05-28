@@ -25,6 +25,10 @@ export class Material extends CddaItem {
     return commonParseId(this.json);
   }
 
+  getName(): string {
+    return this.data.name.translate();
+  }
+
   parseJson(data: MaterialData, util: JsonParseUtil): void {
     data.name = util.getMyClass<GettextString>('name', new GettextString());
 
@@ -75,7 +79,7 @@ export class Material extends CddaItem {
   prepareSearch() {
     this.weight = 1;
     this.isSearch = true;
-    this.name = this.data.name.translate();
+    this.name = this.getName();
   }
 
   doView(data: object, util: ViewUtil): void {

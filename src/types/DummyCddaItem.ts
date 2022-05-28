@@ -20,6 +20,10 @@ export class DummyCddaItem extends CddaItem {
     return ids;
   }
 
+  getName(): string {
+    return this.id;
+  }
+
   validate() {
     return true;
   }

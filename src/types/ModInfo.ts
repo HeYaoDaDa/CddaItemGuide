@@ -21,6 +21,10 @@ export class ModInfo extends CddaItem {
     return commonParseId(this.json);
   }
 
+  getName(): string {
+    return this.data.name.translate();
+  }
+
   parseJson(data: ModInfoData, util: JsonParseUtil): void {
     data.id = this.id;
     data.name = util.getMyClass<GettextString>('name', new GettextString());
@@ -81,7 +85,7 @@ export class ModInfo extends CddaItem {
   prepareSearch() {
     this.weight = 0;
     this.isSearch = true;
-    this.name = this.data.name.translate();
+    this.name = this.getName();
     this.description = this.data.description.translate();
   }
 
