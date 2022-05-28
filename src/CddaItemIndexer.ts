@@ -100,8 +100,9 @@ export class CddaItemIndexer {
       logger.debug(`version id ${userConfig.versionId} is no in db. start save`);
       if (newVersion) {
         const remoteJsonItems = await getAllJsonItems(newVersion);
-        await saveJsonItemSet({ versionId: userConfig.versionId, jsonItems: remoteJsonItems });
-        await saveVersion(newVersion);
+        saveJsonItemSet({ versionId: userConfig.versionId, jsonItems: remoteJsonItems })
+          .then(() => saveVersion(newVersion))
+          .catch((e) => logger.error('save jsonItemSet and save Version fail, ', e));
         replaceArray(jsonItems, remoteJsonItems);
       } else {
         logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
