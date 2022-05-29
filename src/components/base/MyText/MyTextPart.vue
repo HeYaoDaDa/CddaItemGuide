@@ -1,26 +1,26 @@
 <template>
-  <template v-if="normalContent !== undefined">
-    <template v-if="typeof normalContent === 'object'">
-      <normal-content />
-    </template>
-
-    <template v-else>
-      <li v-if="props.li">
-        <optional-route :content="normalContent" :route="props.route" />
-      </li>
-
-      <p v-if="props.p">
-        <optional-route :content="normalContent" :route="props.route" />
-      </p>
-
-      <span v-if="!(props.p || props.li)">
-        <optional-route :content="normalContent" :route="props.route" />
-      </span>
-    </template>
+  <template v-if="typeof normalContent === 'object'">
+    <normal-content />
   </template>
 
   <template v-else>
-    <slot />
+    <li v-if="props.li">
+      <optional-route :content="normalContent" :route="props.route" />
+
+      <slot />
+    </li>
+
+    <p v-if="props.p">
+      <optional-route :content="normalContent" :route="props.route" />
+
+      <slot />
+    </p>
+
+    <span v-if="!(props.p || props.li)">
+      <optional-route :content="normalContent" :route="props.route" />
+
+      <slot />
+    </span>
   </template>
 </template>
 

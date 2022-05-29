@@ -73,7 +73,22 @@ export function getOptionalArrayWithType<T>(
   if (ins instanceof MyClass) {
     return temps?.map((temp) => callFromJson(temp, ins, ...extend) as T);
   }
+  if (Array.isArray(ins)) {
+    return temps?.map((temp, i) => {
+      return getOptionalArrayWithType(temps, i.toString(), ins[0], ...extend) as unknown as T;
+    });
+  }
   return temps?.map((temp) => temp as T);
+}
+
+export function getArrayWithType<T>(
+  jsonObject: unknown,
+  key: string,
+  ins: T,
+  def?: Array<T>,
+  ...extend: unknown[]
+): Array<T> {
+  return getOptionalArrayWithType(jsonObject, key, ins, ...extend) ?? def ?? [];
 }
 
 export function getOptionalMyClass<T extends MyClass<T>>(

@@ -17,11 +17,14 @@ export class ViewUtil {
   }
 
   addField(props: MyFieldProp) {
-    this.add(h(MyField, props));
+    const subUtil = new ViewUtil();
+    this.add(h(MyField, props, () => subUtil.result));
+    return subUtil;
   }
 
   addText(props: MyTextProp) {
-    //TODO: this 'as object' is miss lint error
-    this.add(h(MyText, props as object));
+    const subUtil = new ViewUtil();
+    this.add(h(MyText, props as object, () => subUtil.result));
+    return subUtil;
   }
 }

@@ -30,7 +30,7 @@ export abstract class CddaItem<T extends object> {
     jsonTypes: string[];
     id: string;
   };
-  data!: T;
+  data: T = {} as T;
   mod?: BaseMod;
 
   prepare(jsonItem: JsonItem) {

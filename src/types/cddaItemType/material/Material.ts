@@ -56,7 +56,7 @@ export class Material extends CddaItem<MaterialData> {
     data.soft = util.getBoolean('soft');
     data.reinforces = util.getBoolean('reinforces');
 
-    data.vitamins = util.getArray('vitamins', <[string, number]>['', 0]).map((vitaminTulpe) => {
+    data.vitamins = util.getArray('vitamins', <[string, number]>{}).map((vitaminTulpe) => {
       const vitaminName = new CddaItemRef({ id: vitaminTulpe[0], type: jsonTypes.vitamin });
       return [vitaminName, vitaminTulpe[1]];
     });
@@ -66,7 +66,7 @@ export class Material extends CddaItem<MaterialData> {
       data.burnData.push(new MaterialBurn().fromJson({ burn: 1 }) as MaterialBurn);
     }
     data.fuelData = util.getOptionalMyClass('fuel_data', new Fuel());
-    data.burnProducts = util.getArray('burn_products', <[string, number]>['', 0]).map((burnProduct) => {
+    data.burnProducts = util.getArray('burn_products', <[string, number]>{}).map((burnProduct) => {
       const burnProductName = new CddaItemRef({ id: burnProduct[0], type: jsonTypes.item });
       return [burnProductName, burnProduct[1]];
     });

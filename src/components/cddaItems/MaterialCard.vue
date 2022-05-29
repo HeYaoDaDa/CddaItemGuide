@@ -1,5 +1,5 @@
 <template>
-  <my-card label="material" :cddaItem="props.cddaItem">
+  <my-card :cddaItem="props.cddaItem">
     <my-field
       v-if="props.cddaItem.data.salvagedInto"
       label="salvagedInto"
@@ -37,6 +37,8 @@
     <my-field label="latentHeat" :content="props.cddaItem.data.latentHeat" />
 
     <my-field label="freezePoint" :content="props.cddaItem.data.freezePoint" />
+
+    <my-field label="breathability" :content="props.cddaItem.data.breathability" />
 
     <my-field label="edible" :content="props.cddaItem.data.edible" />
 

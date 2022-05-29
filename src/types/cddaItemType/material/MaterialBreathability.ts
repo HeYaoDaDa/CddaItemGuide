@@ -2,8 +2,8 @@ import { MyClass } from 'src/types/EqualClass';
 import { ViewUtil } from 'src/utils/viewUtil';
 
 export class MaterialBreathability extends MyClass<MaterialBreathability> {
-  str!: string;
-  num!: number;
+  str: string;
+  num: number;
 
   constructor(str?: string) {
     super();
@@ -23,7 +23,7 @@ export class MaterialBreathability extends MyClass<MaterialBreathability> {
   }
 
   doView(util: ViewUtil): void {
-    util.addField({ label: 'breathability', content: this.str });
+    util.addText({ content: `${this.str}(${this.num})` });
   }
 }
 
@@ -34,7 +34,6 @@ export enum BreathabilityRating {
   GOOD = 80,
   MOISTURE_WICKING = 110,
   SECOND_SKIN = 140,
-  last = 0,
 }
 
 export function breathabilityToNumber(str: string): number {
