@@ -21,6 +21,7 @@ export class ViewUtil {
   }
 
   addText(props: MyTextProp) {
-    this.add(h(MyText, props));
+    //TODO: this 'as object' is miss lint error
+    this.add(h(MyText, props as object));
   }
 }

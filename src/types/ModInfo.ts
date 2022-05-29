@@ -90,9 +90,7 @@ export class ModInfo extends CddaItem {
   }
 
   doView(data: ModInfoData, util: ViewUtil): void {
-    const cardUtil = util.addCard({});
-    cardUtil.addField({ label: 'name', content: data.name });
-    cardUtil.addField({ label: 'description', content: data.description });
+    const cardUtil = util.addCard({ cddaItem: this });
     cardUtil.addField({ label: 'author', content: data.authors });
     cardUtil.addField({ label: 'maintainer', content: data.maintainers });
     cardUtil.addField({ label: 'category', content: data.showCategory });

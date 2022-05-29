@@ -39,12 +39,12 @@ export class SubBodyPart extends CddaItem {
   }
 
   prepareSearch(): void {
+    this.name = this.getName();
     return;
   }
 
   doView(data: SubBodyPartData, util: ViewUtil): void {
-    const cardUtil = util.addCard({});
-    cardUtil.addField({ label: 'name', content: data.name });
+    const cardUtil = util.addCard({ cddaItem: this });
     if (data.nameMultiple) cardUtil.addField({ label: 'nameMultiple', content: data.nameMultiple });
     cardUtil.addField({ label: 'parent', content: data.parent });
     if (data.opposite) cardUtil.addField({ label: 'opposite', content: data.opposite });

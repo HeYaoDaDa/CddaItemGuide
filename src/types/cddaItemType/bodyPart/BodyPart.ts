@@ -45,12 +45,12 @@ export class BodyPart extends CddaItem {
   }
 
   prepareSearch(): void {
+    this.name = this.getName();
     return;
   }
 
   doView(data: BodyPartData, util: ViewUtil): void {
-    const cardUtil = util.addCard({});
-    cardUtil.addField({ label: 'name', content: data.name });
+    const cardUtil = util.addCard({ cddaItem: this });
     if (data.nameMultiple) cardUtil.addField({ label: 'nameMultiple', content: data.nameMultiple });
     cardUtil.addField({ label: 'accusative', content: data.accusative });
     if (data.accusativeMultiple) cardUtil.addField({ label: 'accusativeMultiple', content: data.accusativeMultiple });

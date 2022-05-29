@@ -7,6 +7,18 @@
         :route="props.route"
       />
 
+      <template v-if="props.cddaItem">
+        <p :class="['text-weight-bold', 'text-h3']">
+          <span v-if="props.symbol && props.color" :style="{ color: props.color }">{{ props.symbol + '  ' }}</span>
+
+          <span>{{ props.cddaItem.name }}</span>
+
+          <q-badge :class="['text-weight-bold', 'text-h6']">{{ props.cddaItem.getMod().name.translate() }}</q-badge>
+        </p>
+
+        <my-text v-if="props.cddaItem.description" :content="props.cddaItem.description" />
+      </template>
+
       <slot name="befor" />
 
       <dl>
@@ -18,13 +30,18 @@
 
 <script setup lang="ts">
 import OptionalRoute from 'src/components/base/OptionalRoute.vue';
+import { CddaItem } from 'src/types/CddaItem';
 import { RouteLocationRaw } from 'vue-router';
+import MyText from './MyText/MyText.vue';
 
 const props = defineProps<{
   label?: string;
   width?: string;
   translate?: string;
   route?: RouteLocationRaw;
+  cddaItem?: CddaItem;
+  symbol?: string;
+  color?: string;
 }>();
 </script>
 

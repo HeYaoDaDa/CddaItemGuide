@@ -1,7 +1,5 @@
 <template>
-  <my-card label="material">
-    <my-field label="name" :content="props.cddaItem.data.name" />
-
+  <my-card label="material" :cddaItem="props.cddaItem">
     <my-field
       v-if="props.cddaItem.data.salvagedInto"
       label="salvagedInto"

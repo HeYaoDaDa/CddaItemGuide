@@ -1,4 +1,5 @@
 import { RouteLocationRaw } from 'vue-router';
+import { CddaItem } from './CddaItem';
 import { MyClass } from './EqualClass';
 
 export interface MyFieldProp {
@@ -31,4 +32,7 @@ export interface MyCardProp {
   width?: string;
   translate?: string;
   route?: RouteLocationRaw;
+  cddaItem?: CddaItem;
+  symbol?: string;
+  color?: string;
 }
