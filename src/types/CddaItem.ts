@@ -1,6 +1,5 @@
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { cloneDeep } from 'lodash';
-import { logger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import { useConfigOptionsStore } from 'src/stores/configOptions';
 import { convertToJsonType, convertToType } from 'src/utils/commonUtil';
@@ -34,12 +33,6 @@ export abstract class CddaItem {
   data!: object;
   mod?: BaseMod;
 
-  /**
-   * validate is match JsonItem
-   * @param jsonItem jsonItem object
-   */
-  abstract validate(jsonItem: JsonItem): boolean;
-
   loadJsonItem(jsonItem: JsonItem) {
     this.json = jsonItem.json;
     this.modId = jsonItem.modId;
@@ -59,21 +52,15 @@ export abstract class CddaItem {
   load(): boolean {
     if (this.isLoad) return true;
     if (this.copyFromInfo) {
-      const configOptions = useConfigOptionsStore();
-      if (!this.mod) this.mod = configOptions.findModById(this.modId);
-      if (this.mod) {
-        this.copyFromInfo.modIds = [this.modId, ...this.mod.dependencies];
-        const soure = cddaItemIndexer
-          .findByModsByTypeAndId(this.copyFromInfo.modIds, this.type, this.copyFromInfo.id)
-          .find((cddaItem) => cddaItem.isLoad);
-        if (soure) {
-          this.copyFromInfo = undefined;
-          this.data = cloneDeep(soure.data);
-        } else {
-          return false;
-        }
+      this.copyFromInfo.modIds = [this.modId, ...this.getMod().dependencies];
+      const soure = cddaItemIndexer
+        .findByModsByTypeAndId(this.copyFromInfo.modIds, this.type, this.copyFromInfo.id)
+        .find((cddaItem) => cddaItem.isLoad);
+      if (soure) {
+        this.copyFromInfo = undefined;
+        this.data = cloneDeep(soure.data);
       } else {
-        logger.error('no find current mod ', this.modId);
+        return false;
       }
     }
     this.parseJson(this.data, new JsonParseUtil(this));
@@ -98,19 +85,32 @@ export abstract class CddaItem {
     };
   }
 
+  getMod(): BaseMod {
+    const configOptions = useConfigOptionsStore();
+    if (!this.mod) this.mod = configOptions.findModById(this.modId);
+    if (this.mod === undefined) throw new Error('no find mod why?');
+    return this.mod;
+  }
+
   view(): VNode[] {
     const util = new ViewUtil();
     this.doView(this.data, util);
     return util.result;
   }
 
-  abstract parseId(): string[];
+  /**
+   * validate is match JsonItem
+   * @param jsonItem jsonItem object
+   */
+  abstract validate(jsonItem: JsonItem): boolean;
 
-  abstract getName(): string;
+  abstract parseId(): string[];
 
   abstract parseJson(data: object, util: JsonParseUtil): void;
 
   abstract doFinalize(): void;
+
+  abstract getName(): string;
 
   abstract prepareSearch(): void;
 
