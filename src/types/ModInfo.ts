@@ -10,7 +10,7 @@ import { CddaItemRef } from './CddaItemRef';
 import { GettextString } from './GettextString';
 import { JsonItem } from './JsonItem';
 
-export class ModInfo extends CddaItem {
+export class ModInfo extends CddaItem<ModInfoData> {
   data = {} as ModInfoData;
 
   validate(jsonItem: JsonItem): boolean {
@@ -25,7 +25,7 @@ export class ModInfo extends CddaItem {
     return this.data.name.translate();
   }
 
-  parseJson(data: ModInfoData, util: JsonParseUtil): void {
+  doLoadJson(data: ModInfoData, util: JsonParseUtil): void {
     data.id = this.id;
     data.name = util.getMyClass<GettextString>('name', new GettextString());
     data.description = util.getMyClass<GettextString>('description', new GettextString());
@@ -41,6 +41,9 @@ export class ModInfo extends CddaItem {
   }
 
   doFinalize(): void {
+    this.weight = 0;
+    this.isSearch = true;
+
     this.data.showCategory = new GettextString({ str: 'NO CATEGORY' });
     switch (this.data.category) {
       case 'total_conversion':
@@ -82,10 +85,7 @@ export class ModInfo extends CddaItem {
     }
   }
 
-  prepareSearch() {
-    this.weight = 0;
-    this.isSearch = true;
-    this.name = this.getName();
+  doResetSearch() {
     this.description = this.data.description.translate();
   }
 

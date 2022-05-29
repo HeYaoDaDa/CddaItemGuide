@@ -39,7 +39,7 @@ const props = defineProps<{
   width?: string;
   translate?: string;
   route?: RouteLocationRaw;
-  cddaItem?: CddaItem;
+  cddaItem?: CddaItem<object>;
   symbol?: string;
   color?: string;
 }>();

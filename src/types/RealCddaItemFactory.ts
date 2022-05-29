@@ -8,14 +8,14 @@ import { JsonItem } from './JsonItem';
 import { ModInfo } from './ModInfo';
 
 export class RealCddaItemFactory extends CddaItemFactory {
-  cddaItemTypeMap = new Map<string, CddaItem>([
+  cddaItemTypeMap = new Map<string, CddaItem<object>>([
     [jsonTypes.modInfo, new ModInfo()],
     [jsonTypes.material, new Material()],
     [jsonTypes.subBodyPart, new SubBodyPart()],
     [jsonTypes.bodyPart, new BodyPart()],
   ]);
 
-  findCddaItemType(jsonItem: JsonItem): CddaItem | undefined {
+  findCddaItemType(jsonItem: JsonItem): CddaItem<object> | undefined {
     return this.cddaItemTypeMap.get(jsonItem.jsonType.toLowerCase());
   }
 }

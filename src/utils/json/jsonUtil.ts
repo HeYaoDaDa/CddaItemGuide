@@ -19,7 +19,7 @@ export class JsonParseUtil {
   jsonObject: object;
   enabled = false;
 
-  constructor(cddaItem: CddaItem) {
+  constructor(cddaItem: CddaItem<object>) {
     this.jsonObject = cddaItem.json;
     if (cddaItem.copyFromInfo) {
       this.relative = getOptionalUnknown(this.jsonObject, 'relative') as Record<string, number>;

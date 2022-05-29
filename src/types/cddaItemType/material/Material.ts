@@ -14,7 +14,7 @@ import { Fuel } from './Fuel';
 import { MaterialBreathability } from './MaterialBreathability';
 import { MaterialBurn } from './MaterialBurn';
 
-export class Material extends CddaItem {
+export class Material extends CddaItem<MaterialData> {
   data = {} as MaterialData;
 
   validate(jsonItem: JsonItem): boolean {
@@ -29,7 +29,7 @@ export class Material extends CddaItem {
     return this.data.name.translate();
   }
 
-  parseJson(data: MaterialData, util: JsonParseUtil): void {
+  doLoadJson(data: MaterialData, util: JsonParseUtil): void {
     data.name = util.getMyClass<GettextString>('name', new GettextString());
 
     data.bashResist = util.getNumber('bash_resist');
@@ -73,13 +73,12 @@ export class Material extends CddaItem {
   }
 
   doFinalize(): void {
-    return;
-  }
-
-  prepareSearch() {
     this.weight = 1;
     this.isSearch = true;
-    this.name = this.getName();
+  }
+
+  doResetSearch() {
+    return;
   }
 
   doView(data: object, util: ViewUtil): void {

@@ -1,15 +1,15 @@
 import { getArray, getOptionalString } from 'src/utils/json/baseJsonUtil';
 import { CddaItem } from './CddaItem';
 
-export class DummyCddaItem extends CddaItem {
+export class DummyCddaItem extends CddaItem<object> {
   data = {};
-  prepareSearch() {
+  doResetSearch() {
     return;
   }
   doFinalize(): void {
     return;
   }
-  parseJson(): void {
+  doLoadJson(): void {
     return;
   }
   parseId(): string[] {

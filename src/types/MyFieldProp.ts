@@ -32,7 +32,7 @@ export interface MyCardProp {
   width?: string;
   translate?: string;
   route?: RouteLocationRaw;
-  cddaItem?: CddaItem;
+  cddaItem?: CddaItem<object>;
   symbol?: string;
   color?: string;
 }

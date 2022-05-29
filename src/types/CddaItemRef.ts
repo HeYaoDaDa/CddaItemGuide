@@ -11,7 +11,7 @@ export class CddaItemRef extends MyClass<CddaItemRef> {
   id!: string;
   type!: string;
   route!: RouteLocationRaw;
-  cddaItem?: CddaItem;
+  cddaItem?: CddaItem<object>;
 
   constructor(val?: { id: string; type: string }) {
     super();

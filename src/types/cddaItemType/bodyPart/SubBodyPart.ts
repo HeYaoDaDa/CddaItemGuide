@@ -8,7 +8,7 @@ import { commonParseId } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
 
-export class SubBodyPart extends CddaItem {
+export class SubBodyPart extends CddaItem<SubBodyPartData> {
   data = {} as SubBodyPartData;
 
   validate(jsonItem: JsonItem): boolean {
@@ -24,7 +24,7 @@ export class SubBodyPart extends CddaItem {
     else return this.data.name.translate();
   }
 
-  parseJson(data: SubBodyPartData, util: JsonParseUtil): void {
+  doLoadJson(data: SubBodyPartData, util: JsonParseUtil): void {
     data.name = util.getMyClass('name', new GettextString());
     data.nameMultiple = util.getOptionalMyClass('name_multiple', new GettextString());
     data.parent = util.getMyClass('parent', new CddaItemRef(), jsonTypes.bodyPart);
@@ -38,8 +38,7 @@ export class SubBodyPart extends CddaItem {
     return;
   }
 
-  prepareSearch(): void {
-    this.name = this.getName();
+  doResetSearch(): void {
     return;
   }
 

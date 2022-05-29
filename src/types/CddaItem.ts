@@ -2,7 +2,7 @@ import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { cloneDeep } from 'lodash';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import { useConfigOptionsStore } from 'src/stores/configOptions';
-import { convertToJsonType, convertToType } from 'src/utils/commonUtil';
+import { convertToJsonType, convertToType, stringIsNotEmpty } from 'src/utils/commonUtil';
 import { getOptionalString } from 'src/utils/json/baseJsonUtil';
 import { JsonParseUtil } from 'src/utils/json/jsonUtil';
 import { ViewUtil } from 'src/utils/viewUtil';
@@ -11,7 +11,7 @@ import { RouteLocationRaw } from 'vue-router';
 import { BaseMod } from './BaseMod';
 import { JsonItem } from './JsonItem';
 
-export abstract class CddaItem {
+export abstract class CddaItem<T extends object> {
   finalized = false;
   isLoad = false;
 
@@ -30,10 +30,10 @@ export abstract class CddaItem {
     jsonTypes: string[];
     id: string;
   };
-  data!: object;
+  data!: T;
   mod?: BaseMod;
 
-  loadJsonItem(jsonItem: JsonItem) {
+  prepare(jsonItem: JsonItem) {
     this.json = jsonItem.json;
     this.modId = jsonItem.modId;
     this.path = jsonItem.path;
@@ -49,7 +49,7 @@ export abstract class CddaItem {
     }
   }
 
-  load(): boolean {
+  loadJson(): boolean {
     if (this.isLoad) return true;
     if (this.copyFromInfo) {
       this.copyFromInfo.modIds = [this.modId, ...this.getMod().dependencies];
@@ -58,12 +58,12 @@ export abstract class CddaItem {
         .find((cddaItem) => cddaItem.isLoad);
       if (soure) {
         this.copyFromInfo = undefined;
-        this.data = cloneDeep(soure.data);
+        this.data = cloneDeep(soure.data) as T;
       } else {
         return false;
       }
     }
-    this.parseJson(this.data, new JsonParseUtil(this));
+    this.doLoadJson(this.data, new JsonParseUtil(this));
     this.isLoad = true;
     return true;
   }
@@ -71,8 +71,14 @@ export abstract class CddaItem {
   finalize() {
     if (this.finalized) return;
     this.doFinalize();
-    this.prepareSearch();
+    this.resetSearch();
     this.finalized = true;
+  }
+
+  resetSearch() {
+    const name = this.getName();
+    this.name = stringIsNotEmpty(name) ? name : this.id;
+    this.doResetSearch();
   }
 
   getRoute(): RouteLocationRaw {
@@ -104,17 +110,35 @@ export abstract class CddaItem {
    */
   abstract validate(jsonItem: JsonItem): boolean;
 
+  /**
+   * get cddaItem's id
+   */
   abstract parseId(): string[];
 
-  abstract parseJson(data: object, util: JsonParseUtil): void;
+  /**
+   * from json load data
+   * @param data data
+   * @param util jsonUtil
+   */
+  abstract doLoadJson(data: T, util: JsonParseUtil): void;
 
+  /**
+   * after loadJson
+   * need set weight and isSearch
+   */
   abstract doFinalize(): void;
 
+  /**
+   * cddaItem name
+   */
   abstract getName(): string;
 
-  abstract prepareSearch(): void;
+  /**
+   * update search param
+   */
+  abstract doResetSearch(): void;
 
-  abstract doView(data: object, util: ViewUtil): void;
+  abstract doView(data: T, util: ViewUtil): void;
 
   abstract gridColumnDefine(): (ColGroupDef | ColDef)[];
 }

@@ -15,21 +15,21 @@ import { cddaItemFactory } from './types/RealCddaItemFactory';
 import { arrayIsEmpty, convertToJsonType, popFilter, replaceArray } from './utils/commonUtil';
 
 export class CddaItemIndexer {
-  byModIdAndJsonTypeAndId: Map<string, Map<string, Map<string, CddaItem>>> = new Map();
-  byModIdAndJsonType: Map<string, Map<string, CddaItem[]>> = new Map();
-  modinfos: CddaItem[] = [];
-  deferred: Map<string, CddaItem[]> = new Map();
-  searchs: CddaItem[] = [];
+  byModIdAndJsonTypeAndId: Map<string, Map<string, Map<string, CddaItem<object>>>> = new Map();
+  byModIdAndJsonType: Map<string, Map<string, CddaItem<object>[]>> = new Map();
+  modinfos: CddaItem<object>[] = [];
+  deferred: Map<string, CddaItem<object>[]> = new Map();
+  searchs: CddaItem<object>[] = [];
   finalized = ref(false);
 
-  findByTypeAndId(type: string, id: string): CddaItem[] {
+  findByTypeAndId(type: string, id: string): CddaItem<object>[] {
     const userConfig = useUserConfigStore();
     return this.findByModsByTypeAndId(userConfig.modIds, type, id);
   }
 
-  findByModsByTypeAndId(modIds: string[], type: string, id: string): CddaItem[] {
+  findByModsByTypeAndId(modIds: string[], type: string, id: string): CddaItem<object>[] {
     const jsonTypes = convertToJsonType(type);
-    const result = new Array<CddaItem>();
+    const result = new Array<CddaItem<object>>();
     modIds.forEach((modId) =>
       jsonTypes.forEach((fJsonType) => {
         const find = this.byModIdAndJsonTypeAndId.get(modId)?.get(fJsonType)?.get(id);
@@ -39,14 +39,14 @@ export class CddaItemIndexer {
     return result;
   }
 
-  findByType(type: string): CddaItem[] {
+  findByType(type: string): CddaItem<object>[] {
     const userConfig = useUserConfigStore();
     return this.findByModsByType(userConfig.modIds, type);
   }
 
-  findByModsByType(modIds: string[], type: string): CddaItem[] {
+  findByModsByType(modIds: string[], type: string): CddaItem<object>[] {
     const jsonTypes = convertToJsonType(type);
-    const result = new Array<CddaItem>();
+    const result = new Array<CddaItem<object>>();
     modIds.forEach((modId) =>
       jsonTypes.forEach((fJsonType) => {
         const find = this.byModIdAndJsonType.get(modId)?.get(fJsonType);
@@ -125,7 +125,7 @@ export class CddaItemIndexer {
     this.addCddaItem(cddaItem);
   }
 
-  private addCddaItem(cddaItem: CddaItem) {
+  private addCddaItem(cddaItem: CddaItem<object>) {
     cddaItem.parseId().forEach((jsonId, index) => {
       if (index > 0) {
         const newCddaItem = cloneDeep(cddaItem);
@@ -140,14 +140,17 @@ export class CddaItemIndexer {
     });
   }
 
-  private addCddaItemWithJsonId(cddaItem: CddaItem) {
+  private addCddaItemWithJsonId(cddaItem: CddaItem<object>) {
     if (!this.byModIdAndJsonTypeAndId.has(cddaItem.modId)) this.byModIdAndJsonTypeAndId.set(cddaItem.modId, new Map());
-    const byJsonTypeById = this.byModIdAndJsonTypeAndId.get(cddaItem.modId) as Map<string, Map<string, CddaItem>>;
+    const byJsonTypeById = this.byModIdAndJsonTypeAndId.get(cddaItem.modId) as Map<
+      string,
+      Map<string, CddaItem<object>>
+    >;
     if (!byJsonTypeById.has(cddaItem.jsonType)) byJsonTypeById.set(cddaItem.jsonType, new Map());
     byJsonTypeById.get(cddaItem.jsonType)?.set(cddaItem.id, cddaItem);
 
     if (!this.byModIdAndJsonType.has(cddaItem.modId)) this.byModIdAndJsonType.set(cddaItem.modId, new Map());
-    const byJsonType = this.byModIdAndJsonType.get(cddaItem.modId) as Map<string, CddaItem[]>;
+    const byJsonType = this.byModIdAndJsonType.get(cddaItem.modId) as Map<string, CddaItem<object>[]>;
     if (!byJsonType.has(cddaItem.jsonType)) byJsonType.set(cddaItem.jsonType, []);
     byJsonType.get(cddaItem.jsonType)?.push(cddaItem);
 
@@ -159,7 +162,7 @@ export class CddaItemIndexer {
     this.foreachAllCddaItem((cddaItem) => {
       this.processLoad(cddaItem);
     });
-    const deferreds = new Array<CddaItem>();
+    const deferreds = new Array<CddaItem<object>>();
     this.deferred.forEach((value) => deferreds.push(...value));
     logger.warn('deferred has ', deferreds.length, deferreds);
     logger.debug('processCopyFroms end');
@@ -178,22 +181,22 @@ export class CddaItemIndexer {
   }
 
   resetSearchs() {
-    this.searchs.forEach((cddaItem) => cddaItem.prepareSearch());
+    this.searchs.forEach((cddaItem) => cddaItem.doResetSearch());
   }
 
-  private foreachAllCddaItem(fu: (cddaItem: CddaItem) => void) {
+  private foreachAllCddaItem(fu: (cddaItem: CddaItem<object>) => void) {
     this.byModIdAndJsonTypeAndId.forEach((byJsonTypeById) => byJsonTypeById.forEach((byId) => byId.forEach(fu)));
   }
 
-  private processLoad(cddaItem: CddaItem) {
-    if (cddaItem.load()) {
+  private processLoad(cddaItem: CddaItem<object>) {
+    if (cddaItem.loadJson()) {
       this.processSubInDeferred(cddaItem.modId, cddaItem.jsonType, cddaItem.id);
     } else {
       this.addDeferred(cddaItem);
     }
   }
 
-  private addDeferred(cddaItem: CddaItem) {
+  private addDeferred(cddaItem: CddaItem<object>) {
     const info = cddaItem.copyFromInfo;
     if (info) {
       if (!this.deferred.has(info.id)) this.deferred.set(info.id, []);
