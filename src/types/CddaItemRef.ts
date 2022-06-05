@@ -43,6 +43,10 @@ export class CddaItemRef extends MyClass<CddaItemRef> {
     else return this.id;
   }
 
+  public getCddaItems() {
+    return cddaItemIndexer.findByTypeAndId(this.type, this.id);
+  }
+
   fromJson(jsonObject: string, type: string): CddaItemRef | undefined {
     if (typeof jsonObject === 'string' && typeof type === 'string') {
       return new CddaItemRef({ id: jsonObject, type });
