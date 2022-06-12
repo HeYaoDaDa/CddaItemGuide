@@ -21,34 +21,35 @@
 import Fuse from 'fuse.js';
 import { includes } from 'lodash';
 import { useQuasar } from 'quasar';
-import { i18n } from 'src/boot/i18n';
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import MyText from 'src/components/base/MyText/MyText.vue';
 import SearchItem from 'src/components/SearchItem.vue';
-import { gettext } from 'src/gettext';
+import { globalGettext } from 'src/gettext';
 import { useUserConfigStore } from 'src/stores/userConfig';
-import { CddaItem } from 'src/types/CddaItem';
+import { CddaItem } from 'src/classes';
 import { reactive, shallowReactive, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
 const quasar = useQuasar();
+const i18n = useI18n();
 
-const searchResultLists = reactive(new Array<Array<CddaItem>>());
+const searchResultLists = reactive(new Array<Array<CddaItem<object>>>());
 const route = useRoute();
 const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['name', 'description'] });
 const userConfig = useUserConfigStore();
 
 function updateSearchResultItems(newRoute: typeof route) {
   const loadLock = !quasar.loading.isActive;
-  if (loadLock) quasar.loading.show({ message: i18n.global.t('message.searching') });
+  if (loadLock) quasar.loading.show({ message: i18n.t('message.searching') });
 
   const allSearchResults = searcher
     .search(newRoute.query.content as string)
     .map((a) => a.item)
     .filter((result) => includes(userConfig.modIds, result.modId));
 
-  const tempMap: Map<string, CddaItem[]> = new Map();
+  const tempMap: Map<string, CddaItem<object>[]> = new Map();
   allSearchResults.forEach((searchResult) => {
     if (!tempMap.has(searchResult.type)) tempMap.set(searchResult.type, shallowReactive([]));
     tempMap.get(searchResult.type)?.push(searchResult);
@@ -69,8 +70,8 @@ onBeforeRouteUpdate((to, from) => {
   }
 });
 
-watch([gettext, cddaItemIndexer.finalized], () => {
-  logger.debug('gettext change, refesh search params.');
+watch([globalGettext, cddaItemIndexer.finalized], () => {
+  myLogger.debug('gettext change, refesh search params.');
   cddaItemIndexer.resetSearchs();
   searcher.setCollection(cddaItemIndexer.searchs);
   updateSearchResultItems(route);

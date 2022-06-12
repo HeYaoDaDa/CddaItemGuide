@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { Quasar } from 'quasar';
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
 import { LANGUAGE_OPTIONS } from 'src/constants/appConstant';
 import { useUserConfigStore } from 'src/stores/userConfig';
 import { computed } from 'vue';
@@ -26,14 +26,14 @@ function changeLanguage(newLanguageCode: string) {
   });
 }
 
-logger.debug('init app i18n');
+myLogger.debug('init app i18n');
 changeLanguage(userConfig.languageCode);
-logger.debug('init app i18n success, language is ', userConfig.languageCode);
+myLogger.debug('init app i18n success, language is ', userConfig.languageCode);
 
 const selectedLanguage = computed({
   get: () => userConfig.languageCode,
   set: (val) => {
-    logger.debug('user change to new language ', val);
+    myLogger.debug('user change to new language ', val);
     userConfig.selectLanguage(val);
     changeLanguage(val);
   },

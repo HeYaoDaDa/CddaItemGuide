@@ -1,3 +1,3 @@
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
 
-export const DEFAULT_CATCH = (e: unknown) => logger.error(e);
+export const DEFAULT_CATCH = (e: unknown) => myLogger.error(e);

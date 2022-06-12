@@ -1,11 +1,11 @@
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
+import { Version } from 'src/classes';
+import { convertToVersion, convertToVersionEntity } from 'src/classes/db';
 import { db } from 'src/db';
-import { convertToVersion, convertToVersionEntity } from 'src/types/db/VersionEntity';
-import { Version } from 'src/types/Version';
 
 export async function saveVersion(version: Version) {
   const result = await db.versions.add(convertToVersionEntity(version));
-  logger.debug('save version result is ', result);
+  myLogger.debug('save version result is ', result);
 }
 
 export async function getVersionById(versionId: string) {

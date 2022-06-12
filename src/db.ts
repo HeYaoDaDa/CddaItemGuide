@@ -1,8 +1,6 @@
 import Dexie from 'dexie';
-import { logger } from './boot/logger';
-import { JsonItemSet } from './types/db/JsonItemSet';
-import { PoFile } from './types/db/PoFile';
-import { VersionEntity } from './types/db/VersionEntity';
+import { myLogger } from './boot/logger';
+import { JsonItemSet, PoFile, VersionEntity } from 'src/classes/db';
 
 class CddaGameData extends Dexie {
   jsonItemSets!: Dexie.Table<JsonItemSet, string>;
@@ -20,4 +18,4 @@ class CddaGameData extends Dexie {
 }
 
 export const db = new CddaGameData();
-db.open().catch((e) => logger.error('open fail', e));
+db.open().catch((e) => myLogger.error('open fail', e));

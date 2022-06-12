@@ -28,4 +28,4 @@ class MyGettext {
   }
 }
 
-export const gettext = new MyGettext();
+export const globalGettext = new MyGettext();

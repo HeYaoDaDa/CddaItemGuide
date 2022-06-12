@@ -1,10 +1,10 @@
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
 import { db } from 'src/db';
-import { JsonItemSet } from 'src/types/db/JsonItemSet';
+import { JsonItemSet } from 'src/classes/db';
 
 export async function saveJsonItemSet(jsonItemSet: JsonItemSet) {
   const result = await db.jsonItemSets.add(jsonItemSet);
-  logger.debug('save JsonItemSet result is ', result);
+  myLogger.debug('save JsonItemSet result is ', result);
 }
 
 export async function getJsonItemSetByVersionId(versionId: string) {

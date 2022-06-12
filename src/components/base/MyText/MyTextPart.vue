@@ -26,8 +26,8 @@
 
 <script setup lang="ts">
 import OptionalRoute from 'src/components/base/OptionalRoute.vue';
-import { ContentProp } from 'src/types/MyFieldProp';
-import { formatBooleanAndNumber } from 'src/utils/commonUtil';
+import { ContentProp } from 'src/classes';
+import { readableData } from 'src/utils';
 import { computed, h } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import MegerVNodesVue from '../MegerVNodes.vue';
@@ -43,7 +43,7 @@ function formatContent(content?: ContentProp) {
   if (typeof content === 'object') {
     return h(MegerVNodesVue, null, () => content.view());
   }
-  return formatBooleanAndNumber(content) as ContentProp;
+  return readableData(content) as ContentProp;
 }
 const normalContent = computed(() => formatContent(props.content));
 </script>

@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import OptionalRoute from 'src/components/base/OptionalRoute.vue';
-import { CddaItem } from 'src/types/CddaItem';
+import { CddaItem } from 'src/classes';
 import { RouteLocationRaw } from 'vue-router';
 import MyText from './MyText/MyText.vue';
 

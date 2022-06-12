@@ -8,12 +8,12 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import MegerVNodesVue from 'src/components/base/MegerVNodes.vue';
 import JsonCardVue from 'src/components/JsonCard.vue';
-import { CddaItem } from 'src/types/CddaItem';
-import { replaceArray } from 'src/utils/commonUtil';
+import { CddaItem } from 'src/classes';
+import { replaceArray } from 'src/utils';
 import { computed, h, ref, shallowReactive, VNode, watch } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
@@ -21,7 +21,7 @@ const route = useRoute();
 const quasar = useQuasar();
 
 const show = ref(false);
-const cddaItems: CddaItem[] = shallowReactive([]);
+const cddaItems: CddaItem<object>[] = shallowReactive([]);
 const cddaItemViews = computed(() =>
   h(MegerVNodesVue, null, () => {
     const views = new Array<VNode>();
@@ -45,7 +45,7 @@ updateView(route.params.type as string, route.params.id as string);
 
 onBeforeRouteUpdate((to, from) => {
   if (to.params !== from.params) {
-    logger.debug('onBeforeRouteUpdate', to);
+    myLogger.debug('onBeforeRouteUpdate', to);
     updateView(to.params.type as string, to.params.id as string);
   }
 });

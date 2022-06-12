@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
 import { DDA_MOD_ID, LANGUAGE_OPTIONS, LATEST_VERSION } from 'src/constants/appConstant';
 import {
@@ -43,7 +43,7 @@ userConfig.$subscribe(async (mutation, state) => {
   const stateJson = JSON.stringify(state);
   const event = mutation.events;
 
-  logger.debug('Save new user config \n', stateJson);
+  myLogger.debug('Save new user config \n', stateJson);
   localStorage.setItem(KEY_USER_CONFIG, stateJson);
 
   if (!Array.isArray(event) && event.key === KEY_USER_CONFIG_VERSION_ID) {

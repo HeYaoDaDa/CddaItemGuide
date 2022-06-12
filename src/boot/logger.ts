@@ -1,7 +1,7 @@
 import { boot } from 'quasar/wrappers';
 import { createLogger, StringifyAndParseObjectsHook } from 'vue-logger-plugin';
 
-const logger = createLogger({
+const myLogger = createLogger({
   enabled: true,
   level: 'debug',
   callerInfo: true,
@@ -9,7 +9,7 @@ const logger = createLogger({
 });
 
 export default boot(({ app }) => {
-  app.use(logger);
+  app.use(myLogger);
 });
 
-export { logger };
+export { myLogger };

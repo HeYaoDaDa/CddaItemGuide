@@ -1,112 +1,91 @@
-import { MyClass } from 'src/types/EqualClass';
-import { arrayIsNotEmpty } from '../commonUtil';
-import { commonConvert, getOptionalArray, getOptionalString, getOptionalUnknown } from './baseJsonUtil';
-import { parseLengthToCm, parseTimeToS, parseVolumeToMl, parseWeightToG } from './dataUtil';
+import { CddaSubItem } from 'src/classes';
+import { AbstractCddaSubItemFactory } from 'src/classes/factory/cddaSubItem/AbstractCddaSubItemFactory';
+import { CddaItemRef, GettextString, Length, Time, Volume, Weight } from 'src/classes/items';
+import { getOptionalUnknown, initCddaSubItemByJson } from './base';
 
-export function getOptionalWeight(value: unknown, key: string): number | undefined {
-  const jsonObject = commonConvert(value);
-  const field = getOptionalString(jsonObject, key);
-  if (field) {
-    return parseWeightToG(field);
-  } else {
-    return undefined;
-  }
-}
-
-export function getWeight(value: unknown, key: string, def?: number): number {
-  const jsonObject = commonConvert(value);
-  return getOptionalWeight(jsonObject, key) ?? def ?? 0;
-}
-
-export function getOptionalVolume(value: unknown, key: string): number | undefined {
-  const jsonObject = commonConvert(value);
-  const field = getOptionalString(jsonObject, key);
-  if (field) {
-    return parseVolumeToMl(field);
-  } else {
-    return undefined;
-  }
-}
-
-export function getVolume(value: unknown, key: string, def?: number): number {
-  const jsonObject = commonConvert(value);
-  return getOptionalVolume(jsonObject, key) ?? def ?? 0;
-}
-
-export function getOptionalLength(value: unknown, key: string): number | undefined {
-  const jsonObject = commonConvert(value);
-  const field = getOptionalString(jsonObject, key);
-  if (field) {
-    return parseLengthToCm(field);
-  } else {
-    return undefined;
-  }
-}
-
-export function getLength(value: unknown, key: string, def?: number): number {
-  const jsonObject = commonConvert(value);
-  return getOptionalLength(jsonObject, key) ?? def ?? 0;
-}
-
-export function getOptionalTime(value: unknown, key: string): number | undefined {
-  const jsonObject = commonConvert(value);
-  const field = getOptionalString(jsonObject, key);
-  if (field) {
-    return parseTimeToS(field);
-  } else {
-    return undefined;
-  }
-}
-
-export function getTime(value: unknown, key: string, def?: number): number {
-  const jsonObject = commonConvert(value);
-  return getOptionalTime(jsonObject, key) ?? def ?? 0;
-}
-
-export function getOptionalArrayWithType<T>(
-  jsonObject: unknown,
-  key: string,
-  ins: T,
-  ...extend: unknown[]
-): Array<T> | undefined {
-  const temps = getOptionalArray(jsonObject, key);
-  if (ins instanceof MyClass) {
-    return temps?.map((temp) => callFromJson(temp, ins, ...extend) as T);
-  }
-  if (Array.isArray(ins)) {
-    return temps?.map((temp, i) => {
-      return getOptionalArrayWithType(temps, i.toString(), ins[0], ...extend) as unknown as T;
-    });
-  }
-  return temps?.map((temp) => temp as T);
-}
-
-export function getArrayWithType<T>(
-  jsonObject: unknown,
-  key: string,
-  ins: T,
-  def?: Array<T>,
-  ...extend: unknown[]
-): Array<T> {
-  return getOptionalArrayWithType(jsonObject, key, ins, ...extend) ?? def ?? [];
-}
-
-export function getOptionalMyClass<T extends MyClass<T>>(
+export function getOptionalCddaSubItem<T extends CddaSubItem>(
   jsonObject: unknown,
   key: string,
   ins: T,
   ...extend: unknown[]
 ): T | undefined {
   const optionalUnknown = getOptionalUnknown(jsonObject, key);
-  return callFromJson(optionalUnknown, ins, ...extend);
+  return initCddaSubItemByJson(optionalUnknown, ins, ...extend);
 }
 
-function callFromJson<T extends MyClass<T>>(jsonObject: unknown | undefined, ins: T, ...extend: unknown[]) {
-  if (jsonObject === undefined) return undefined;
-  if (arrayIsNotEmpty(extend)) return ins.fromJson(jsonObject, ...extend);
-  else return ins.fromJson(jsonObject);
+export function getCddaSubItem<T extends CddaSubItem>(
+  jsonObject: unknown,
+  key: string,
+  def: T,
+  ...extend: unknown[]
+): T {
+  return getOptionalCddaSubItem(jsonObject, key, def, ...extend) ?? def;
 }
 
-export function getMyClass<T extends MyClass<T>>(jsonObject: unknown, key: string, def: T, ...extend: unknown[]): T {
-  return getOptionalMyClass(jsonObject, key, def, ...extend) ?? def;
+export function getOptionalCddaSubItemUseVersionFactory(
+  jsonObject: unknown,
+  key: string,
+  factory: AbstractCddaSubItemFactory,
+  ...extend: unknown[]
+): CddaSubItem | undefined {
+  const cddaSubItem = factory.getProduct();
+  return getOptionalCddaSubItem(jsonObject, key, cddaSubItem, ...extend);
+}
+
+export function getCddaSubItemUseVersionFactory(
+  jsonObject: unknown,
+  key: string,
+  factory: AbstractCddaSubItemFactory,
+  ...extend: unknown[]
+): CddaSubItem {
+  const cddaSubItem = factory.getProduct();
+  return getCddaSubItem(jsonObject, key, cddaSubItem, ...extend);
+}
+
+export function getOptionalCddaItemRef(jsonObject: unknown, key: string, jsonType: string) {
+  return getOptionalCddaSubItem<CddaItemRef>(jsonObject, key, new CddaItemRef(), jsonType);
+}
+
+export function getCddaItemRef(jsonObject: unknown, key: string, jsonType: string, def?: CddaItemRef) {
+  return getCddaSubItem<CddaItemRef>(jsonObject, key, def ?? new CddaItemRef(), jsonType);
+}
+
+export function getOptionalGettextString(jsonObject: unknown, key: string, ctx?: string) {
+  return getOptionalCddaSubItem<GettextString>(jsonObject, key, new GettextString(), ctx);
+}
+
+export function getGettextString(jsonObject: unknown, key: string, ctx?: string, def?: GettextString) {
+  return getCddaSubItem<GettextString>(jsonObject, key, def ?? new GettextString(), ctx);
+}
+
+export function getOptionalVolume(jsonObject: unknown, key: string, mult?: number) {
+  return getOptionalCddaSubItem<Volume>(jsonObject, key, new Volume(), mult);
+}
+
+export function getVolume(jsonObject: unknown, key: string, mult?: number, def?: Volume) {
+  return getCddaSubItem<Volume>(jsonObject, key, def ?? new Volume(), mult);
+}
+
+export function getOptionalWeight(jsonObject: unknown, key: string, mult?: number) {
+  return getOptionalCddaSubItem<Weight>(jsonObject, key, new Weight(), mult);
+}
+
+export function getWeight(jsonObject: unknown, key: string, mult?: number, def?: Weight) {
+  return getCddaSubItem<Weight>(jsonObject, key, def ?? new Weight(), mult);
+}
+
+export function getOptionalLength(jsonObject: unknown, key: string, mult?: number) {
+  return getOptionalCddaSubItem<Length>(jsonObject, key, new Length(), mult);
+}
+
+export function getLength(jsonObject: unknown, key: string, mult?: number, def?: Length) {
+  return getCddaSubItem<Length>(jsonObject, key, def ?? new Length(), mult);
+}
+
+export function getOptionalTime(jsonObject: unknown, key: string, mult?: number) {
+  return getOptionalCddaSubItem<Time>(jsonObject, key, new Time(), mult);
+}
+
+export function getTime(jsonObject: unknown, key: string, mult?: number, def?: Time) {
+  return getCddaSubItem<Time>(jsonObject, key, def ?? new Time(), mult);
 }

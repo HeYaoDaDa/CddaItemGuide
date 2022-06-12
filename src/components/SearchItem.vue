@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { CddaItem } from 'src/types/CddaItem';
+import { CddaItem } from 'src/classes';
 
 const props = defineProps<{
-  cddaItem: CddaItem;
+  cddaItem: CddaItem<object>;
 }>();
 </script>

@@ -50,7 +50,7 @@
 
     <my-field label="sheetThickness" :content="props.cddaItem.data.sheetThickness" />
 
-    <my-label label="vitamin" v-if="arrayIsNotEmpty(props.cddaItem.data.vitamins)" ul>
+    <my-label label="vitamin" v-if="isNotEmpty(props.cddaItem.data.vitamins)" ul>
       <li v-for="vitamin in props.cddaItem.data.vitamins" :key="vitamin[0].id">
         <my-text :content="vitamin[0]" />
         <my-text :content="`(${vitamin[1]})`" />
@@ -59,7 +59,7 @@
 
     <my-field v-if="props.cddaItem.data.fuelData" label="fuel" :content="props.cddaItem.data.fuelData" />
 
-    <my-label label="burn" v-if="arrayIsNotEmpty(props.cddaItem.data.burnData)" ul>
+    <my-label label="burn" v-if="isNotEmpty(props.cddaItem.data.burnData)" ul>
       <li v-for="(burn, index) in props.cddaItem.data.burnData" :key="index">
         <dl>
           <my-text :content="burn" />
@@ -67,7 +67,7 @@
       </li>
     </my-label>
 
-    <my-label label="burnProduct" v-if="arrayIsNotEmpty(props.cddaItem.data.burnProducts)" ul>
+    <my-label label="burnProduct" v-if="isNotEmpty(props.cddaItem.data.burnProducts)" ul>
       <li v-for="burnProduct in props.cddaItem.data.burnProducts" :key="burnProduct[0].id">
         <my-text :content="burnProduct[0]" />
         <my-text :content="`(${burnProduct[1]})`" />
@@ -77,8 +77,8 @@
 </template>
 
 <script setup lang="ts">
-import { Material } from 'src/types/cddaItemType/material/Material';
-import { arrayIsNotEmpty } from 'src/utils/commonUtil';
+import { Material } from 'src/classes/items/cddaItems/material/Material';
+import { isNotEmpty } from 'src/utils';
 import MyCard from '../base/MyCard.vue';
 import MyField from '../base/MyField.vue';
 import MyLabel from '../base/MyLabel.vue';

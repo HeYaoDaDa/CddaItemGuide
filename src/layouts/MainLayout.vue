@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
 import FastNavigation from 'src/components/fastNavigation/FastNavigation.vue';
 import SearchInput from 'src/components/SearchInput.vue';
 import UserConfig from 'src/components/userConfig/UserConfig.vue';
@@ -42,5 +42,5 @@ function toggleLeftDrawer() {
  */
 useConfigOptionsStore()
   .initVersions()
-  .catch((e) => logger.error(e));
+  .catch((e) => myLogger.error(e));
 </script>

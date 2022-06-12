@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const content = ref('');
@@ -18,6 +18,6 @@ const $router = useRouter();
 
 function search() {
   if (content.value.length > 0)
-    $router.push({ name: 'search', query: { content: content.value } }).catch((e) => logger.error(e));
+    $router.push({ name: 'search', query: { content: content.value } }).catch((e) => myLogger.error(e));
 }
 </script>

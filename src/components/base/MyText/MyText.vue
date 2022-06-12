@@ -9,8 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import { ContentProps } from 'src/types/MyFieldProp';
-import { toArray } from 'src/utils/commonUtil';
+import { ContentProps } from 'src/classes';
+import { toArray } from 'src/utils';
 import { computed } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import MyTextPart from './MyTextPart.vue';

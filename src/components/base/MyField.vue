@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ContentProps } from 'src/types/MyFieldProp';
+import { ContentProps } from 'src/classes';
 import { computed } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import MyLabel from './MyLabel.vue';

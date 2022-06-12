@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia';
 import { getVersions } from 'src/apis/versionApi';
-import { logger } from 'src/boot/logger';
+import { myLogger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
+import { BaseMod } from 'src/classes/base/BaseMod';
+import { Version } from 'src/classes/base/Version';
 import { LANGUAGE_OPTIONS, LATEST_VERSION } from 'src/constants/appConstant';
 import { KEY_CONFIG_OPTIONS_VERSIONS, KEY_USER_CONFIG_OPTIONS } from 'src/constants/storeConstant';
 import { initGettext } from 'src/services/poFileService';
-import { BaseMod } from 'src/types/BaseMod';
-import { Version } from 'src/types/Version';
-import { arrayIsEmpty } from 'src/utils/commonUtil';
+import { isEmpty } from 'src/utils';
 import { useUserConfigStore } from './userConfig';
 
 export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
@@ -20,7 +20,7 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
   },
   getters: {
     lastestVersion(state): Version | undefined {
-      if (arrayIsEmpty(state.versions)) return;
+      if (isEmpty(state.versions)) return;
       return state.versions.reduce((l, r) => (l.publishDate > r.publishDate ? l : r));
     },
   },
@@ -30,11 +30,11 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
      */
     async initVersions() {
       const start = performance.now();
-      logger.debug('start init versions');
+      myLogger.debug('start init versions');
       const versions = await getVersions();
       useConfigOptionsStore().updateVersions(versions);
       const end = performance.now();
-      logger.debug(`init versions success, cost time is ${end - start}ms, all versions size is ${versions.length}`);
+      myLogger.debug(`init versions success, cost time is ${end - start}ms, all versions size is ${versions.length}`);
     },
     updateVersions(newVersions: Version[]) {
       this.versions = newVersions;
@@ -49,7 +49,7 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
      * after cddaItemIndexer prepare, because need modinfos
      */
     updateMods() {
-      logger.debug('start init mods');
+      myLogger.debug('start init mods');
       const newMods = cddaItemIndexer.modinfos.map((jsonItem) => {
         const mod = new BaseMod(jsonItem);
         if (!Array.isArray(mod.dependencies)) mod.dependencies = [mod.dependencies];
@@ -57,7 +57,7 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
       });
       this.mods.clear();
       newMods.forEach((newMod) => this.mods.set(newMod.id.toLowerCase(), newMod));
-      logger.debug('init mods success, mods size is ', newMods.length);
+      myLogger.debug('init mods success, mods size is ', newMods.length);
     },
     findModById(modId: string) {
       return this.mods.get(modId.toLowerCase());
@@ -71,9 +71,9 @@ useConfigOptionsStore().$subscribe(async (mutation, state) => {
 
   if (!Array.isArray(event) && event.key === KEY_CONFIG_OPTIONS_VERSIONS) {
     if (userConfig.versionId === LATEST_VERSION) {
-      logger.debug('change lastest version to normal version');
+      myLogger.debug('change lastest version to normal version');
       userConfig.selectVersion(state.versions.reduce((l, r) => (l.publishDate > r.publishDate ? l : r)).id);
-      logger.debug('normal version is ', userConfig.versionId);
+      myLogger.debug('normal version is ', userConfig.versionId);
     } else {
       await Promise.all([cddaItemIndexer.init(), initGettext()]);
     }

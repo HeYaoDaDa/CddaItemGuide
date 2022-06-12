@@ -1,18 +1,17 @@
-import { cloneDeep, includes } from 'lodash';
 import { Loading } from 'quasar';
+import { JsonItem } from 'src/classes';
+import { cddaItemFactory } from 'src/classes/factory/CddaItemFactory';
+import { cloneDeep, includes, isEmpty, itemType2JsonType, popFilter, replaceArray } from 'src/utils';
 import { ref } from 'vue';
 import { getAllJsonItems } from './apis/jsonItemApi';
-import { i18n } from './boot/i18n';
-import { logger } from './boot/logger';
+import { globalI18n } from './boot/i18n';
+import { myLogger } from './boot/logger';
+import { CddaItem } from './classes';
 import { jsonTypes } from './constants/jsonTypesConstant';
 import { getJsonItemSetByVersionId, saveJsonItemSet } from './services/jsonItemSetService';
 import { hasVersionById, saveVersion } from './services/versionsService';
 import { useConfigOptionsStore } from './stores/configOptions';
 import { useUserConfigStore } from './stores/userConfig';
-import { CddaItem } from './types/CddaItem';
-import { JsonItem } from './types/JsonItem';
-import { cddaItemFactory } from './types/RealCddaItemFactory';
-import { arrayIsEmpty, convertToJsonType, popFilter, replaceArray } from './utils/commonUtil';
 
 export class CddaItemIndexer {
   byModIdAndJsonTypeAndId: Map<string, Map<string, Map<string, CddaItem<object>>>> = new Map();
@@ -28,7 +27,7 @@ export class CddaItemIndexer {
   }
 
   findByModsByTypeAndId(modIds: string[], type: string, id: string): CddaItem<object>[] {
-    const jsonTypes = convertToJsonType(type);
+    const jsonTypes = itemType2JsonType(type);
     const result = new Array<CddaItem<object>>();
     modIds.forEach((modId) =>
       jsonTypes.forEach((fJsonType) => {
@@ -45,7 +44,7 @@ export class CddaItemIndexer {
   }
 
   findByModsByType(modIds: string[], type: string): CddaItem<object>[] {
-    const jsonTypes = convertToJsonType(type);
+    const jsonTypes = itemType2JsonType(type);
     const result = new Array<CddaItem<object>>();
     modIds.forEach((modId) =>
       jsonTypes.forEach((fJsonType) => {
@@ -66,9 +65,9 @@ export class CddaItemIndexer {
 
   async init() {
     const loadLock = !Loading.isActive;
-    if (loadLock) Loading.show({ message: i18n.global.t('message.gameData') });
+    if (loadLock) Loading.show({ message: globalI18n.global.t('message.gameData') });
     const start = performance.now();
-    logger.debug('start init CddaItemIndexer');
+    myLogger.debug('start init CddaItemIndexer');
     const configOptions = useConfigOptionsStore();
     const jsonItems = await this.getJsonItems();
     this.clear();
@@ -78,7 +77,7 @@ export class CddaItemIndexer {
     this.finalizeAllCddaItem();
     this.finalized.value = true;
     const end = performance.now();
-    logger.debug(
+    myLogger.debug(
       `init CddaItemIndexer success, cost time is ${end - start}ms, input jsonItem size is ${jsonItems.length}`
     );
     if (loadLock) Loading.hide();
@@ -90,26 +89,26 @@ export class CddaItemIndexer {
     const configOptions = useConfigOptionsStore();
     const jsonItems = [] as JsonItem[];
     if (await hasVersionById(userConfig.versionId)) {
-      logger.debug(`version id ${userConfig.versionId} is has in db.`);
+      myLogger.debug(`version id ${userConfig.versionId} is has in db.`);
       const dbJsonItemSet = await getJsonItemSetByVersionId(userConfig.versionId);
       if (dbJsonItemSet) {
         replaceArray(jsonItems, dbJsonItemSet.jsonItems);
       }
     } else {
       const newVersion = configOptions.findVersionById(userConfig.versionId);
-      logger.debug(`version id ${userConfig.versionId} is no in db. start save`);
+      myLogger.debug(`version id ${userConfig.versionId} is no in db. start save`);
       if (newVersion) {
         const remoteJsonItems = await getAllJsonItems(newVersion);
         saveJsonItemSet({ versionId: userConfig.versionId, jsonItems: remoteJsonItems })
           .then(() => saveVersion(newVersion))
-          .catch((e) => logger.error('save jsonItemSet and save Version fail, ', e));
+          .catch((e) => myLogger.error('save jsonItemSet and save Version fail, ', e));
         replaceArray(jsonItems, remoteJsonItems);
       } else {
-        logger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
+        myLogger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
       }
     }
     const end = performance.now();
-    logger.debug(`cddaItemIndexer getJsonItems cost time is ${end - start}ms`);
+    myLogger.debug(`cddaItemIndexer getJsonItems cost time is ${end - start}ms`);
     return jsonItems;
   }
 
@@ -117,11 +116,12 @@ export class CddaItemIndexer {
     const start = performance.now();
     jsonItems.forEach((jsonItem) => this.addJsonItem(jsonItem));
     const end = performance.now();
-    logger.debug(`cddaItemIndexer prepare cost time is ${end - start}ms`);
+    myLogger.debug(`cddaItemIndexer prepare cost time is ${end - start}ms`);
   }
 
   private addJsonItem(jsonItem: JsonItem) {
-    const cddaItem = cddaItemFactory.generateCddaItem(jsonItem);
+    const cddaItem = cddaItemFactory.getCddaItemVersionFactory(jsonItem).getProduct();
+    cddaItem.prepare(jsonItem);
     this.addCddaItem(cddaItem);
   }
 
@@ -164,10 +164,10 @@ export class CddaItemIndexer {
     });
     const deferreds = new Array<CddaItem<object>>();
     this.deferred.forEach((value) => deferreds.push(...value));
-    logger.warn('deferred has ', deferreds.length, deferreds);
-    logger.debug('processCopyFroms end');
+    myLogger.warn('deferred has ', deferreds.length, deferreds);
+    myLogger.debug('processCopyFroms end');
     const end = performance.now();
-    logger.debug(`cddaItemIndexer load cost time is ${end - start}ms`);
+    myLogger.debug(`cddaItemIndexer load cost time is ${end - start}ms`);
   }
 
   private finalizeAllCddaItem() {
@@ -177,11 +177,11 @@ export class CddaItemIndexer {
       if (cddaItem.isSearch) this.searchs.push(cddaItem);
     });
     const end = performance.now();
-    logger.debug(`cddaItemIndexer finalize cost time is ${end - start}ms`);
+    myLogger.debug(`cddaItemIndexer finalize cost time is ${end - start}ms`);
   }
 
   resetSearchs() {
-    this.searchs.forEach((cddaItem) => cddaItem.doResetSearch());
+    this.searchs.forEach((cddaItem) => cddaItem.resetSearch());
   }
 
   private foreachAllCddaItem(fu: (cddaItem: CddaItem<object>) => void) {
@@ -212,11 +212,11 @@ export class CddaItemIndexer {
         if (info) {
           return includes(info.modIds, modId) && includes(info.jsonTypes, jsonType);
         } else {
-          logger.error('why a no copyFromInfo cddaItem in deferred?', deferredItem);
+          myLogger.error('why a no copyFromInfo cddaItem in deferred?', deferredItem);
           return false;
         }
       }).forEach((deferredItem) => this.processLoad(deferredItem));
-      if (arrayIsEmpty(deferreds)) this.deferred.delete(id);
+      if (isEmpty(deferreds)) this.deferred.delete(id);
     }
   }
 }

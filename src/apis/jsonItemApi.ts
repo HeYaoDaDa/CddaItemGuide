@@ -1,7 +1,7 @@
 import { api } from 'src/boot/axios';
-import { JsonItem } from 'src/types/JsonItem';
-import { Version } from 'src/types/Version';
-import { unzip } from 'src/utils/zipUtil';
+import { JsonItem } from 'src/classes/base/JsonItem';
+import { Version } from 'src/classes/base/Version';
+import { unzip } from 'src/utils';
 
 export async function getAllJsonItems(version: Version): Promise<JsonItem[]> {
   //TODO:the jsonUrls should to process
