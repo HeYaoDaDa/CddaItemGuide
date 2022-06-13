@@ -1,20 +1,19 @@
-import { BaseMod } from 'src/classes/base/BaseMod';
-import { VNode } from 'vue';
-import ViewableInterface from './ViewableInterface';
-import { JsonItem } from 'src/classes/base/JsonItem';
-import { itemType2JsonType, jsonType2ItemType } from 'src/utils';
-import { getOptionalString, getArray } from 'src/utils/json';
-import { ColGroupDef, ColDef } from 'ag-grid-community';
+import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { cloneDeep } from 'lodash';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
+import { BaseMod } from 'src/classes/base/BaseMod';
+import { JsonItem } from 'src/classes/base/JsonItem';
 import { useConfigOptionsStore } from 'src/stores/configOptions';
-import ViewUtil from 'src/utils/ViewUtil';
-import { RouteLocationRaw } from 'vue-router';
+import { itemType2JsonType, jsonType2ItemType } from 'src/utils';
+import { getArray, getOptionalString } from 'src/utils/json';
 import CddaJsonParseUtil from 'src/utils/json/CddaJsonParseUtil';
+import ViewUtil from 'src/utils/ViewUtil';
+import { VNode } from 'vue';
+import { RouteLocationRaw } from 'vue-router';
+import ViewableInterface from './ViewableInterface';
 
 export abstract class CddaItem<T extends object> implements ViewableInterface {
   finalized = false;
-  isLoad = false;
 
   data: T = {} as T;
 
@@ -68,12 +67,15 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
    * init data from json, return is success
    */
   loadJson(): boolean {
-    if (this.isLoad) return true;
+    if (this.finalized) return true;
     if (this.copyFromInfo) {
-      this.copyFromInfo.modIds = [this.modId, ...this.getMod().dependencies];
+      this.copyFromInfo.modIds = this.getMod()
+        .getDependencyMods()
+        .map((v) => v.id);
+      this.copyFromInfo.modIds.push(this.modId);
       const soure = cddaItemIndexer
         .findByModsByTypeAndId(this.copyFromInfo.modIds, this.type, this.copyFromInfo.id)
-        .find((cddaItem) => cddaItem.isLoad);
+        .find((cddaItem) => cddaItem.finalized);
       if (soure) {
         this.copyFromInfo = undefined;
         this.data = cloneDeep(soure.data) as T;
@@ -82,18 +84,10 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
       }
     }
     this.doLoadJson(this.data, new CddaJsonParseUtil(this));
-    this.isLoad = true;
-    return true;
-  }
-
-  /**
-   * last step, set Search Params
-   */
-  finalize() {
-    if (this.finalized) return;
     this.doFinalize();
     this.resetSearch();
     this.finalized = true;
+    return true;
   }
 
   /**

@@ -38,7 +38,7 @@ export class RecipeProficiency extends CddaSubItem {
       //FIXME:what???
       if (isNotEmpty(cddaItems)) {
         const proficiency: Proficiency = (cddaItems[0] as Proficiency) ?? new Proficiency();
-        if (!proficiency.finalize) proficiency.doFinalize();
+        if (!proficiency.finalized) proficiency.loadJson();
         if (this.timeMultiplier <= 0) {
           this.timeMultiplier = proficiency.data.defaultTimeMultiplier;
         }
