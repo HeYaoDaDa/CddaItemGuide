@@ -94,7 +94,7 @@ export class Modinfo extends CddaItem<ModinfoData> {
     return [
       {
         headerValueGetter: () => globalI18n.global.t('label.name'),
-        valueGetter: (value) => value.data.data.name.translate(),
+        valueGetter: (value) => value.data.getName(),
       },
       { headerValueGetter: () => globalI18n.global.t('label.mod'), valueGetter: (value) => value.data.modId },
       {

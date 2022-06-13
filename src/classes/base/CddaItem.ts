@@ -131,8 +131,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
     if (this.name) return this.name;
     const name = this.doGetName();
 
-    if (name) this.name = name;
-    else this.name = this.id;
+    this.name = name ?? this.id;
 
     return this.name;
   }

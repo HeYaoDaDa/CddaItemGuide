@@ -129,11 +129,9 @@ export class CddaItemIndexer {
       if (index > 0) {
         const newCddaItem = cloneDeep(cddaItem);
         newCddaItem.id = jsonId;
-        newCddaItem.name = jsonId;
         this.addCddaItemWithJsonId(newCddaItem);
       } else {
         cddaItem.id = jsonId;
-        cddaItem.name = jsonId;
         this.addCddaItemWithJsonId(cddaItem);
       }
     });

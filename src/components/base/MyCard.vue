@@ -11,7 +11,7 @@
         <p :class="['text-weight-bold', 'text-h3']">
           <span v-if="props.symbol && props.color" :style="{ color: props.color }">{{ props.symbol + '  ' }}</span>
 
-          <span>{{ props.cddaItem.name }}</span>
+          <span>{{ props.cddaItem.getName() }}</span>
 
           <q-badge :class="['text-weight-bold', 'text-h6']">{{ props.cddaItem.getMod().name.translate() }}</q-badge>
         </p>
