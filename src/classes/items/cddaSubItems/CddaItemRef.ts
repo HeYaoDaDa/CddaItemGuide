@@ -16,17 +16,24 @@ export class CddaItemRef extends CddaSubItem {
     const value = new CddaItemRef();
     value.id = id;
     value.type = type;
+    value.route = {
+      name: 'cddaItem',
+      params: {
+        type,
+        id,
+      },
+    };
     return value;
   }
 
   public getName(): string {
     let name = '';
     if (this.cddaItem) {
-      name = this.cddaItem.getName();
+      name = this.cddaItem.getRefName();
     } else {
       const cddaItems = cddaItemIndexer.findByTypeAndId(this.type, this.id);
       if (isNotEmpty(cddaItems)) {
-        name = cddaItems[0].getName();
+        name = cddaItems[0].getRefName();
       }
     }
     if (isNotEmpty(name)) return name;
@@ -39,8 +46,7 @@ export class CddaItemRef extends CddaSubItem {
 
   parseJson(jsonObject: string, type: string): this {
     if (typeof jsonObject === 'string' && typeof type === 'string') {
-      this.id = jsonObject;
-      this.type = type;
+      Object.assign(this, CddaItemRef.init(jsonObject, type));
     } else {
       myLogger.warn('CddaItemRef fromJson is fail, param is ', jsonObject, type);
     }

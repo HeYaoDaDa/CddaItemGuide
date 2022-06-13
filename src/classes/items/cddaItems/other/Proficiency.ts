@@ -47,7 +47,7 @@ export class Proficiency extends CddaItem<ProficiencyData> {
     cardUtil.addField({ label: 'defaultWeakpointPenalty', content: data.defaultWeakpointPenalty });
 
     cardUtil.addField({ label: 'learnTime', content: data.learnTime });
-    cardUtil.addField({ label: 'required', content: data.required });
+    cardUtil.addField({ label: 'required', content: data.required, separator: ', ' });
   }
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {

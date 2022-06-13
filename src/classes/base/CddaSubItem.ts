@@ -1,4 +1,5 @@
 import { isEqual } from 'src/utils';
+import ViewUtil from 'src/utils/ViewUtil';
 import { VNode } from 'vue';
 import EquableInterface from './EquableInterface';
 import ViewableInterface from './ViewableInterface';
@@ -21,6 +22,10 @@ export abstract class CddaSubItem implements ViewableInterface, EquableInterface
   }
 
   view(): VNode[] {
-    return [];
+    const util = new ViewUtil();
+    this.doView(util);
+    return util.result;
   }
+
+  abstract doView(util: ViewUtil): void;
 }

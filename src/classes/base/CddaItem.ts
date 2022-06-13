@@ -196,6 +196,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
 
   /**
    * update search param description
+   * also use in myCard description
    */
   doResetDescription(): void {
     return;
