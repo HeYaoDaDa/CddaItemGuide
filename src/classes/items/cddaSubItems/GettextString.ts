@@ -13,12 +13,14 @@ export class GettextString extends CddaSubItem {
 
   static init(val: GettextStringInterface) {
     const value = new GettextString();
+
     value.str = val.str;
     value.ctx = val.ctx;
     value.str_sp = val.str_sp;
     value.str_pl = val.str_pl;
     value.male = val.male;
     value.female = val.female;
+
     return value;
   }
 
@@ -34,13 +36,16 @@ export class GettextString extends CddaSubItem {
 
   parseJson(jsonObject: unknown, ctx?: string): this {
     this.ctx = ctx;
+
     if (typeof jsonObject === 'string') {
       this.str = jsonObject;
     } else if (typeof jsonObject === 'object') {
       const obj = GettextString.init(jsonObject as GettextStringInterface);
+
       Object.assign(this, obj);
       this.ctx = ctx;
     }
+
     return this;
   }
 

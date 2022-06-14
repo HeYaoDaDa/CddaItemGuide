@@ -23,7 +23,9 @@ export abstract class CddaSubItem implements ViewableInterface, EquableInterface
 
   view(): VNode[] {
     const util = new ViewUtil();
+
     this.doView(util);
+
     return util.result;
   }
 

@@ -34,7 +34,6 @@ import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
 const quasar = useQuasar();
 const i18n = useI18n();
-
 const searchResultLists = reactive(new Array<Array<CddaItem<object>>>());
 const route = useRoute();
 const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['name', 'description'] });
@@ -48,13 +47,12 @@ function updateSearchResultItems(newRoute: typeof route) {
     .search(newRoute.query.content as string)
     .map((a) => a.item)
     .filter((result) => includes(userConfig.modIds, result.modId));
-
   const tempMap: Map<string, CddaItem<object>[]> = new Map();
+
   allSearchResults.forEach((searchResult) => {
     if (!tempMap.has(searchResult.type)) tempMap.set(searchResult.type, shallowReactive([]));
     tempMap.get(searchResult.type)?.push(searchResult);
   });
-
   searchResultLists.length = 0;
   tempMap.forEach((searchResults) => searchResultLists.push(searchResults));
   searchResultLists.sort((a, b) => a[0].weight - b[0].weight);
@@ -63,13 +61,11 @@ function updateSearchResultItems(newRoute: typeof route) {
 }
 
 updateSearchResultItems(route);
-
 onBeforeRouteUpdate((to, from) => {
   if (to.query !== from.query) {
     updateSearchResultItems(to);
   }
 });
-
 watch([globalGettext, cddaItemIndexer.finalized], () => {
   myLogger.debug('gettext change, refesh search params.');
   cddaItemIndexer.resetSearchs();

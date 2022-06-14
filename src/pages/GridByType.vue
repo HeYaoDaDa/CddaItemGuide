@@ -38,6 +38,7 @@ const cddaItems = shallowReactive(new Array<CddaItem<object>>());
 
 function update(myRoute: typeof route) {
   const type = myRoute.params.type as string;
+
   replaceArray(cddaItems, cddaItemIndexer.finalized ? cddaItemIndexer.findByType(type) : []);
 }
 
@@ -58,7 +59,6 @@ onBeforeRouteUpdate((to, from) => {
     update(to);
   }
 });
-
 watch([globalGettext, cddaItemIndexer.finalized], (newValue, oldValue) => {
   if (newValue[1] !== oldValue[1]) {
     myLogger.debug('cddaItemIndexer change, update data.');

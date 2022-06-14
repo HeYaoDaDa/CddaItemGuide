@@ -20,7 +20,6 @@ export class Material extends CddaItem<MaterialData> {
 
   doLoadJson(data: MaterialData, util: CddaJsonParseUtil): void {
     data.name = util.getGettextString('name');
-
     data.bashResist = util.getNumber('bash_resist');
     data.cutResist = util.getNumber('cut_resist');
     data.bulletResist = util.getNumber('bullet_resist');
@@ -28,11 +27,9 @@ export class Material extends CddaItem<MaterialData> {
     data.elecResist = util.getNumber('elec_resist');
     data.fireResist = util.getNumber('fire_resist');
     data.chipResist = util.getNumber('chip_resist');
-
     data.density = util.getNumber('density', 1);
     data.sheetThickness = util.getNumber('sheet_thickness');
     data.windResist = util.getOptionalNumber('wind_resist');
-
     data.specificHeatSolid = util.getNumber('specific_heat_liquid', 4.186);
     data.specificTeatLiquid = util.getNumber('specific_heat_solid', 2.108);
     data.latentHeat = util.getNumber('latent_heat', 334);
@@ -45,20 +42,22 @@ export class Material extends CddaItem<MaterialData> {
     data.rotting = util.getBoolean('rotting');
     data.soft = util.getBoolean('soft');
     data.reinforces = util.getBoolean('reinforces');
-
     data.vitamins = util.getArray('vitamins', <[string, number]>{}).map((vitaminTulpe) => {
       const vitaminName = CddaItemRef.init(vitaminTulpe[0], jsonTypes.vitamin);
+
       return [vitaminName, vitaminTulpe[1]];
     });
-
     data.burnData = util.getArray('burn_data', new MaterialBurn());
+
     if (isEmpty(data.burnData) && data.fireResist <= 0) {
       data.burnData.push(new MaterialBurn().parseJson({ burn: 1 }) as MaterialBurn);
     }
+
     //FIXME: useFactory
     data.fuelData = util.getOptionalCddaSubItem('fuel_data', new Fuel());
     data.burnProducts = util.getArray('burn_products', <[string, number]>{}).map((burnProduct) => {
       const burnProductName = CddaItemRef.init(burnProduct[0], jsonTypes.item);
+
       return [burnProductName, burnProduct[1]];
     });
   }

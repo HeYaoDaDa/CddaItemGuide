@@ -35,6 +35,7 @@ export class RecipeProficiency extends CddaSubItem {
 
     if (this.timeMultiplier === 0 || this.failMultiplier === 0) {
       const cddaItems = this.name.getCddaItems();
+
       //FIXME:what???
       if (isNotEmpty(cddaItems)) {
         const proficiency: Proficiency = (cddaItems[0] as Proficiency) ?? new Proficiency();
@@ -42,6 +43,7 @@ export class RecipeProficiency extends CddaSubItem {
         if (this.timeMultiplier <= 0) {
           this.timeMultiplier = proficiency.data.defaultTimeMultiplier;
         }
+
         if (this.failMultiplier <= 0) {
           this.failMultiplier = proficiency.data.defaultFailMultiplier;
         }

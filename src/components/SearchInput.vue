@@ -13,6 +13,7 @@
 import { myLogger } from 'src/boot/logger';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+
 const content = ref('');
 const $router = useRouter();
 

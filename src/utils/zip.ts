@@ -1,5 +1,6 @@
 //先导入pako
 import pako from 'pako';
+
 // b64Data-->传入加密的数据进行解密
 export function unzip(binData: ArrayBuffer) {
   return Utf8ArrayToStr(pako.ungzip(binData));
@@ -10,10 +11,14 @@ function Utf8ArrayToStr(array: Uint8Array) {
   let char2, char3;
 
   out = '';
+
   const len = array.length;
+
   i = 0;
+
   while (i < len) {
     c = array[i++];
+
     switch (c >> 4) {
       case 0:
       case 1:
@@ -40,5 +45,6 @@ function Utf8ArrayToStr(array: Uint8Array) {
         break;
     }
   }
+
   return out;
 }

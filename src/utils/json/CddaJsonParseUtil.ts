@@ -38,6 +38,7 @@ export default class {
 
   constructor(cddaItem: CddaItem<object>) {
     this.jsonObject = cddaItem.json;
+
     if (cddaItem.copyFromInfo) {
       this.relative = getOptionalUnknown(this.jsonObject, 'relative') as Record<string, number>;
       this.proportional = getOptionalUnknown(this.jsonObject, 'proportional') as Record<string, number>;
@@ -61,21 +62,26 @@ export default class {
 
   getOptionalArray<T>(key: string, ins: T, fromNotEmpty?: boolean, ...extend: unknown[]): Array<T> | undefined {
     const result = getOptionalArrayWithType(this.jsonObject, key, ins, ...extend);
+
     if (!fromNotEmpty) {
       if (result) {
         replaceArray(result, this._processDeleteAndExtend(result, key, ins, ...extend));
+
         return result;
       } else {
         const newResult = this._processDeleteAndExtend([], key, ins, ...extend);
         if (isNotEmpty(newResult)) return newResult;
       }
     }
+
     return result;
   }
 
   getArray<T>(key: string, ins: T, def?: Array<T>, ...extend: unknown[]): Array<T> {
     const result: T[] = this.getOptionalArray(key, ins, true, ...extend) ?? def ?? [];
+
     replaceArray(result, this._processDeleteAndExtend(result, key, ins, ...extend));
+
     return result;
   }
 
@@ -90,12 +96,15 @@ export default class {
   getOptionalNumber(key: string, fromNotEmpty?: boolean): number | undefined {
     let result = getOptionalNumber(this.jsonObject, key);
     if (result && !fromNotEmpty) result = this._processProportinalAndRelative(result, key);
+
     return result;
   }
 
   getNumber(key: string, def?: number): number {
     let result = this.getOptionalNumber(key, true) ?? def ?? 0;
+
     result = this._processProportinalAndRelative(result, key);
+
     return result;
   }
 
@@ -183,17 +192,21 @@ export default class {
     if (result && this.enabled) {
       if (this.proportional) {
         const proportionalNum = getOptionalNumber(this.proportional, key);
+
         if (proportionalNum && proportionalNum < 1 && proportionalNum >= 0) {
           result *= proportionalNum;
         }
       }
+
       if (this.relative) {
         const relativeNum = getOptionalNumber(this.relative, key);
+
         if (relativeNum) {
           result += relativeNum;
         }
       }
     }
+
     return result;
   }
 
@@ -201,14 +214,17 @@ export default class {
     if (result && this.enabled) {
       if (this.extend) {
         const extendItems = getOptionalArrayWithType(this.extend, key, ins, ...extend);
+
         if (extendItems) {
           extendItems.forEach((extendItem) => {
             result.push(extendItem);
           });
         }
       }
+
       if (this.delete) {
         const deleteItems = getOptionalArrayWithType(this.delete, key, ins, ...extend);
+
         if (isNotEmpty(result) && deleteItems) {
           return result.filter((resultItem) => {
             if (resultItem instanceof CddaSubItem) {
@@ -220,6 +236,7 @@ export default class {
         }
       }
     }
+
     return result;
   }
 }

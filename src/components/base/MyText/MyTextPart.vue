@@ -43,7 +43,9 @@ function formatContent(content?: ContentProp) {
   if (typeof content === 'object') {
     return h(MegerVNodesVue, null, () => content.view());
   }
+
   return readableData(content) as ContentProp;
 }
+
 const normalContent = computed(() => formatContent(props.content));
 </script>

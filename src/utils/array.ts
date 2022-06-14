@@ -16,11 +16,13 @@ export function popFilter<T>(soures: T[], fu: (soure: T) => boolean): T[] {
   const result = new Array<T>();
   if (isEmpty(soures)) return result;
   const l = soures.length;
+
   for (let i = l - 1; i > -1; i--) {
     if (fu(soures[i])) {
       result.push(soures[i]);
       soures.splice(i, 1);
     }
   }
+
   return result;
 }

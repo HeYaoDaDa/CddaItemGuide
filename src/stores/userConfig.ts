@@ -26,6 +26,7 @@ export const useUserConfigStore = defineStore(KEY_USER_CONFIG, {
 
 function initUserConfig(): { versionId: string; languageCode: string; modIds: string[] } {
   const userConfigValue = localStorage.getItem(KEY_USER_CONFIG);
+
   if (userConfigValue) {
     return JSON.parse(userConfigValue);
   } else {

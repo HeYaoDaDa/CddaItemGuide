@@ -6,7 +6,9 @@ export class Volume extends CddaSubItem {
 
   static init(ml: number) {
     const result = new Volume();
+
     result.value = ml;
+
     return result;
   }
 
@@ -23,6 +25,7 @@ export class Volume extends CddaSubItem {
       if (jsonObject.toLowerCase().endsWith('ml')) this.value = parseInt(jsonObject);
       else if (jsonObject.toLowerCase().endsWith('l')) this.value = parseInt(jsonObject) * 1000;
     }
+
     return this;
   }
 
@@ -36,7 +39,9 @@ export class Weight extends CddaSubItem {
 
   static init(g: number) {
     const result = new Weight();
+
     result.value = g;
+
     return result;
   }
 
@@ -54,11 +59,13 @@ export class Weight extends CddaSubItem {
       else if (jsonObject.toLowerCase().endsWith('kg')) this.value = parseInt(jsonObject) * 1000;
       else if (jsonObject.toLowerCase().endsWith('g')) this.value = parseInt(jsonObject);
     }
+
     return this;
   }
 
   doView(util: ViewUtil): void {
     let str = '';
+
     if (this.value >= 1000 * 1000) {
       str = `${this.value / 1000 / 1000} t`;
     } else if (this.value >= 1000) {
@@ -66,6 +73,7 @@ export class Weight extends CddaSubItem {
     } else {
       str = `${this.value} g`;
     }
+
     util.addText({ content: str });
   }
 }
@@ -75,7 +83,9 @@ export class Length extends CddaSubItem {
 
   static init(cm: number) {
     const result = new Length();
+
     result.value = cm;
+
     return result;
   }
 
@@ -93,11 +103,13 @@ export class Length extends CddaSubItem {
       if (jsonObject.toLowerCase().endsWith('km')) this.value = parseInt(jsonObject) * 1000 * 1000;
       else if (jsonObject.toLowerCase().endsWith('cm')) this.value = parseInt(jsonObject);
     }
+
     return this;
   }
 
   doView(util: ViewUtil): void {
     let str = '';
+
     if (this.value >= 1000 * 1000) {
       str = `${this.value / 1000 / 1000} km`;
     } else if (this.value >= 1000) {
@@ -105,6 +117,7 @@ export class Length extends CddaSubItem {
     } else {
       str = `${this.value} cm`;
     }
+
     util.addText({ content: str });
   }
 }
@@ -114,7 +127,9 @@ export class Time extends CddaSubItem {
 
   static init(s: number) {
     const result = new Time();
+
     result.value = s;
+
     return result;
   }
 
@@ -132,6 +147,7 @@ export class Time extends CddaSubItem {
       const reResult = re.exec(jsonObject);
       const value = parseInt(reResult?.[1] ?? '0');
       const unit = reResult?.[2] ?? 's';
+
       if (['turns', 'turn', 't', 'seconds', 'second', 's'].includes(unit)) {
         this.value = value;
       } else if (['minutes', 'minute', 'm'].includes(unit)) {
@@ -144,29 +160,38 @@ export class Time extends CddaSubItem {
         this.value = value;
       }
     }
+
     return this;
   }
 
   doView(util: ViewUtil): void {
     let result = '';
+
     const date = new Date(0);
+
     date.setSeconds(this.value);
+
     const day = date.getUTCDate() - 1;
     const hour = date.getUTCHours();
     const m = date.getUTCMinutes();
     const s = date.getUTCSeconds();
+
     if (day > 0) {
       result += day.toString() + ' d';
     }
+
     if (hour > 0) {
       result += hour.toString() + ' h';
     }
+
     if (m > 0) {
       result += m.toString() + ' m';
     }
+
     if (s > 0) {
       result += s.toString() + ' s';
     }
+
     util.addText({ content: result });
   }
 }

@@ -27,18 +27,24 @@ export class Requirement extends CddaItem<RequirementData> {
 
   doView(data: RequirementData, util: ViewUtil): void {
     const cardUtil = util.addCard({ cddaItem: this });
+
     if (isNotEmpty(data.qualities)) {
       const qualityUtil = cardUtil.addField({ label: 'quality', ul: true });
+
       data.qualities.forEach((qualities) =>
         qualityUtil.addText({ content: qualities, separator: globalI18n.global.t('base.or') })
       );
     }
+
     if (isNotEmpty(data.tools)) {
       const toolUtil = cardUtil.addField({ label: 'tool', ul: true });
+
       data.tools.forEach((tools) => toolUtil.addText({ content: tools, separator: globalI18n.global.t('base.or') }));
     }
+
     if (isNotEmpty(data.components)) {
       const component = cardUtil.addField({ label: 'component', ul: true });
+
       data.components.forEach((components) =>
         component.addText({ content: components, separator: globalI18n.global.t('base.or') })
       );
@@ -62,7 +68,6 @@ export function normalizeRequirmentInterface(
   usings?: { requirment: CddaItemRef; count: number }[]
 ): Requirement {
   const newRequirement = cloneDeep(requirement);
-
   const myUsings: Array<{ requirment: CddaItemRef; count: number }> = usings ?? [];
 
   [newRequirement.data.tools, newRequirement.data.components].forEach((componentListList) => {
@@ -73,6 +78,7 @@ export function normalizeRequirmentInterface(
         ...components.filter((component) => {
           if (component.requirement) {
             myUsings.push({ requirment: component.name, count: component.count });
+
             return false;
           } else {
             return true;
@@ -87,12 +93,14 @@ export function normalizeRequirmentInterface(
     const usingRequirments = myUsings.map((using) => {
       if (using.requirment !== undefined) {
         const requirmentJsonItems = using.requirment.getCddaItems();
+
         if (isNotEmpty(requirmentJsonItems)) {
           return normalizeRequirmentInterface(requirmentJsonItems[0] as Requirement, using.count);
         }
       } else {
         console.warn('wrong requirement', requirement);
       }
+
       return undefined;
     });
 
@@ -114,5 +122,6 @@ function requirmentMultiplier(requirement: Requirement, multiplier: number) {
       components.forEach((component) => (component.count *= multiplier))
     );
   }
+
   return requirement;
 }

@@ -18,7 +18,6 @@ export class Modinfo extends CddaItem<ModinfoData> {
     data.id = this.id;
     data.name = util.getCddaSubItem<GettextString>('name', new GettextString());
     data.description = util.getCddaSubItem<GettextString>('description', new GettextString());
-
     data.path = util.getString('path');
     data.authors = util.getArray('authors', '');
     data.maintainers = util.getArray('maintainers', '');
@@ -32,8 +31,8 @@ export class Modinfo extends CddaItem<ModinfoData> {
   doFinalize(): void {
     this.weight = 0;
     this.isSearch = true;
-
     this.data.showCategory = GettextString.init({ str: 'NO CATEGORY' });
+
     switch (this.data.category) {
       case 'total_conversion':
         this.data.showCategory.str = 'TOTAL CONVERSIONS';
@@ -80,6 +79,7 @@ export class Modinfo extends CddaItem<ModinfoData> {
 
   doView(data: ModinfoData, util: ViewUtil): void {
     const cardUtil = util.addCard({ cddaItem: this });
+
     cardUtil.addField({ label: 'author', content: data.authors });
     cardUtil.addField({ label: 'maintainer', content: data.maintainers });
     cardUtil.addField({ label: 'category', content: data.showCategory });

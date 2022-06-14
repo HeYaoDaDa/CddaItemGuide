@@ -13,19 +13,25 @@ export default class ViewUtil {
 
   addCard(props: MyCardProp) {
     const cardUtil = new ViewUtil();
+
     this.add(h(MyCard, props, () => cardUtil.result));
+
     return cardUtil;
   }
 
   addField(props: MyFieldProp) {
     const subUtil = new ViewUtil();
+
     this.add(h(MyField, props, () => subUtil.result));
+
     return subUtil;
   }
 
   addText(props: MyTextProp) {
     const subUtil = new ViewUtil();
+
     this.add(h(MyText, props as object, () => subUtil.result));
+
     return subUtil;
   }
 }

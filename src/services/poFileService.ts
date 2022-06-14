@@ -11,6 +11,7 @@ import { PoFile } from 'src/classes/db';
 
 export async function savePoFile(poFile: PoFile) {
   const result = await db.poFiles.add(poFile);
+
   myLogger.debug('save poFile result is ', result);
 }
 
@@ -26,21 +27,29 @@ export async function initGettext() {
   const loadLock = !Loading.isActive;
   if (loadLock) Loading.show({ message: globalI18n.global.t('message.i18n') });
   const start = performance.now();
+
   myLogger.debug('start init gettext');
+
   const userConfig = useUserConfigStore();
   const configOptions = useConfigOptionsStore();
+
   if (userConfig.languageCode === LANGUAGE_OPTIONS[0].value) {
     myLogger.debug(`language code is ${userConfig.languageCode}, no need use gettext.`);
     globalGettext.clear();
     if (loadLock) Loading.hide();
+
     return;
   }
+
   let poStr = (await getSavePoFileByVersion(userConfig.versionId, userConfig.languageCode))?.po;
+
   if (poStr) {
     myLogger.debug('db has po ', userConfig.languageCode);
   } else {
     myLogger.debug('db no has po ', userConfig.languageCode);
+
     const version = configOptions.findVersionById(userConfig.versionId);
+
     if (version) {
       poStr = await getPoFileByVersionAndLanguageCode(version);
       await savePoFile({ versionId: userConfig.versionId, languageCode: userConfig.languageCode, po: poStr });
@@ -48,8 +57,11 @@ export async function initGettext() {
       myLogger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
     }
   }
+
   globalGettext.changeGettext(poStr as string);
+
   const end = performance.now();
+
   myLogger.debug(`init gettext success, cost time is ${end - start}ms, language is ${userConfig.languageCode}`);
   if (loadLock) Loading.hide();
 }

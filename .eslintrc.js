@@ -84,5 +84,47 @@ module.exports = {
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'padding-line-between-statements': 'off',
+    '@typescript-eslint/padding-line-between-statements': [
+      'warn',
+      {
+        blankLine: 'always',
+        prev: ['block', 'block-like', 'class', 'const', 'import', 'let', 'expression', 'var', 'interface', 'type'],
+        next: [
+          'block',
+          'block-like',
+          'class',
+          'const',
+          'import',
+          'let',
+          'expression',
+          'var',
+          'interface',
+          'type',
+          'export',
+        ],
+      },
+      {
+        blankLine: 'never',
+        prev: ['const'],
+        next: ['const'],
+      },
+      {
+        blankLine: 'never',
+        prev: ['let'],
+        next: ['let'],
+      },
+      {
+        blankLine: 'never',
+        prev: ['import'],
+        next: ['import'],
+      },
+      {
+        blankLine: 'never',
+        prev: ['expression'],
+        next: ['expression'],
+      },
+      { blankLine: 'always', prev: '*', next: 'return' },
+    ],
   },
 };

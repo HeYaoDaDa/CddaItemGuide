@@ -22,36 +22,38 @@ export class CddaItemIndexer {
   finalized = ref(false);
 
   findByTypeAndId(type: string, id: string): CddaItem<object>[] {
-    const userConfig = useUserConfigStore();
-    return this.findByModsByTypeAndId(userConfig.modIds, type, id);
+    return this.findByModsByTypeAndId(useUserConfigStore().modIds, type, id);
   }
 
   findByModsByTypeAndId(modIds: string[], type: string, id: string): CddaItem<object>[] {
     const jsonTypes = itemType2JsonType(type);
     const result = new Array<CddaItem<object>>();
+
     modIds.forEach((modId) =>
       jsonTypes.forEach((fJsonType) => {
         const find = this.byModIdAndJsonTypeAndId.get(modId)?.get(fJsonType)?.get(id);
         if (find) result.push(find);
       })
     );
+
     return result;
   }
 
   findByType(type: string): CddaItem<object>[] {
-    const userConfig = useUserConfigStore();
-    return this.findByModsByType(userConfig.modIds, type);
+    return this.findByModsByType(useUserConfigStore().modIds, type);
   }
 
   findByModsByType(modIds: string[], type: string): CddaItem<object>[] {
     const jsonTypes = itemType2JsonType(type);
     const result = new Array<CddaItem<object>>();
+
     modIds.forEach((modId) =>
       jsonTypes.forEach((fJsonType) => {
         const find = this.byModIdAndJsonType.get(modId)?.get(fJsonType);
         if (find) result.push(...find);
       })
     );
+
     return result;
   }
 
@@ -67,17 +69,21 @@ export class CddaItemIndexer {
     const loadLock = !Loading.isActive;
     if (loadLock) Loading.show({ message: globalI18n.global.t('message.gameData') });
     const start = performance.now();
+
     myLogger.debug('start init CddaItemIndexer');
+
     const configOptions = useConfigOptionsStore();
     const jsonItems = await this.getJsonItems();
+
     this.clear();
     this.addJsonItems(jsonItems);
     configOptions.updateMods();
     this.processCopyFroms();
     this.finalized.value = true;
-    const end = performance.now();
     myLogger.debug(
-      `init CddaItemIndexer success, cost time is ${end - start}ms, input jsonItem size is ${jsonItems.length}`
+      `init CddaItemIndexer success, cost time is ${performance.now() - start}ms, input jsonItem size is ${
+        jsonItems.length
+      }`
     );
     if (loadLock) Loading.hide();
   }
@@ -87,17 +93,20 @@ export class CddaItemIndexer {
     const userConfig = useUserConfigStore();
     const configOptions = useConfigOptionsStore();
     const jsonItems = [] as JsonItem[];
+
     if (await hasVersionById(userConfig.versionId)) {
-      myLogger.debug(`version id ${userConfig.versionId} is has in db.`);
       const dbJsonItemSet = await getJsonItemSetByVersionId(userConfig.versionId);
-      if (dbJsonItemSet) {
-        replaceArray(jsonItems, dbJsonItemSet.jsonItems);
-      }
+
+      myLogger.debug(`version id ${userConfig.versionId} is has in db.`);
+      if (dbJsonItemSet) replaceArray(jsonItems, dbJsonItemSet.jsonItems);
     } else {
       const newVersion = configOptions.findVersionById(userConfig.versionId);
+
       myLogger.debug(`version id ${userConfig.versionId} is no in db. start save`);
+
       if (newVersion) {
         const remoteJsonItems = await getAllJsonItems(newVersion);
+
         saveJsonItemSet({ versionId: userConfig.versionId, jsonItems: remoteJsonItems })
           .then(() => saveVersion(newVersion))
           .catch((e) => myLogger.error('save jsonItemSet and save Version fail, ', e));
@@ -106,20 +115,22 @@ export class CddaItemIndexer {
         myLogger.error(`new version ${userConfig.versionId} is no find in config Options, Why?`);
       }
     }
-    const end = performance.now();
-    myLogger.debug(`cddaItemIndexer getJsonItems cost time is ${end - start}ms`);
+
+    myLogger.debug(`cddaItemIndexer getJsonItems cost time is ${performance.now() - start}ms`);
+
     return jsonItems;
   }
 
   private addJsonItems(jsonItems: JsonItem[]) {
     const start = performance.now();
+
     jsonItems.forEach((jsonItem) => this.addJsonItem(jsonItem));
-    const end = performance.now();
-    myLogger.debug(`cddaItemIndexer prepare cost time is ${end - start}ms`);
+    myLogger.debug(`cddaItemIndexer prepare cost time is ${performance.now() - start}ms`);
   }
 
   private addJsonItem(jsonItem: JsonItem) {
     const cddaItem = cddaItemFactory.getCddaItemVersionFactory(jsonItem).getProduct();
+
     cddaItem.prepare(jsonItem);
     this.addCddaItem(cddaItem);
   }
@@ -128,6 +139,7 @@ export class CddaItemIndexer {
     cddaItem.parseId().forEach((jsonId, index) => {
       if (index > 0) {
         const newCddaItem = cloneDeep(cddaItem);
+
         newCddaItem.id = jsonId;
         this.addCddaItemWithJsonId(newCddaItem);
       } else {
@@ -156,16 +168,18 @@ export class CddaItemIndexer {
 
   private processCopyFroms() {
     const start = performance.now();
+
     this.foreachAllCddaItem((cddaItem) => {
       this.processLoad(cddaItem);
       if (cddaItem.isSearch) this.searchs.push(cddaItem);
     });
+
     const deferreds = new Array<CddaItem<object>>();
+
     this.deferred.forEach((value) => deferreds.push(...value));
     myLogger.warn('deferred has ', deferreds.length, deferreds);
     myLogger.debug('processCopyFroms end');
-    const end = performance.now();
-    myLogger.debug(`cddaItemIndexer load cost time is ${end - start}ms`);
+    myLogger.debug(`cddaItemIndexer load cost time is ${performance.now() - start}ms`);
   }
 
   resetSearchs() {
@@ -186,6 +200,7 @@ export class CddaItemIndexer {
 
   private addDeferred(cddaItem: CddaItem<object>) {
     const info = cddaItem.copyFromInfo;
+
     if (info) {
       if (!this.deferred.has(info.id)) this.deferred.set(info.id, []);
       this.deferred.get(info.id)?.push(cddaItem);
@@ -194,13 +209,16 @@ export class CddaItemIndexer {
 
   private processSubInDeferred(modId: string, jsonType: string, id: string) {
     const deferreds = this.deferred.get(id);
+
     if (deferreds) {
       popFilter(deferreds, (deferredItem) => {
         const info = deferredItem.copyFromInfo;
+
         if (info) {
           return includes(info.modIds, modId) && includes(info.jsonTypes, jsonType);
         } else {
           myLogger.error('why a no copyFromInfo cddaItem in deferred?', deferredItem);
+
           return false;
         }
       }).forEach((deferredItem) => this.processLoad(deferredItem));

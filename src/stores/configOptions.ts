@@ -21,6 +21,7 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
   getters: {
     lastestVersion(state): Version | undefined {
       if (isEmpty(state.versions)) return;
+
       return state.versions.reduce((l, r) => (l.publishDate > r.publishDate ? l : r));
     },
   },
@@ -30,10 +31,15 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
      */
     async initVersions() {
       const start = performance.now();
+
       myLogger.debug('start init versions');
+
       const versions = await getVersions();
+
       useConfigOptionsStore().updateVersions(versions);
+
       const end = performance.now();
+
       myLogger.debug(`init versions success, cost time is ${end - start}ms, all versions size is ${versions.length}`);
     },
     updateVersions(newVersions: Version[]) {
@@ -45,16 +51,20 @@ export const useConfigOptionsStore = defineStore(KEY_USER_CONFIG_OPTIONS, {
     findLanguageByCode(code: string) {
       return this.languages.find((language) => language.value === code);
     },
+
     /**
      * after cddaItemIndexer prepare, because need modinfos
      */
     updateMods() {
       myLogger.debug('start init mods');
+
       const newMods = cddaItemIndexer.modinfos.map((jsonItem) => {
         const mod = new BaseMod(jsonItem);
         if (!Array.isArray(mod.dependencies)) mod.dependencies = [mod.dependencies];
+
         return mod;
       });
+
       this.mods.clear();
       newMods.forEach((newMod) => this.mods.set(newMod.id.toLowerCase(), newMod));
       myLogger.debug('init mods success, mods size is ', newMods.length);

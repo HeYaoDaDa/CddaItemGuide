@@ -20,7 +20,6 @@ import { computed } from 'vue';
 
 const userConfig = useUserConfigStore();
 const configOptions = useConfigOptionsStore();
-
 const selectedGameVersion = computed({
   get: () => userConfig.versionId,
   set: (val) => {

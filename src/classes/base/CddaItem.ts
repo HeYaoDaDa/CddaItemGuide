@@ -53,7 +53,9 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
     this.path = jsonItem.path;
     this.jsonType = jsonItem.jsonType;
     this.type = jsonType2ItemType(this.jsonType);
+
     const copyFromId = getOptionalString(jsonItem.json, 'copy-from');
+
     if (copyFromId) {
       this.copyFromInfo = {
         modIds: [this.modId],
@@ -73,9 +75,11 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
         .getDependencyMods()
         .map((v) => v.id);
       this.copyFromInfo.modIds.push(this.modId);
+
       const soure = cddaItemIndexer
         .findByModsByTypeAndId(this.copyFromInfo.modIds, this.type, this.copyFromInfo.id)
         .find((cddaItem) => cddaItem.finalized);
+
       if (soure) {
         this.copyFromInfo = undefined;
         this.data = cloneDeep(soure.data) as T;
@@ -83,10 +87,12 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
         return false;
       }
     }
+
     this.doLoadJson(this.data, new CddaJsonParseUtil(this));
     this.doFinalize();
     this.resetSearch();
     this.finalized = true;
+
     return true;
   }
 
@@ -96,6 +102,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
   resetSearch() {
     const refName = this.doGetRefName();
     const name = this.doGetName();
+
     this.refName = refName ?? name ?? this.id;
     this.doResetDescription();
   }
@@ -120,6 +127,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
     const configOptions = useConfigOptionsStore();
     if (!this.mod) this.mod = configOptions.findModById(this.modId);
     if (this.mod === undefined) throw new Error('no find mod why?');
+
     return this.mod;
   }
 
@@ -151,7 +159,9 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
 
   view(): VNode[] {
     const util = new ViewUtil();
+
     this.doView(this.data, util);
+
     return util.result;
   }
 
@@ -164,6 +174,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
     const jsonObject = this.json as Record<string, unknown>;
     const ids = getArray(jsonObject, 'id').map((id) => id as string);
     const abstractId = getArray(jsonObject, 'abstract').map((id) => id as string);
+
     return [...ids, ...abstractId];
   }
 

@@ -22,6 +22,7 @@ export class FuelExplosion extends CddaSubItem {
     this.factor = getNumber(jsonObject, 'factor');
     this.sizeFactor = getNumber(jsonObject, 'size_factor');
     this.fiery = getBoolean(jsonObject, 'fiery');
+
     return this;
   }
 

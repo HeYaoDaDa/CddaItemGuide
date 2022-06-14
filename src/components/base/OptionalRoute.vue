@@ -12,6 +12,7 @@
 
 <script setup lang="ts">
 import { RouteLocationRaw } from 'vue-router';
+
 const props = defineProps<{
   content?: string | number | boolean;
   route?: RouteLocationRaw;

@@ -17,7 +17,9 @@ export class ToolComponent extends CddaSubItem {
 
   parseJson(jsonObject: [string, number, string | undefined]) {
     this.count = jsonObject[1];
+
     const flag = jsonObject[2];
+
     if (flag) {
       this.requirement = flag.toLowerCase() === 'list';
       this.noRecoverable = flag.toLowerCase() === 'no_recover';
@@ -25,7 +27,9 @@ export class ToolComponent extends CddaSubItem {
       this.requirement = false;
       this.noRecoverable = false;
     }
+
     this.name = CddaItemRef.init(jsonObject[0], this.requirement ? jsonTypes.requirement : jsonTypes.item);
+
     return this;
   }
 

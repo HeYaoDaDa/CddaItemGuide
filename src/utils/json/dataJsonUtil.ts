@@ -10,6 +10,7 @@ export function getOptionalCddaSubItem<T extends CddaSubItem>(
   ...extend: unknown[]
 ): T | undefined {
   const optionalUnknown = getOptionalUnknown(jsonObject, key);
+
   return initCddaSubItemByJson(optionalUnknown, ins, ...extend);
 }
 
@@ -29,6 +30,7 @@ export function getOptionalCddaSubItemUseVersionFactory(
   ...extend: unknown[]
 ): CddaSubItem | undefined {
   const cddaSubItem = factory.getProduct();
+
   return getOptionalCddaSubItem(jsonObject, key, cddaSubItem, ...extend);
 }
 
@@ -39,6 +41,7 @@ export function getCddaSubItemUseVersionFactory(
   ...extend: unknown[]
 ): CddaSubItem {
   const cddaSubItem = factory.getProduct();
+
   return getCddaSubItem(jsonObject, key, cddaSubItem, ...extend);
 }
 

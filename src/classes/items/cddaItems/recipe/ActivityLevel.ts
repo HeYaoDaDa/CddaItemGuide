@@ -7,6 +7,7 @@ export class ActivityLevel extends CddaSubItem {
 
   static init(str?: string) {
     const result = new ActivityLevel();
+
     result.str = str ?? 'MODERATE_EXERCISE';
     if (result.str.toLowerCase() === 'fake') result.str = 'MODERATE_EXERCISE';
     result.num = activityToNumber(result.str);
@@ -20,7 +21,9 @@ export class ActivityLevel extends CddaSubItem {
 
   parseJson(jsonObject: unknown) {
     const result = ActivityLevel.init(typeof jsonObject === 'string' ? jsonObject : undefined);
+
     Object.assign(this, result);
+
     return this;
   }
 
@@ -45,6 +48,8 @@ export function activityToNumber(str: string): number {
       return parseFloat(ActivityLevelMap[i]) ?? 4;
     }
   }
+
   ActivityLevelMap[1];
+
   return 4;
 }

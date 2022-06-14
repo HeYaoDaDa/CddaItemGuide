@@ -24,6 +24,7 @@ export class Fuel extends CddaSubItem {
     this.explosionData = getOptionalCddaSubItem(jsonObject, 'explosion_data', new FuelExplosion());
     this.pumpTerrain = getOptionalCddaSubItem(jsonObject, 'pump_terrain', new CddaItemRef(), jsonTypes.terrain);
     this.isPerpetualFuel = getBoolean(jsonObject, 'perpetual');
+
     return this;
   }
 

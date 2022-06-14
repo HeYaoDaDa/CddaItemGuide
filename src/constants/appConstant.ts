@@ -29,6 +29,7 @@ interface SelectOption {
 
 export const LANGUAGE_OPTIONS: SelectOption[] = [
   { value: 'en-US', label: 'English' },
+
   // { value: 'ar', label: 'العربية' },
   // { value: 'cs', label: 'Český Jazyk' },
   // { value: 'da', label: 'Dansk' },
@@ -52,5 +53,6 @@ export const LANGUAGE_OPTIONS: SelectOption[] = [
   // { value: 'tr', label: 'Türkçe' },
   // { value: 'uk-UA', label: 'український' },
   { value: 'zh-CN', label: '中文 (天朝)' },
+
   // { value: 'zh-TW', label: '中文 (台灣)' },
 ];

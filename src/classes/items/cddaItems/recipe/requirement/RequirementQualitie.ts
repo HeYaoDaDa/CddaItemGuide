@@ -20,6 +20,7 @@ export class RequirementQualitie extends CddaSubItem {
     this.name = getCddaSubItem(jsonObject, 'id', new CddaItemRef(), jsonTypes.quality);
     this.level = getNumber(jsonObject, 'level', 1);
     this.amount = getNumber(jsonObject, 'amount', 1);
+
     return this;
   }
 

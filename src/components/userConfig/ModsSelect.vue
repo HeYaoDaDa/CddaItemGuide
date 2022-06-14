@@ -9,18 +9,18 @@ import { computed } from 'vue';
 
 const userConfig = useUserConfigStore();
 const configOptions = useConfigOptionsStore();
-
 const options = computed(() => {
   const result = new Array<{ label: string; value: string }>();
+
   configOptions.mods.forEach((mod) => {
     result.push({
       label: mod.name.translate(),
       value: mod.id,
     });
   });
+
   return result;
 });
-
 const selectedMods = computed({
   get: () => userConfig.modIds,
   set: (val) => {

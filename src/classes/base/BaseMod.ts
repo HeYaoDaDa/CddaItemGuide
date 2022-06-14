@@ -17,6 +17,7 @@ export class BaseMod {
 
   constructor(jsonItem: JsonItem) {
     const jsonObject = jsonItem.json;
+
     this.id = getString(jsonObject, 'id');
     this.name = getCddaSubItem(jsonObject, 'name', new GettextString());
     this.obsolete = getBoolean(jsonObject, 'obsolete');
@@ -26,10 +27,13 @@ export class BaseMod {
   getDependencyMods() {
     if (this.dependcncyMods) return this.dependcncyMods;
     const result = new Array<BaseMod>();
+
     if (isNotEmpty(this.dependencies)) {
       const configOptions = useConfigOptionsStore();
+
       this.dependencies.forEach((dependencyModId) => {
         const dependencyMod = configOptions.findModById(dependencyModId);
+
         if (dependencyMod) {
           result.push(dependencyMod, ...dependencyMod.getDependencyMods());
         } else {
@@ -37,6 +41,7 @@ export class BaseMod {
         }
       });
     }
+
     return result.reverse();
   }
 }

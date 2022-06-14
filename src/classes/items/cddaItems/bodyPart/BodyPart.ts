@@ -30,6 +30,7 @@ export class BodyPart extends CddaItem<BodyPartData> {
     if (this.data.accusativeMultiple) name += '/' + this.data.accusativeMultiple.translate();
     name += '/' + this.data.heading.translate();
     if (this.data.headingMultiple) name += '/' + this.data.headingMultiple.translate();
+
     return name;
   }
 

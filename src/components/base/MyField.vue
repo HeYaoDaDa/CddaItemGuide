@@ -44,6 +44,7 @@ const props = defineProps<{
 const show = computed(() => {
   if (props.forceShow) return true;
   if (Array.isArray(props.content) && props.content.length === 0) return false;
+
   return true;
 });
 </script>

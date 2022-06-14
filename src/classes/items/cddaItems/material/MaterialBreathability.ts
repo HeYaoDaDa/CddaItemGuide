@@ -7,8 +7,10 @@ export class MaterialBreathability extends CddaSubItem {
 
   static init(str?: string) {
     const result = new MaterialBreathability();
+
     result.str = str ?? BreathabilityRating[0];
     result.num = breathabilityToNumber(result.str);
+
     return result;
   }
 
@@ -20,7 +22,9 @@ export class MaterialBreathability extends CddaSubItem {
 
   parseJson(jsonObject: unknown) {
     const result = MaterialBreathability.init(typeof jsonObject === 'string' ? jsonObject : undefined);
+
     Object.assign(this, result);
+
     return this;
   }
 
@@ -41,9 +45,11 @@ export enum BreathabilityRating {
 export function breathabilityToNumber(str: string): number {
   for (const i in BreathabilityRating) {
     const isValueProperty = parseInt(i, 10) >= 0;
+
     if (!isValueProperty && str.toUpperCase() === i) {
       return parseInt(BreathabilityRating[i], 10) ?? 0;
     }
   }
+
   return 0;
 }

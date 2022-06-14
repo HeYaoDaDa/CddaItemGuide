@@ -10,6 +10,5 @@ import { h } from 'vue';
 const props = defineProps<{
   cddaItem: CddaItem<object>;
 }>();
-
 const myRender = h(MergerVNode, {}, () => props.cddaItem.view());
 </script>

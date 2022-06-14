@@ -18,13 +18,13 @@ import MyTextPart from './MyTextPart.vue';
 //TODO:https://github.com/vuejs/core/issues/4294
 const props = defineProps<{
   content?: ContentProps;
+
   //TODO: should as RouteLocationRaw | RouteLocationRaw[]
   route?: object | RouteLocationRaw[];
   separator?: string;
   p?: boolean;
   li?: boolean;
 }>();
-
 const normalContent = computed(() => toArray(props.content));
 const normalRoute = computed(() => toArray(props.route));
 </script>

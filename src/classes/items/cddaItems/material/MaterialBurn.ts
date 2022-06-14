@@ -24,6 +24,7 @@ export class MaterialBurn extends CddaSubItem {
     this.fuel = getNumber(jsonObject, 'fuel');
     this.smoke = getNumber(jsonObject, 'smoke');
     this.burn = getNumber(jsonObject, 'burn');
+
     return this;
   }
 

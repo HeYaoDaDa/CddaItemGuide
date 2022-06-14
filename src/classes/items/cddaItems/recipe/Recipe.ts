@@ -43,17 +43,14 @@ export class Recipe extends CddaItem<RecipeData> {
       .getArray('decomp_learn', <[string, number | undefined]>{})
       .map((value) => [CddaItemRef.init(jsonTypes.skill, value[0]), value[1] ?? 0]);
     data.bookLearn = parseBookLearn(this.json);
-
     data.proficiencies = util.getArray('proficiencies', new RecipeProficiency());
     data.requirement = new Requirement();
     data.requirement.json = this.json;
     data.requirement.loadJson();
-
     data.usings = util.getArray('using', <[string, number | undefined]>{}).map((value) => {
       return { requirment: CddaItemRef.init(jsonTypes.requirement, value[0]), count: value[1] ?? 1 };
     });
     data.flags = util.getArray('flags', new CddaItemRef(), [], jsonTypes.flag);
-
     data.contained = util.getBoolean('contained');
     data.sealed = util.getBoolean('sealed');
     data.container = util.getCddaItemRef('container', jsonTypes.item);
@@ -119,6 +116,7 @@ export function parseBookLearn(jsonObject: unknown) {
     | Record<string, BookLearnJson>
     | [string, number | undefined][];
   const bookLearn: { book: CddaItemRef; level: number; name: string | undefined; hidden: boolean }[] = [];
+
   if (bookLearnJson !== undefined) {
     if (Array.isArray(bookLearnJson)) {
       bookLearnJson.forEach((bookLearnTuple) =>
@@ -132,6 +130,7 @@ export function parseBookLearn(jsonObject: unknown) {
     } else {
       for (const bookId in bookLearnJson) {
         const bookLearnObject = bookLearnJson[bookId];
+
         bookLearn.push({
           book: CddaItemRef.init(bookId, jsonTypes.item),
           level: bookLearnObject.skill_level,
@@ -141,6 +140,7 @@ export function parseBookLearn(jsonObject: unknown) {
       }
     }
   }
+
   return bookLearn;
 
   interface BookLearnJson {

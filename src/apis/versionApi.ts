@@ -6,5 +6,6 @@ export async function getVersions(): Promise<Version[]> {
   // const response = await api.get(`${HOST}/${API_VERSION}/versions`);
   //TODO: Dummy url
   const response = await api.get('https://raw.githubusercontent.com/HeYaoDaDa/CddaFile/master/versions.json');
+
   return response.data;
 }
