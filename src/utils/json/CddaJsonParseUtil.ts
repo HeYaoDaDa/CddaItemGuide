@@ -1,5 +1,5 @@
 import { CddaItem, CddaSubItem } from 'src/classes';
-import { AbstractCddaSubItemFactory } from 'src/classes/factory/cddaSubItem/AbstractCddaSubItemFactory';
+import { AbstractCddaSubItemVersionFactory } from 'src/classes/factory/cddaSubItem/AbstractCddaSubItemFactory';
 import { CddaItemRef, GettextString, Volume, Length, Time, Weight } from 'src/classes/items';
 import { isEqual, isNotEmpty, replaceArray } from 'src/utils';
 import {
@@ -117,13 +117,17 @@ export default class {
 
   getOptionalCddaSubItemUseVersionFactory(
     key: string,
-    factory: AbstractCddaSubItemFactory,
+    factory: AbstractCddaSubItemVersionFactory,
     ...extend: unknown[]
   ): CddaSubItem | undefined {
     return getOptionalCddaSubItemUseVersionFactory(this.jsonObject, key, factory, ...extend);
   }
 
-  getCddaSubItemUseVersionFactory(key: string, factory: AbstractCddaSubItemFactory, ...extend: unknown[]): CddaSubItem {
+  getCddaSubItemUseVersionFactory(
+    key: string,
+    factory: AbstractCddaSubItemVersionFactory,
+    ...extend: unknown[]
+  ): CddaSubItem {
     return getCddaSubItemUseVersionFactory(this.jsonObject, key, factory, ...extend);
   }
 

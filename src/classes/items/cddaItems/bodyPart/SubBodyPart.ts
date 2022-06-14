@@ -26,10 +26,6 @@ export class SubBodyPart extends CddaItem<SubBodyPartData> {
     data.side = util.getNumber('side');
   }
 
-  doFinalize(): void {
-    return;
-  }
-
   doView(data: SubBodyPartData, util: ViewUtil): void {
     const cardUtil = util.addCard({ cddaItem: this });
     if (data.nameMultiple) cardUtil.addField({ label: 'nameMultiple', content: data.nameMultiple });

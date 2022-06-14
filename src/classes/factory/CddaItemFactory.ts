@@ -1,17 +1,17 @@
-import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { JsonItem } from 'src/classes';
-import { AbstractCddaItemFactory } from './cddaItem/AbstractCddaItemFactory';
+import { jsonTypes } from 'src/constants/jsonTypesConstant';
+import { AbstractCddaItemVersionFactory } from './cddaItem/AbstractCddaItemVersionFactory';
 import { DummyVersionFactory } from './cddaItem/DummyVersionFactory';
-import { ModinfoFactory } from './cddaItem/ModinfoFactory';
-import { ProficiencyFactory } from './cddaItem/ProficiencyFactory';
+import { ModinfoVersionFactory } from './cddaItem/ModinfoVersionFactory';
+import { ProficiencyVersionFactory } from './cddaItem/ProficiencyVersionFactory';
 
 class CddaItemFactory {
-  factoryMap = new Map<string, AbstractCddaItemFactory>([
-    [jsonTypes.modInfo, new ModinfoFactory()],
-    [jsonTypes.proficiency, new ProficiencyFactory()],
+  factoryMap = new Map<string, AbstractCddaItemVersionFactory>([
+    [jsonTypes.modInfo, new ModinfoVersionFactory()],
+    [jsonTypes.proficiency, new ProficiencyVersionFactory()],
   ]);
 
-  getCddaItemVersionFactory(jsonItem: JsonItem): AbstractCddaItemFactory {
+  getCddaItemVersionFactory(jsonItem: JsonItem): AbstractCddaItemVersionFactory {
     return this.factoryMap.get(jsonItem.jsonType) ?? new DummyVersionFactory();
   }
 }
