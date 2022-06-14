@@ -73,8 +73,8 @@ export class Modinfo extends CddaItem<ModinfoData> {
     }
   }
 
-  doResetDescription() {
-    this.description = this.data.description.translate();
+  doGetDescription() {
+    return this.data.description.translate();
   }
 
   doView(data: ModinfoData, util: ViewUtil): void {

@@ -2,12 +2,12 @@
   <router-link :to="props.cddaItem.getRoute()">
     <q-card width="100%">
       <p>
-        <span>{{ props.cddaItem.name }}</span>
+        <span>{{ props.cddaItem.getRefName() }}</span>
 
         <q-badge>{{ props.cddaItem.getMod().name.translate() }}</q-badge>
       </p>
 
-      <p v-if="props.cddaItem.description">{{ props.cddaItem.description }}</p>
+      <p v-if="props.cddaItem.getDescription()">{{ props.cddaItem.getDescription() }}</p>
     </q-card>
   </router-link>
 </template>

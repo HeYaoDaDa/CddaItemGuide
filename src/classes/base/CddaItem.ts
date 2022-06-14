@@ -32,8 +32,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
   //outside set id
   id!: string;
 
-  //use in search
-  //ref show name
+  //only use in search
   refName!: string;
   description?: string;
   weight = 0;
@@ -41,7 +40,6 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
 
   //cache
   mod?: BaseMod;
-  name?: string;
 
   /**
    * init before add to indexer
@@ -104,7 +102,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
     const name = this.doGetName();
 
     this.refName = refName ?? name ?? this.id;
-    this.doResetDescription();
+    this.description = this.doGetDescription();
   }
 
   /**
@@ -132,27 +130,28 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
   }
 
   /**
-   * cddaItem name, read cache
+   * cddaItem name
    */
 
   getName(): string {
-    if (this.name) return this.name;
-    const name = this.doGetName();
+    return this.doGetName() ?? this.id;
+  }
 
-    this.name = name ?? this.id;
+  /**
+   * cddaItem name
+   */
 
-    return this.name;
+  getDescription(): string | undefined {
+    this.description = this.doGetDescription();
+
+    return this.description;
   }
 
   /**
    * cddaItem ref name, also use in search, read cache
    */
   getRefName(): string {
-    if (this.refName) return this.refName;
-    const refName = this.doGetRefName();
-
-    if (refName) this.refName = refName;
-    else this.refName = this.getName();
+    this.refName = this.doGetRefName() ?? this.getName();
 
     return this.refName;
   }
@@ -209,7 +208,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
    * update search param description
    * also use in myCard description
    */
-  doResetDescription(): void {
+  doGetDescription(): string | undefined {
     return;
   }
 

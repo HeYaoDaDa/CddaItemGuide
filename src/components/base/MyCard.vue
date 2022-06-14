@@ -16,7 +16,7 @@
           <q-badge :class="['text-weight-bold', 'text-h6']">{{ props.cddaItem.getMod().name.translate() }}</q-badge>
         </p>
 
-        <my-text v-if="props.cddaItem.description" :content="props.cddaItem.description" />
+        <my-text v-if="props.cddaItem.getDescription()" :content="props.cddaItem.getDescription()" />
       </template>
 
       <slot name="befor" />

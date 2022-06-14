@@ -36,7 +36,7 @@ const quasar = useQuasar();
 const i18n = useI18n();
 const searchResultLists = reactive(new Array<Array<CddaItem<object>>>());
 const route = useRoute();
-const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['name', 'description'] });
+const searcher = new Fuse(cddaItemIndexer.searchs, { keys: ['refName', 'description'] });
 const userConfig = useUserConfigStore();
 
 function updateSearchResultItems(newRoute: typeof route) {

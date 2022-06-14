@@ -27,8 +27,8 @@ export class Proficiency extends CddaItem<ProficiencyData> {
     return this.data.name.translate();
   }
 
-  doResetDescription(): void {
-    this.description = this.data.description.translate();
+  doGetDescription() {
+    return this.data.description.translate();
   }
 
   doView(data: ProficiencyData, util: ViewUtil): void {
