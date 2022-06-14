@@ -28,7 +28,7 @@ import {
   getWeight,
 } from './dataJsonUtil';
 
-export default class {
+export class CddaJsonParseUtil {
   relative?: Record<string, number>;
   proportional?: Record<string, number>;
   extend?: object;

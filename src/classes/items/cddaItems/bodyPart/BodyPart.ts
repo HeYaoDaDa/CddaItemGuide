@@ -1,9 +1,9 @@
 import { ColDef, ColGroupDef } from 'ag-grid-community';
-import { CddaItem } from 'src/classes';
+import { CddaItem } from 'src/classes/base/CddaItem';
 import { CddaItemRef, GettextString } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
-import CddaJsonParseUtil from 'src/utils/json/CddaJsonParseUtil';
-import ViewUtil from 'src/utils/ViewUtil';
+import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class BodyPart extends CddaItem<BodyPartData> {
   data = {} as BodyPartData;
@@ -22,18 +22,6 @@ export class BodyPart extends CddaItem<BodyPartData> {
     return this.data.name.translate();
   }
 
-  doGetRefName() {
-    let name = '';
-    if (this.data.nameMultiple) name += this.data.nameMultiple.translate() + '/';
-    name += this.data.name.translate();
-    name += '/' + this.data.accusative.translate();
-    if (this.data.accusativeMultiple) name += '/' + this.data.accusativeMultiple.translate();
-    name += '/' + this.data.heading.translate();
-    if (this.data.headingMultiple) name += '/' + this.data.headingMultiple.translate();
-
-    return name;
-  }
-
   doView(data: BodyPartData, util: ViewUtil): void {
     const cardUtil = util.addCard({ cddaItem: this });
     if (data.nameMultiple) cardUtil.addField({ label: 'nameMultiple', content: data.nameMultiple });
@@ -46,6 +34,18 @@ export class BodyPart extends CddaItem<BodyPartData> {
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
     return [];
+  }
+
+  doGetRefName() {
+    let name = '';
+    if (this.data.nameMultiple) name += this.data.nameMultiple.translate() + '/';
+    name += this.data.name.translate();
+    name += '/' + this.data.accusative.translate();
+    if (this.data.accusativeMultiple) name += '/' + this.data.accusativeMultiple.translate();
+    name += '/' + this.data.heading.translate();
+    if (this.data.headingMultiple) name += '/' + this.data.headingMultiple.translate();
+
+    return name;
   }
 }
 

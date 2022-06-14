@@ -1,7 +1,7 @@
 import { isEqual } from 'lodash';
 import { CddaSubItem } from 'src/classes';
 import { getBoolean, getNumber } from 'src/utils/json';
-import ViewUtil from 'src/utils/ViewUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class FuelExplosion extends CddaSubItem {
   chanceHot!: number;

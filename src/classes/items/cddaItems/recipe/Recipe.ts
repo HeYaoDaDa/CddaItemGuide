@@ -3,7 +3,7 @@ import { CddaItem } from 'src/classes';
 import { CddaItemRef, Time } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { getOptionalString, getOptionalUnknown } from 'src/utils/json';
-import CddaJsonParseUtil from 'src/utils/json/CddaJsonParseUtil';
+import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
 import { ActivityLevel } from './ActivityLevel';
 import { RecipeProficiency } from './RecipeProficiency';
 import { normalizeRequirmentInterface, Requirement } from './requirement/Requirement';

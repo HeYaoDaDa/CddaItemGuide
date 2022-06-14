@@ -6,11 +6,11 @@ import { JsonItem } from 'src/classes/base/JsonItem';
 import { useConfigOptionsStore } from 'src/stores/configOptions';
 import { itemType2JsonType, jsonType2ItemType } from 'src/utils';
 import { getArray, getOptionalString } from 'src/utils/json';
-import CddaJsonParseUtil from 'src/utils/json/CddaJsonParseUtil';
-import ViewUtil from 'src/utils/ViewUtil';
+import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 import { VNode } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
-import ViewableInterface from './ViewableInterface';
+import { ViewableInterface } from './ViewableInterface';
 
 export abstract class CddaItem<T extends object> implements ViewableInterface {
   finalized = false;

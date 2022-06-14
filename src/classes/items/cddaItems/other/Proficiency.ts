@@ -2,8 +2,8 @@ import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { CddaItem } from 'src/classes';
 import { CddaItemRef, GettextString, Time } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
-import CddaJsonParseUtil from 'src/utils/json/CddaJsonParseUtil';
-import ViewUtil from 'src/utils/ViewUtil';
+import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class Proficiency extends CddaItem<ProficiencyData> {
   doLoadJson(data: ProficiencyData, util: CddaJsonParseUtil): void {

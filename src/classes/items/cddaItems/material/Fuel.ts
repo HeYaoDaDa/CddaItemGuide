@@ -2,7 +2,7 @@ import { isEqual } from 'lodash';
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { getOptionalCddaSubItem } from 'src/utils/json/dataJsonUtil';
-import ViewUtil from 'src/utils/ViewUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 import { CddaItemRef } from 'src/classes/items';
 import { FuelExplosion } from './FuelExplosion';
 import { getBoolean, getNumber } from 'src/utils/json';

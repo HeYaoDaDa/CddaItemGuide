@@ -3,7 +3,7 @@ import { CddaItemRef } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { getNumber } from 'src/utils/json';
 import { getCddaSubItem } from 'src/utils/json/dataJsonUtil';
-import ViewUtil from 'src/utils/ViewUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class RequirementQualitie extends CddaSubItem {
   name!: CddaItemRef;

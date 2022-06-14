@@ -4,7 +4,7 @@ import MyText from 'components/base/MyText/MyText.vue';
 import { MyCardProp, MyFieldProp, MyTextProp } from 'src/classes';
 import { h, shallowReactive, VNode } from 'vue';
 
-export default class ViewUtil {
+export class ViewUtil {
   result: VNode[] = shallowReactive([]);
 
   add(v: VNode) {

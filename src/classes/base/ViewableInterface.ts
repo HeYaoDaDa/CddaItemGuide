@@ -3,7 +3,7 @@ import { VNode } from 'vue';
 /**
  * Viewable Interface
  */
-export default interface ViewableInterface {
+export interface ViewableInterface {
   /**
    * view current object
    */

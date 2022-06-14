@@ -3,7 +3,7 @@ import { CddaSubItem } from 'src/classes/base/CddaSubItem';
 import { Volume } from 'src/classes/items';
 import { getBoolean, getNumber } from 'src/utils/json';
 import { getVolume } from 'src/utils/json/dataJsonUtil';
-import ViewUtil from 'src/utils/ViewUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class MaterialBurn extends CddaSubItem {
   immune!: boolean;

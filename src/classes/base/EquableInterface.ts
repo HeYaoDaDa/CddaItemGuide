@@ -1,7 +1,7 @@
 /**
  * Equable Interface
  */
-export default interface EquableInterface {
+export interface EquableInterface {
   /**
    * equal current and param
    * @param param param

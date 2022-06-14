@@ -5,7 +5,7 @@ import { Version } from 'src/classes';
 /**
  * abstract version factory class
  */
-export default abstract class<T extends object> {
+export abstract class AbstractVersionFactory<T extends object> {
   /**
    * get product by param
    * @param version param

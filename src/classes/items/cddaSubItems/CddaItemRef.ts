@@ -1,6 +1,6 @@
 import { myLogger } from 'src/boot/logger';
 import { cddaItemIndexer } from 'src/CddaItemIndexer';
-import ViewUtil from 'src/utils/ViewUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 import { RouteLocationRaw } from 'vue-router';
 import { CddaItem } from 'src/classes';
 import { CddaSubItem } from 'src/classes';

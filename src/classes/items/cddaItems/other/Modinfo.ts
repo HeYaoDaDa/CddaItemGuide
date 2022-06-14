@@ -4,8 +4,8 @@ import { CddaItem } from 'src/classes';
 import { CddaItemRef, GettextString } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { readableData } from 'src/utils';
-import CddaJsonParseUtil from 'src/utils/json/CddaJsonParseUtil';
-import ViewUtil from 'src/utils/ViewUtil';
+import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class Modinfo extends CddaItem<ModinfoData> {
   data = {} as ModinfoData;

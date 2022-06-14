@@ -1,5 +1,5 @@
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
-import ViewUtil from 'src/utils/ViewUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class ActivityLevel extends CddaSubItem {
   str!: string;

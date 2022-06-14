@@ -1,7 +1,7 @@
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
 import { CddaItemRef } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
-import ViewUtil from 'src/utils/ViewUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class ToolComponent extends CddaSubItem {
   name!: CddaItemRef;

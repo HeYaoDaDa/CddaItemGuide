@@ -1,5 +1,5 @@
 import { CddaSubItem } from 'src/classes';
-import ViewUtil from 'src/utils/ViewUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class Volume extends CddaSubItem {
   value = 0;

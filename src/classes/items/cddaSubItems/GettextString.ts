@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash';
 import { globalGettext } from 'src/gettext';
-import ViewUtil from 'src/utils/ViewUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 import { CddaSubItem } from 'src/classes';
 
 export class GettextString extends CddaSubItem {
