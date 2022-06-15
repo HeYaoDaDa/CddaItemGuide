@@ -1,6 +1,6 @@
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
-import { MaterialBreathability } from 'src/classes/items/cddaItems/material/MaterialBreathability';
-import { AbstractCddaSubItemVersionFactory } from '../AbstractCddaSubItemFactory';
+import { AbstractCddaSubItemVersionFactory } from 'src/classes/items/base/AbstractCddaSubItemFactory';
+import { MaterialBreathability } from './MaterialBreathability';
 
 class MaterialBreathabilityVersionFactory extends AbstractCddaSubItemVersionFactory {
   doGetProduct(): CddaSubItem {

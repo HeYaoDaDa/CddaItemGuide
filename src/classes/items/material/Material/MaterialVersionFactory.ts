@@ -1,6 +1,6 @@
 import { CddaItem } from 'src/classes/base/CddaItem';
-import { Material } from 'src/classes/items/cddaItems/material/Material';
-import { AbstractCddaItemVersionFactory } from '../AbstractCddaItemVersionFactory';
+import { AbstractCddaItemVersionFactory } from 'src/classes/items/base/AbstractCddaItemVersionFactory';
+import { Material } from './Material';
 
 class MaterialVersionFactory extends AbstractCddaItemVersionFactory {
   doGetProduct(): CddaItem<object> {

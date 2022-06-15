@@ -1,6 +1,6 @@
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
-import { MaterialBurn } from 'src/classes/items/cddaSubItems/material/MaterialBurn';
-import { AbstractCddaSubItemVersionFactory } from '../AbstractCddaSubItemFactory';
+import { AbstractCddaSubItemVersionFactory } from 'src/classes/items/base/AbstractCddaSubItemFactory';
+import { MaterialBurn } from './MaterialBurn';
 
 class MaterialBurnVersionFactory extends AbstractCddaSubItemVersionFactory {
   doGetProduct(): CddaSubItem {

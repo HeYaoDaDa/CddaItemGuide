@@ -1,6 +1,6 @@
 import { Loading } from 'quasar';
 import { JsonItem } from 'src/classes';
-import { cddaItemFactory } from 'src/classes/factory/CddaItemFactory';
+import { cddaItemFactory } from 'src/classes/items/CddaItemFactory';
 import { cloneDeep, includes, isEmpty, itemType2JsonType, popFilter, replaceArray } from 'src/utils';
 import { ref } from 'vue';
 import { getAllJsonItems } from './apis/jsonItemApi';

@@ -1,6 +1,6 @@
 import { CddaSubItem } from 'src/classes';
-import { AbstractCddaSubItemVersionFactory } from 'src/classes/factory/cddaSubItem/AbstractCddaSubItemFactory';
 import { CddaItemRef, GettextString, Length, Time, Volume, Weight } from 'src/classes/items';
+import { AbstractCddaSubItemVersionFactory } from 'src/classes/items/base/AbstractCddaSubItemFactory';
 import { getOptionalUnknown, initCddaSubItemByJson } from './base';
 
 export function getOptionalCddaSubItem<T extends CddaSubItem>(

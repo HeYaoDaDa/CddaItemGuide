@@ -1,6 +1,6 @@
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
-import { fuelExplosionVersionFactory } from 'src/classes/factory/cddaSubItem/material/FuelExplosionVersionFactory';
 import { CddaItemRef } from 'src/classes/items';
+import { fuelExplosionVersionFactory } from 'src/classes/items/material/FuelExplosion/FuelExplosionVersionFactory';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { getBoolean, getNumber } from 'src/utils/json';
 import { getOptionalCddaItemRef, getOptionalCddaSubItem } from 'src/utils/json/dataJsonUtil';
@@ -23,7 +23,7 @@ export class Fuel extends CddaSubItem {
 
   doView(util: ViewUtil): void {
     util.addField({ label: 'energy', content: this.energy });
-    util.addField({ label: 'explosionData', content: this.explosionData });
+    util.addField({ label: 'explosionData', content: this.explosionData, dl: true });
     util.addField({ label: 'pumpTerrain', content: this.pumpTerrain });
     if (this.isPerpetualFuel) util.addField({ label: 'isPerpetualFuel', content: this.isPerpetualFuel });
   }

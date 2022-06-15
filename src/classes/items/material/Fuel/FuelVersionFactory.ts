@@ -1,6 +1,6 @@
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
-import { Fuel } from 'src/classes/items/cddaItems/material/Fuel';
-import { AbstractCddaSubItemVersionFactory } from '../AbstractCddaSubItemFactory';
+import { AbstractCddaSubItemVersionFactory } from '../../base/AbstractCddaSubItemFactory';
+import { Fuel } from './Fuel';
 
 class FuelVersionFactory extends AbstractCddaSubItemVersionFactory {
   doGetProduct(): CddaSubItem {

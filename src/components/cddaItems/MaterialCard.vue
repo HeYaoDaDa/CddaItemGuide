@@ -57,7 +57,7 @@
       </li>
     </my-label>
 
-    <my-field v-if="props.cddaItem.data.fuelData" label="fuel" :content="props.cddaItem.data.fuelData" />
+    <my-field v-if="props.cddaItem.data.fuelData" label="fuel" :content="props.cddaItem.data.fuelData" :dl="true" />
 
     <my-label label="burn" v-if="isNotEmpty(props.cddaItem.data.burnData)" ul>
       <li v-for="(burn, index) in props.cddaItem.data.burnData" :key="index">
@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { Material } from 'src/classes/items/cddaItems/material/Material';
+import { Material } from 'src/classes/items/material/Material/Material';
 import { isNotEmpty } from 'src/utils';
 import MyCard from '../base/MyCard.vue';
 import MyField from '../base/MyField.vue';

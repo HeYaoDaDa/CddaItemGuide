@@ -1,8 +1,8 @@
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { CddaItem, CddaSubItem } from 'src/classes';
-import { fuelVersionFactory } from 'src/classes/factory/cddaSubItem/material/FuelVersionFactory';
-import { materialBreathabilityVersionFactory } from 'src/classes/factory/cddaSubItem/material/MaterialBreathabilityVersionFactory';
-import { materialBurnVersionFactory } from 'src/classes/factory/cddaSubItem/material/MaterialBurnVersionFactory';
+import { fuelVersionFactory } from 'src/classes/items/material/Fuel/FuelVersionFactory';
+import { materialBreathabilityVersionFactory } from 'src/classes/items/material/MaterialBreathability/MaterialBreathabilityVersionFactory';
+import { materialBurnVersionFactory } from 'src/classes/items/material/MaterialBurn/MaterialBurnVersionFactory';
 import { CddaItemRef, GettextString } from 'src/classes/items';
 import MaterialCardVue from 'src/components/cddaItems/MaterialCard.vue';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
