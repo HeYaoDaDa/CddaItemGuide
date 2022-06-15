@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash';
 import { CddaSubItem } from 'src/classes';
 import { getBoolean, getNumber } from 'src/utils/json';
 import { ViewUtil } from 'src/utils/ViewUtil';
@@ -9,12 +8,6 @@ export class FuelExplosion extends CddaSubItem {
   factor!: number;
   sizeFactor!: number;
   fiery!: boolean;
-
-  equal(v: object): boolean {
-    if (v === undefined) return false;
-    if (v instanceof FuelExplosion) return isEqual(this, v);
-    else return false;
-  }
 
   parseJson(jsonObject: unknown) {
     this.chanceHot = getNumber(jsonObject, 'chance_hot');

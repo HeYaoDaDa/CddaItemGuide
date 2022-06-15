@@ -1,28 +1,21 @@
-import { isEqual } from 'lodash';
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
-import { jsonTypes } from 'src/constants/jsonTypesConstant';
-import { getOptionalCddaSubItem } from 'src/utils/json/dataJsonUtil';
-import { ViewUtil } from 'src/utils/ViewUtil';
+import { fuelExplosionVersionFactory } from 'src/classes/factory/cddaSubItem/material/FuelExplosionVersionFactory';
 import { CddaItemRef } from 'src/classes/items';
-import { FuelExplosion } from './FuelExplosion';
+import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { getBoolean, getNumber } from 'src/utils/json';
+import { getOptionalCddaItemRef, getOptionalCddaSubItem } from 'src/utils/json/dataJsonUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 
 export class Fuel extends CddaSubItem {
   energy!: number;
-  explosionData?: FuelExplosion;
+  explosionData?: CddaSubItem;
   pumpTerrain?: CddaItemRef;
   isPerpetualFuel!: boolean;
 
-  equal(v: object): boolean {
-    if (v === undefined) return false;
-    if (v instanceof Fuel) return isEqual(this, v);
-    else return false;
-  }
-
   parseJson(jsonObject: unknown) {
     this.energy = getNumber(jsonObject, 'energy');
-    this.explosionData = getOptionalCddaSubItem(jsonObject, 'explosion_data', new FuelExplosion());
-    this.pumpTerrain = getOptionalCddaSubItem(jsonObject, 'pump_terrain', new CddaItemRef(), jsonTypes.terrain);
+    this.explosionData = getOptionalCddaSubItem(jsonObject, 'explosion_data', fuelExplosionVersionFactory.getProduct());
+    this.pumpTerrain = getOptionalCddaItemRef(jsonObject, 'pump_terrain', jsonTypes.terrain);
     this.isPerpetualFuel = getBoolean(jsonObject, 'perpetual');
 
     return this;

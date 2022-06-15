@@ -4,6 +4,7 @@ import { AbstractCddaItemVersionFactory } from './cddaItem/AbstractCddaItemVersi
 import { BodyPartVersionFactory } from './cddaItem/bodyPart/BodyPartVersionFactory';
 import { SubBodyPartVersionFactory } from './cddaItem/bodyPart/SubBodyPartVersionFactory';
 import { DummyVersionFactory } from './cddaItem/DummyVersionFactory';
+import { materilaVersionFactory } from './cddaItem/material/MaterialVersionFactory';
 import { ModinfoVersionFactory } from './cddaItem/ModinfoVersionFactory';
 import { ProficiencyVersionFactory } from './cddaItem/ProficiencyVersionFactory';
 
@@ -13,6 +14,7 @@ class CddaItemFactory {
     [jsonTypes.proficiency, new ProficiencyVersionFactory()],
     [jsonTypes.bodyPart, new BodyPartVersionFactory()],
     [jsonTypes.subBodyPart, new SubBodyPartVersionFactory()],
+    [jsonTypes.material, materilaVersionFactory],
   ]);
 
   getCddaItemVersionFactory(jsonItem: JsonItem): AbstractCddaItemVersionFactory {

@@ -1,5 +1,8 @@
 import { ColDef, ColGroupDef } from 'ag-grid-community';
-import { CddaItem } from 'src/classes';
+import { CddaItem, CddaSubItem } from 'src/classes';
+import { fuelVersionFactory } from 'src/classes/factory/cddaSubItem/material/FuelVersionFactory';
+import { materialBreathabilityVersionFactory } from 'src/classes/factory/cddaSubItem/material/MaterialBreathabilityVersionFactory';
+import { materialBurnVersionFactory } from 'src/classes/factory/cddaSubItem/material/MaterialBurnVersionFactory';
 import { CddaItemRef, GettextString } from 'src/classes/items';
 import MaterialCardVue from 'src/components/cddaItems/MaterialCard.vue';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
@@ -7,9 +10,6 @@ import { isEmpty } from 'src/utils';
 import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { h } from 'vue';
-import { Fuel } from './Fuel';
-import { MaterialBreathability } from './MaterialBreathability';
-import { MaterialBurn } from './MaterialBurn';
 
 export class Material extends CddaItem<MaterialData> {
   data = {} as MaterialData;
@@ -34,44 +34,39 @@ export class Material extends CddaItem<MaterialData> {
     data.specificTeatLiquid = util.getNumber('specific_heat_solid', 2.108);
     data.latentHeat = util.getNumber('latent_heat', 334);
     data.freezePoint = util.getNumber('freezing_point');
-    //FIXME: useFactory
-    data.breathability = util.getCddaSubItem('breathability', new MaterialBreathability());
-    data.salvagedInto = util.getCddaItemRef('salvaged_into', jsonTypes.item);
-    data.repairedWith = util.getCddaItemRef('repaired_with', jsonTypes.item);
+    data.breathability = util.getCddaSubItem(
+      'breathability',
+      materialBreathabilityVersionFactory.getProduct().parseJson(undefined)
+    );
+    data.salvagedInto = util.getOptionalCddaItemRef('salvaged_into', jsonTypes.item);
+    data.repairedWith = util.getOptionalCddaItemRef('repaired_with', jsonTypes.item);
     data.edible = util.getBoolean('edible');
     data.rotting = util.getBoolean('rotting');
     data.soft = util.getBoolean('soft');
     data.reinforces = util.getBoolean('reinforces');
-    data.vitamins = util.getArray('vitamins', <[string, number]>{}).map((vitaminTulpe) => {
-      const vitaminName = CddaItemRef.init(vitaminTulpe[0], jsonTypes.vitamin);
-
-      return [vitaminName, vitaminTulpe[1]];
-    });
-    data.burnData = util.getArray('burn_data', new MaterialBurn());
-
-    if (isEmpty(data.burnData) && data.fireResist <= 0) {
-      data.burnData.push(new MaterialBurn().parseJson({ burn: 1 }) as MaterialBurn);
-    }
-
-    //FIXME: useFactory
-    data.fuelData = util.getOptionalCddaSubItem('fuel_data', new Fuel());
-    data.burnProducts = util.getArray('burn_products', <[string, number]>{}).map((burnProduct) => {
-      const burnProductName = CddaItemRef.init(burnProduct[0], jsonTypes.item);
-
-      return [burnProductName, burnProduct[1]];
-    });
+    data.vitamins = util
+      .getArray('vitamins', <[string, number]>{})
+      .map((vitaminTulpe) => [CddaItemRef.init(vitaminTulpe[0], jsonTypes.vitamin), vitaminTulpe[1]]);
+    data.burnData = util.getArray('burn_data', materialBurnVersionFactory.getProduct());
+    if (isEmpty(data.burnData) && data.fireResist <= 0)
+      data.burnData.push(materialBurnVersionFactory.getProduct().parseJson({ burn: 1 }));
+    data.fuelData = util.getOptionalCddaSubItem('fuel_data', fuelVersionFactory.getProduct());
+    data.burnProducts = util
+      .getArray('burn_products', <[string, number]>{})
+      .map((burnProduct) => [CddaItemRef.init(burnProduct[0], jsonTypes.item), burnProduct[1]]);
   }
 
   doFinalize(): void {
     this.weight = 1;
     this.isSearch = true;
   }
-  doView(data: object, util: ViewUtil): void {
+
+  doView(data: MaterialData, util: ViewUtil): void {
     util.add(h(MaterialCardVue, { cddaItem: this }));
   }
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
-    throw new Error('Method not implemented.');
+    return [];
   }
 }
 
@@ -90,7 +85,7 @@ interface MaterialData {
   chipResist: number;
 
   density: number;
-  breathability: MaterialBreathability;
+  breathability: CddaSubItem;
   windResist?: number;
 
   specificTeatLiquid: number;
@@ -105,7 +100,7 @@ interface MaterialData {
 
   sheetThickness: number;
   vitamins: [CddaItemRef, number][];
-  fuelData?: Fuel;
-  burnData: MaterialBurn[];
+  fuelData?: CddaSubItem;
+  burnData: CddaSubItem[];
   burnProducts: [CddaItemRef, number][];
 }

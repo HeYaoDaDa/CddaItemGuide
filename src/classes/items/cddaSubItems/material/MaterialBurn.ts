@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash';
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
 import { Volume } from 'src/classes/items';
 import { getBoolean, getNumber } from 'src/utils/json';
@@ -11,12 +10,6 @@ export class MaterialBurn extends CddaSubItem {
   fuel!: number;
   smoke!: number;
   burn!: number;
-
-  equal(v: object): boolean {
-    if (v === undefined) return false;
-    if (v instanceof MaterialBurn) return isEqual(this, v);
-    else return false;
-  }
 
   parseJson(jsonObject: unknown) {
     this.immune = getBoolean(jsonObject, 'immune');
