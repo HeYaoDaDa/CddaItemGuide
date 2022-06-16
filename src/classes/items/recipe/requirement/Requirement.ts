@@ -1,24 +1,20 @@
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { cloneDeep } from 'lodash';
 import { globalI18n } from 'src/boot/i18n';
-import { CddaItem } from 'src/classes';
+import { CddaItem, CddaSubItem } from 'src/classes';
 import { CddaItemRef } from 'src/classes/items';
 import { isNotEmpty } from 'src/utils';
 import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { ItemComponent } from './ItemComponent';
-import { RequirementQualitie } from './RequirementQualitie';
+import { requirementQualitieVersionFactory } from './requirementQualitie/RequirementQualitieVersionFactory';
 import { ToolComponent } from './ToolComponent';
 
 export class Requirement extends CddaItem<RequirementData> {
   doLoadJson(data: RequirementData, util: CddaJsonParseUtil): void {
-    data.qualities = util.getArray('qualities', [new RequirementQualitie()]);
+    data.qualities = util.getArray('qualities', [requirementQualitieVersionFactory.getProduct()]);
     data.tools = util.getArray('tools', [new ToolComponent()]);
     data.components = util.getArray('components', [new ItemComponent()]);
-  }
-
-  doFinalize(): void {
-    return;
   }
 
   doGetName(): string {
@@ -54,74 +50,70 @@ export class Requirement extends CddaItem<RequirementData> {
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
     return [];
   }
+
+  getNormalizeRequirmentInterface(
+    multiplier?: number,
+    usings?: { requirment: CddaItemRef; count: number }[]
+  ): Requirement {
+    const newRequirement = cloneDeep(this);
+    const myUsings: Array<{ requirment: CddaItemRef; count: number }> = usings ?? [];
+    const normalizeMultiplier = multiplier ?? 1;
+
+    [newRequirement.data.tools, newRequirement.data.components].forEach((componentListList) => {
+      componentListList.forEach((components) =>
+        components.splice(
+          0,
+          components.length,
+          ...components.filter((component) => {
+            if (component.requirement) {
+              myUsings.push({ requirment: component.name, count: component.count });
+
+              return false;
+            } else {
+              return true;
+            }
+          })
+        )
+      );
+      componentListList.splice(0, componentListList.length, ...componentListList.filter((tools) => isNotEmpty(tools)));
+    });
+
+    if (isNotEmpty(myUsings)) {
+      const usingRequirments = myUsings.map((using) => {
+        if (using.requirment !== undefined) {
+          const requirmentJsonItems = using.requirment.getCddaItems();
+
+          if (isNotEmpty(requirmentJsonItems)) {
+            return (requirmentJsonItems[0] as Requirement).getNormalizeRequirmentInterface(using.count);
+          }
+        } else {
+          console.warn('wrong requirement', this);
+        }
+
+        return undefined;
+      });
+
+      usingRequirments.forEach((usingRequirment) => {
+        if (usingRequirment) {
+          usingRequirment.data.tools.forEach((tools) => newRequirement.data.tools.push(tools));
+          usingRequirment.data.components.forEach((components) => newRequirement.data.components.push(components));
+        }
+      });
+    }
+
+    if (normalizeMultiplier > 1) {
+      newRequirement.data.tools.forEach((tools) => tools.forEach((tool) => (tool.count *= normalizeMultiplier)));
+      newRequirement.data.components.forEach((components) =>
+        components.forEach((component) => (component.count *= normalizeMultiplier))
+      );
+    }
+
+    return newRequirement;
+  }
 }
 
 interface RequirementData {
-  qualities: Array<Array<RequirementQualitie>>;
+  qualities: Array<Array<CddaSubItem>>;
   tools: Array<Array<ToolComponent>>;
   components: Array<Array<ItemComponent>>;
-}
-
-export function normalizeRequirmentInterface(
-  requirement: Requirement,
-  multiplier?: number,
-  usings?: { requirment: CddaItemRef; count: number }[]
-): Requirement {
-  const newRequirement = cloneDeep(requirement);
-  const myUsings: Array<{ requirment: CddaItemRef; count: number }> = usings ?? [];
-
-  [newRequirement.data.tools, newRequirement.data.components].forEach((componentListList) => {
-    componentListList.forEach((components) =>
-      components.splice(
-        0,
-        components.length,
-        ...components.filter((component) => {
-          if (component.requirement) {
-            myUsings.push({ requirment: component.name, count: component.count });
-
-            return false;
-          } else {
-            return true;
-          }
-        })
-      )
-    );
-    componentListList.splice(0, componentListList.length, ...componentListList.filter((tools) => isNotEmpty(tools)));
-  });
-
-  if (isNotEmpty(myUsings)) {
-    const usingRequirments = myUsings.map((using) => {
-      if (using.requirment !== undefined) {
-        const requirmentJsonItems = using.requirment.getCddaItems();
-
-        if (isNotEmpty(requirmentJsonItems)) {
-          return normalizeRequirmentInterface(requirmentJsonItems[0] as Requirement, using.count);
-        }
-      } else {
-        console.warn('wrong requirement', requirement);
-      }
-
-      return undefined;
-    });
-
-    usingRequirments.forEach((usingRequirment) => {
-      if (usingRequirment) {
-        usingRequirment.data.tools.forEach((tools) => newRequirement.data.tools.push(tools));
-        usingRequirment.data.components.forEach((components) => newRequirement.data.components.push(components));
-      }
-    });
-  }
-
-  return requirmentMultiplier(newRequirement, multiplier ?? 1);
-}
-
-function requirmentMultiplier(requirement: Requirement, multiplier: number) {
-  if (multiplier > 1) {
-    requirement.data.tools.forEach((tools) => tools.forEach((tool) => (tool.count *= multiplier)));
-    requirement.data.components.forEach((components) =>
-      components.forEach((component) => (component.count *= multiplier))
-    );
-  }
-
-  return requirement;
 }

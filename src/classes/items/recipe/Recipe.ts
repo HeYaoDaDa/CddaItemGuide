@@ -6,7 +6,7 @@ import { getOptionalString, getOptionalUnknown } from 'src/utils/json';
 import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
 import { ActivityLevel } from './ActivityLevel';
 import { RecipeProficiency } from './RecipeProficiency';
-import { normalizeRequirmentInterface, Requirement } from './requirement/Requirement';
+import { Requirement } from './requirement/Requirement';
 
 export class Recipe extends CddaItem<RecipeData> {
   parseId(): string[] {
@@ -60,7 +60,8 @@ export class Recipe extends CddaItem<RecipeData> {
   }
 
   doFinalize(): void {
-    this.data.normalRequirement = normalizeRequirmentInterface(this.data.requirement, 1, this.data.usings);
+    // this.data.normalRequirement = normalizeRequirmentInterface(this.data.requirement, 1, this.data.usings);
+    return;
   }
 
   doGetName(): string {

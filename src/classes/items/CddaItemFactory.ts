@@ -7,6 +7,7 @@ import { materilaVersionFactory } from './material/Material/MaterialVersionFacto
 import { dummyVersionFactory } from './other/Dummy/DummyVersionFactory';
 import { modinfoVersionFactory } from './other/Modinfo/ModinfoVersionFactory';
 import { proficiencyVersionFactory } from './other/Proficiency/ProficiencyVersionFactory';
+import { requirementVersionFactory } from './recipe/requirement/RequirementVersionFactory';
 
 class CddaItemFactory {
   factoryMap = new Map<string, AbstractCddaItemVersionFactory>([
@@ -15,6 +16,7 @@ class CddaItemFactory {
     [jsonTypes.bodyPart, bodyPartVersionFactory],
     [jsonTypes.subBodyPart, subBodyPartVersionFactory],
     [jsonTypes.material, materilaVersionFactory],
+    [jsonTypes.requirement, requirementVersionFactory],
   ]);
 
   getCddaItemVersionFactory(jsonItem: JsonItem): AbstractCddaItemVersionFactory {
