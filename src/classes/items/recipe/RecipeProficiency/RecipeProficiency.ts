@@ -4,7 +4,7 @@ import { CddaItemRef, Time } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { isNotEmpty } from 'src/utils';
 import { getBoolean, getNumber } from 'src/utils/json';
-import { getCddaItemRef, getTime } from 'src/utils/json/dataJsonUtil';
+import { getCddaItemRef, getOptionalTime } from 'src/utils/json/dataJsonUtil';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { Proficiency } from '../../other/Proficiency/Proficiency';
 
@@ -30,7 +30,7 @@ export class RecipeProficiency extends CddaSubItem {
     this.timeMultiplier = getNumber(jsonObject, 'time_multiplier');
     this.failMultiplier = getNumber(jsonObject, 'fail_multiplier');
     this.learnTimeMultiplier = getNumber(jsonObject, 'learning_time_multiplier', 1);
-    this.maxExperience = getTime(jsonObject, 'max_experience');
+    this.maxExperience = getOptionalTime(jsonObject, 'max_experience');
     this.name = getCddaItemRef(jsonObject, 'proficiency', jsonTypes.proficiency);
 
     return this;
@@ -55,14 +55,19 @@ export class RecipeProficiency extends CddaSubItem {
   }
 
   doView(util: ViewUtil): void {
+    util.addText({ content: this.name });
+    if (this.required) util.addText({ content: this.required });
     if (this.timeMultiplier !== 1)
-      util.addText({ content: `(${this.timeMultiplier}x${globalI18n.global.t('label.time')})` });
+      util.addText({ content: `(${this.timeMultiplier} x ${globalI18n.global.t('label.time')})` });
     if (this.failMultiplier !== 1)
-      util.addText({ content: `(${this.failMultiplier}x${globalI18n.global.t('label.fail')})` });
+      util.addText({ content: `(${this.failMultiplier} x ${globalI18n.global.t('label.fail')})` });
     if (this.learnTimeMultiplier !== 1)
-      util.addText({ content: `(${this.learnTimeMultiplier}x${globalI18n.global.t('label.learningTime')})` });
-    if (this.maxExperience)
-      util.addText({ content: `(${this.maxExperience}:${globalI18n.global.t('label.maxExperience')})` });
+      util.addText({ content: `(${this.learnTimeMultiplier} x ${globalI18n.global.t('label.learningTime')})` });
+    if (this.maxExperience) {
+      util.addText({ content: '(' });
+      util.addText({ content: this.maxExperience });
+      util.addText({ content: ' x ' + globalI18n.global.t('label.maxExperience') + ')' });
+    }
     if (this.required) util.addText({ content: `(${globalI18n.global.t('label.required')})` });
   }
 }

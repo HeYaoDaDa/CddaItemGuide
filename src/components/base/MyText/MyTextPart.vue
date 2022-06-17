@@ -1,6 +1,14 @@
 <template>
   <template v-if="typeof normalContent === 'object'">
-    <normal-content />
+    <li v-if="props.li">
+      <normal-content />
+
+      <slot />
+    </li>
+
+    <template v-else>
+      <normal-content />
+    </template>
   </template>
 
   <template v-else>

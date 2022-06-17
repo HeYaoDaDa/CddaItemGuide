@@ -24,8 +24,12 @@ export class Requirement extends CddaItem<RequirementData> {
   doView(data: RequirementData, util: ViewUtil): void {
     const cardUtil = util.addCard({ cddaItem: this });
 
+    this.doCardView(data, cardUtil);
+  }
+
+  doCardView(data: RequirementData, util: ViewUtil) {
     if (isNotEmpty(data.qualities)) {
-      const qualityUtil = cardUtil.addField({ label: 'quality', ul: true });
+      const qualityUtil = util.addField({ label: 'quality', ul: true });
 
       data.qualities.forEach((qualities) =>
         qualityUtil.addText({ content: qualities, separator: globalI18n.global.t('base.or') })
@@ -33,18 +37,20 @@ export class Requirement extends CddaItem<RequirementData> {
     }
 
     if (isNotEmpty(data.tools)) {
-      const toolUtil = cardUtil.addField({ label: 'tool', ul: true });
+      const toolUtil = util.addField({ label: 'tool', ul: true });
 
       data.tools.forEach((tools) => toolUtil.addText({ content: tools, separator: globalI18n.global.t('base.or') }));
     }
 
     if (isNotEmpty(data.components)) {
-      const component = cardUtil.addField({ label: 'component', ul: true });
+      const component = util.addField({ label: 'component', ul: true });
 
       data.components.forEach((components) =>
         component.addText({ content: components, separator: globalI18n.global.t('base.or') })
       );
     }
+
+    return util.result;
   }
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {

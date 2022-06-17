@@ -22,6 +22,6 @@ export default {
   base: {
     true: 'Yes',
     false: 'No',
-    or: 'Or',
+    or: 'OR',
   },
 };

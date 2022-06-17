@@ -3,9 +3,12 @@ import { myLogger } from 'src/boot/logger';
 import { CddaItem, CddaSubItem } from 'src/classes';
 import { CddaItemRef, Time } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
-import { getOptionalString, getOptionalUnknown } from 'src/utils/json';
+import { isNotEmpty } from 'src/utils';
+import { getOptionalString } from 'src/utils/json';
 import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
+import { ViewUtil } from 'src/utils/ViewUtil';
 import { activityLevelVersionFactory } from './ActivityLevel/ActivityLevelVersionFactory';
+import { recipeBookLearnVersionFactory } from './RecipeBookLearn/RecipeBookLearnVersionFactory';
 import { recipeProficiencyVersionFactory } from './RecipeProficiency/RecipeProficiencyVersionFactory';
 import { Requirement } from './requirement/Requirement';
 
@@ -37,7 +40,10 @@ export class Recipe extends CddaItem<RecipeData> {
     data.skillRequire = util
       .getArray('skills_required', <[string, number | undefined]>{})
       .map((value) => [CddaItemRef.init(jsonTypes.skill, value[0]), value[1] ?? 0]);
-    data.activity = util.getCddaSubItem('activity_level', activityLevelVersionFactory.getProduct());
+    data.activity = util.getCddaSubItem(
+      'activity_level',
+      activityLevelVersionFactory.getProduct().parseJson(undefined)
+    );
     data.neverLearn = util.getBoolean('never_learn');
     data.autolearnRequire = util
       .getArray('autolearn', <[string, number | undefined]>{})
@@ -45,7 +51,7 @@ export class Recipe extends CddaItem<RecipeData> {
     data.decompLearn = util
       .getArray('decomp_learn', <[string, number | undefined]>{})
       .map((value) => [CddaItemRef.init(jsonTypes.skill, value[0]), value[1] ?? 0]);
-    data.bookLearn = parseBookLearn(this.json);
+    data.bookLearn = util.getCddaSubItem('book_learn', recipeBookLearnVersionFactory.getProduct());
     data.proficiencies = util.getArray('proficiencies', recipeProficiencyVersionFactory.getProduct());
     data.requirement = new Requirement();
     data.requirement.json = this.json;
@@ -64,7 +70,6 @@ export class Recipe extends CddaItem<RecipeData> {
 
   doFinalize(): void {
     if (this.data.obsolete) return;
-    // this.data.proficiencies.forEach((proficiencie) => proficiencie.finalize());
     this.data.normalRequirement = this.data.requirement.getNormalizeRequirmentInterface(1, this.data.usings);
   }
 
@@ -72,8 +77,34 @@ export class Recipe extends CddaItem<RecipeData> {
     return this.data.result?.getName() ?? this.id;
   }
 
-  doView(): void {
-    return;
+  doView(data: RecipeData, util: ViewUtil): void {
+    const cardUtil = util.addCard({ cddaItem: this });
+
+    if (data.obsolete) {
+    } else {
+      if (data.result) cardUtil.addField({ label: 'result', content: data.result });
+      if (data.resultMult > 1) cardUtil.addField({ label: 'resultMult', content: data.resultMult });
+      if (data.charges > 1) cardUtil.addField({ label: 'charges', content: data.charges });
+      cardUtil.addField({ label: 'time', content: data.time });
+      cardUtil.addField({ label: 'skill', content: `${data.skillUse}(${data.difficulty})` });
+      cardUtil.addField({ label: 'otherSkill', content: data.skillRequire.map((item) => `${item[0]}(${item[1]})`) });
+      cardUtil.addField({ label: 'activity', content: data.activity });
+      if (data.neverLearn) cardUtil.addField({ label: 'neverLearn', content: data.neverLearn });
+      if (isNotEmpty(data.autolearnRequire))
+        cardUtil.addField({
+          label: 'autoLearn',
+          content: data.autolearnRequire.map((item) => `${item[0]}(${item[1]})`),
+        });
+      if (isNotEmpty(data.decompLearn))
+        cardUtil.addField({ label: 'decompLearn', content: data.decompLearn.map((item) => `${item[0]}(${item[1]})`) });
+      if (isNotEmpty(data.bookLearn)) cardUtil.addField({ label: 'book', content: data.bookLearn });
+      if (isNotEmpty(data.proficiencies))
+        cardUtil.addField({ label: 'proficiency', content: data.proficiencies, ul: true });
+      //TODO:
+      cardUtil.result.push(...data.normalRequirement.doCardView(data.normalRequirement.data, new ViewUtil()));
+      cardUtil.addField({ label: 'flag', content: data.flags });
+      if (data.batch) cardUtil.addField({ label: 'barch', content: `${data.batch[0]}(${data.batch[1]})` });
+    }
   }
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
@@ -94,7 +125,7 @@ interface RecipeData {
   neverLearn: boolean;
   autolearnRequire: [CddaItemRef, number][];
   decompLearn: [CddaItemRef, number][];
-  bookLearn: { book: CddaItemRef; level: number; name: string | undefined; hidden: boolean }[];
+  bookLearn: CddaSubItem;
 
   proficiencies: CddaSubItem[];
   requirement: Requirement;
@@ -113,44 +144,4 @@ interface RecipeData {
   resultMult: number;
 
   normalRequirement: Requirement;
-}
-
-export function parseBookLearn(jsonObject: unknown) {
-  const bookLearnJson = getOptionalUnknown(jsonObject, 'book_learn') as
-    | undefined
-    | Record<string, BookLearnJson>
-    | [string, number | undefined][];
-  const bookLearn: { book: CddaItemRef; level: number; name: string | undefined; hidden: boolean }[] = [];
-
-  if (bookLearnJson !== undefined) {
-    if (Array.isArray(bookLearnJson)) {
-      bookLearnJson.forEach((bookLearnTuple) =>
-        bookLearn.push({
-          book: CddaItemRef.init(bookLearnTuple[0], jsonTypes.item),
-          level: bookLearnTuple[1] ?? -1,
-          name: undefined,
-          hidden: false,
-        })
-      );
-    } else {
-      for (const bookId in bookLearnJson) {
-        const bookLearnObject = bookLearnJson[bookId];
-
-        bookLearn.push({
-          book: CddaItemRef.init(bookId, jsonTypes.item),
-          level: bookLearnObject.skill_level,
-          name: bookLearnObject.recipe_name,
-          hidden: bookLearnObject.hidden ?? false,
-        });
-      }
-    }
-  }
-
-  return bookLearn;
-
-  interface BookLearnJson {
-    skill_level: number;
-    recipe_name?: string;
-    hidden?: boolean;
-  }
 }

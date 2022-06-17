@@ -11,6 +11,8 @@ export class ActivityLevel extends CddaSubItem {
     result.str = str ?? ActivityLevelMap[4];
     if (result.str.toLowerCase() === 'fake') result.str = ActivityLevelMap[4];
     result.num = activityToNumber(result.str);
+
+    return result;
   }
 
   equal(v: object): boolean {

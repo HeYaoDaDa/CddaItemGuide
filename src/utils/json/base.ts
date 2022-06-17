@@ -1,6 +1,6 @@
 import { myLogger } from 'src/boot/logger';
 import { CddaSubItem } from 'src/classes';
-import { isNotEmpty } from 'src/utils';
+import { cloneDeep, isNotEmpty } from 'src/utils';
 
 export function paramConvert(o: unknown): Record<string, unknown> | undefined {
   if (typeof o === 'object') {
@@ -165,7 +165,7 @@ export function getOptionalArrayWithType<T>(
   const temps = getOptionalArray(jsonObject, key);
 
   if (ins instanceof CddaSubItem) {
-    return temps?.map((temp) => initCddaSubItemByJson(temp, ins, ...extend) as T);
+    return temps?.map((temp) => initCddaSubItemByJson(temp, cloneDeep(ins), ...extend) as T);
   }
 
   if (Array.isArray(ins)) {
