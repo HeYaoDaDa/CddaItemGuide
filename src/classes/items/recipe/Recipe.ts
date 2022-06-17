@@ -1,16 +1,17 @@
 import { ColDef, ColGroupDef } from 'ag-grid-community';
-import { CddaItem } from 'src/classes';
+import { myLogger } from 'src/boot/logger';
+import { CddaItem, CddaSubItem } from 'src/classes';
 import { CddaItemRef, Time } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { getOptionalString, getOptionalUnknown } from 'src/utils/json';
 import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
-import { ActivityLevel } from './ActivityLevel';
-import { RecipeProficiency } from './RecipeProficiency';
+import { activityLevelVersionFactory } from './ActivityLevel/ActivityLevelVersionFactory';
+import { recipeProficiencyVersionFactory } from './RecipeProficiency/RecipeProficiencyVersionFactory';
 import { Requirement } from './requirement/Requirement';
 
 export class Recipe extends CddaItem<RecipeData> {
   parseId(): string[] {
-    const result = getOptionalString(this.json, 'result');
+    const result = getOptionalString(this.json, 'result') ?? getOptionalString(this.json, 'copy-from');
     const id_suffix = getOptionalString(this.json, 'id_suffix');
     const abstract = getOptionalString(this.json, 'abstract');
     if (abstract) return [abstract];
@@ -18,7 +19,9 @@ export class Recipe extends CddaItem<RecipeData> {
       if (id_suffix) return [result + '_' + id_suffix];
       else return [result];
     }
-    throw new Error('fuck??? what recipe no result and abstract');
+
+    myLogger.error(this.json);
+    throw new Error('fuck??? what recipe no result, abstract and copy-from');
   }
 
   doLoadJson(data: RecipeData, util: CddaJsonParseUtil): void {
@@ -34,7 +37,7 @@ export class Recipe extends CddaItem<RecipeData> {
     data.skillRequire = util
       .getArray('skills_required', <[string, number | undefined]>{})
       .map((value) => [CddaItemRef.init(jsonTypes.skill, value[0]), value[1] ?? 0]);
-    data.activity = util.getCddaSubItem('activity_level', new ActivityLevel());
+    data.activity = util.getCddaSubItem('activity_level', activityLevelVersionFactory.getProduct());
     data.neverLearn = util.getBoolean('never_learn');
     data.autolearnRequire = util
       .getArray('autolearn', <[string, number | undefined]>{})
@@ -43,7 +46,7 @@ export class Recipe extends CddaItem<RecipeData> {
       .getArray('decomp_learn', <[string, number | undefined]>{})
       .map((value) => [CddaItemRef.init(jsonTypes.skill, value[0]), value[1] ?? 0]);
     data.bookLearn = parseBookLearn(this.json);
-    data.proficiencies = util.getArray('proficiencies', new RecipeProficiency());
+    data.proficiencies = util.getArray('proficiencies', recipeProficiencyVersionFactory.getProduct());
     data.requirement = new Requirement();
     data.requirement.json = this.json;
     data.requirement.loadJson();
@@ -60,12 +63,11 @@ export class Recipe extends CddaItem<RecipeData> {
   }
 
   doFinalize(): void {
-    // this.data.normalRequirement = normalizeRequirmentInterface(this.data.requirement, 1, this.data.usings);
-    return;
+    this.data.normalRequirement = this.data.requirement.getNormalizeRequirmentInterface(1, this.data.usings);
   }
 
   doGetName(): string {
-    throw this.id;
+    return this.data.result?.getName() ?? this.id;
   }
 
   doView(): void {
@@ -85,14 +87,14 @@ interface RecipeData {
   difficulty: number;
   skillRequire: [CddaItemRef, number][];
 
-  activity: ActivityLevel;
+  activity: CddaSubItem;
 
   neverLearn: boolean;
   autolearnRequire: [CddaItemRef, number][];
   decompLearn: [CddaItemRef, number][];
   bookLearn: { book: CddaItemRef; level: number; name: string | undefined; hidden: boolean }[];
 
-  proficiencies: RecipeProficiency[];
+  proficiencies: CddaSubItem[];
   requirement: Requirement;
   usings: { requirment: CddaItemRef; count: number }[];
   obsolete: boolean;

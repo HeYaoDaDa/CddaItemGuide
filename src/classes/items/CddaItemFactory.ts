@@ -7,6 +7,7 @@ import { materilaVersionFactory } from './material/Material/MaterialVersionFacto
 import { dummyVersionFactory } from './other/Dummy/DummyVersionFactory';
 import { modinfoVersionFactory } from './other/Modinfo/ModinfoVersionFactory';
 import { proficiencyVersionFactory } from './other/Proficiency/ProficiencyVersionFactory';
+import { recipeVersionFactory } from './recipe/RecipeVersionFactory';
 import { requirementVersionFactory } from './recipe/requirement/RequirementVersionFactory';
 
 class CddaItemFactory {
@@ -17,6 +18,7 @@ class CddaItemFactory {
     [jsonTypes.subBodyPart, subBodyPartVersionFactory],
     [jsonTypes.material, materilaVersionFactory],
     [jsonTypes.requirement, requirementVersionFactory],
+    [jsonTypes.recipe, recipeVersionFactory],
   ]);
 
   getCddaItemVersionFactory(jsonItem: JsonItem): AbstractCddaItemVersionFactory {

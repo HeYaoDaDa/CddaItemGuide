@@ -8,8 +8,8 @@ export class ActivityLevel extends CddaSubItem {
   static init(str?: string) {
     const result = new ActivityLevel();
 
-    result.str = str ?? 'MODERATE_EXERCISE';
-    if (result.str.toLowerCase() === 'fake') result.str = 'MODERATE_EXERCISE';
+    result.str = str ?? ActivityLevelMap[3];
+    if (result.str.toLowerCase() === 'fake') result.str = ActivityLevelMap[3];
     result.num = activityToNumber(result.str);
   }
 

@@ -6,7 +6,7 @@ import { isNotEmpty } from 'src/utils';
 import { getBoolean, getNumber } from 'src/utils/json';
 import { getCddaItemRef, getTime } from 'src/utils/json/dataJsonUtil';
 import { ViewUtil } from 'src/utils/ViewUtil';
-import { Proficiency } from '../other/Proficiency/Proficiency';
+import { Proficiency } from '../../other/Proficiency/Proficiency';
 
 export class RecipeProficiency extends CddaSubItem {
   name!: CddaItemRef;
