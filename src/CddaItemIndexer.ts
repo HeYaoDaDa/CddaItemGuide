@@ -79,6 +79,7 @@ export class CddaItemIndexer {
     this.addJsonItems(jsonItems);
     configOptions.updateMods();
     this.processCopyFroms();
+    this.finalizeAllCddaItem();
     this.finalized.value = true;
     myLogger.debug(
       `init CddaItemIndexer success, cost time is ${performance.now() - start}ms, input jsonItem size is ${
@@ -169,10 +170,7 @@ export class CddaItemIndexer {
   private processCopyFroms() {
     const start = performance.now();
 
-    this.foreachAllCddaItem((cddaItem) => {
-      this.processLoad(cddaItem);
-      if (cddaItem.isSearch) this.searchs.push(cddaItem);
-    });
+    this.foreachAllCddaItem((cddaItem) => this.processLoad(cddaItem));
 
     const deferreds = new Array<CddaItem<object>>();
 
@@ -180,6 +178,16 @@ export class CddaItemIndexer {
     myLogger.warn('deferred has ', deferreds.length, deferreds);
     myLogger.debug('processCopyFroms end');
     myLogger.debug(`cddaItemIndexer load cost time is ${performance.now() - start}ms`);
+  }
+
+  private finalizeAllCddaItem() {
+    const start = performance.now();
+
+    this.foreachAllCddaItem((cddaItem) => {
+      cddaItem.finalize();
+      if (cddaItem.isSearch) this.searchs.push(cddaItem);
+    });
+    myLogger.debug(`cddaItemIndexer finalize cost time is ${performance.now() - start}ms`);
   }
 
   resetSearchs() {

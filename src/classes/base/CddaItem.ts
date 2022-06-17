@@ -10,10 +10,12 @@ import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { VNode } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
+import { CddaSubItem } from './CddaSubItem';
 import { ViewableInterface } from './ViewableInterface';
 
 export abstract class CddaItem<T extends object> implements ViewableInterface {
   finalized = false;
+  isLoad = false;
 
   data: T = {} as T;
 
@@ -67,7 +69,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
    * init data from json, return is success
    */
   loadJson(): boolean {
-    if (this.finalized) return true;
+    if (this.isLoad) return true;
     if (this.copyFromInfo) {
       this.copyFromInfo.modIds = this.getMod()
         .getDependencyMods()
@@ -76,7 +78,7 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
 
       const soure = cddaItemIndexer
         .findByModsByTypeAndId(this.copyFromInfo.modIds, this.type, this.copyFromInfo.id)
-        .find((cddaItem) => cddaItem.finalized);
+        .find((cddaItem) => cddaItem.isLoad);
 
       if (soure) {
         this.copyFromInfo = undefined;
@@ -87,11 +89,31 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
     }
 
     this.doLoadJson(this.data, new CddaJsonParseUtil(this));
+    this.isLoad = true;
+
+    return true;
+  }
+
+  /**
+   * last step, set Search Params
+   */
+  finalize() {
+    if (this.finalized) return;
+    // is lower
+    callSubItemFinalize(this.data);
     this.doFinalize();
     this.resetSearch();
     this.finalized = true;
 
-    return true;
+    // process all CddaSubItem's finalize
+    function callSubItemFinalize(item: unknown) {
+      if (typeof item === 'object') {
+        for (const i in item) {
+          callSubItemFinalize(i);
+        }
+        if (item instanceof CddaSubItem) item.finalize();
+      }
+    }
   }
 
   /**

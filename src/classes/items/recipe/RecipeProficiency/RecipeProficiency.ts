@@ -33,13 +33,16 @@ export class RecipeProficiency extends CddaSubItem {
     this.maxExperience = getTime(jsonObject, 'max_experience');
     this.name = getCddaItemRef(jsonObject, 'proficiency', jsonTypes.proficiency);
 
-    if (this.timeMultiplier === 0 || this.failMultiplier === 0) {
+    return this;
+  }
+
+  finalize() {
+    if (this.timeMultiplier <= 0 || this.failMultiplier <= 0) {
       const cddaItems = this.name.getCddaItems();
 
-      //FIXME:what???
       if (isNotEmpty(cddaItems)) {
         const proficiency: Proficiency = (cddaItems[0] as Proficiency) ?? new Proficiency();
-        if (!proficiency.finalized) proficiency.loadJson();
+        if (!proficiency.finalized) proficiency.finalize();
         if (this.timeMultiplier <= 0) {
           this.timeMultiplier = proficiency.data.defaultTimeMultiplier;
         }
@@ -49,8 +52,6 @@ export class RecipeProficiency extends CddaSubItem {
         }
       }
     }
-
-    return this;
   }
 
   doView(util: ViewUtil): void {

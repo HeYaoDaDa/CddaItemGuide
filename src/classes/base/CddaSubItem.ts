@@ -29,5 +29,9 @@ export abstract class CddaSubItem implements ViewableInterface, EquableInterface
     return util.result;
   }
 
+  finalize() {
+    return;
+  }
+
   abstract doView(util: ViewUtil): void;
 }

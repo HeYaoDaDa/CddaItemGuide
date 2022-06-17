@@ -63,6 +63,8 @@ export class Recipe extends CddaItem<RecipeData> {
   }
 
   doFinalize(): void {
+    if (this.data.obsolete) return;
+    // this.data.proficiencies.forEach((proficiencie) => proficiencie.finalize());
     this.data.normalRequirement = this.data.requirement.getNormalizeRequirmentInterface(1, this.data.usings);
   }
 
