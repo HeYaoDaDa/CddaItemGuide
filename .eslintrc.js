@@ -106,13 +106,8 @@ module.exports = {
       },
       {
         blankLine: 'never',
-        prev: ['const'],
-        next: ['const'],
-      },
-      {
-        blankLine: 'never',
-        prev: ['let'],
-        next: ['let'],
+        prev: ['const', 'let'],
+        next: ['const', 'let'],
       },
       {
         blankLine: 'never',

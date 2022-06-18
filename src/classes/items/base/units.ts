@@ -166,7 +166,6 @@ export class Time extends CddaSubItem {
 
   doView(util: ViewUtil): void {
     let result = '';
-
     const date = new Date(0);
 
     date.setSeconds(this.value);

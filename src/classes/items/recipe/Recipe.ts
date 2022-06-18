@@ -8,6 +8,7 @@ import { getOptionalString } from 'src/utils/json';
 import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { activityLevelVersionFactory } from './ActivityLevel/ActivityLevelVersionFactory';
+import { cddaItemRefWithNumberVersionFactory } from './CddaRefItemWithNumber/CddaItemRefWithNumberVersionFactory';
 import { recipeBookLearnVersionFactory } from './RecipeBookLearn/RecipeBookLearnVersionFactory';
 import { recipeProficiencyVersionFactory } from './RecipeProficiency/RecipeProficiencyVersionFactory';
 import { Requirement } from './requirement/Requirement';
@@ -17,6 +18,7 @@ export class Recipe extends CddaItem<RecipeData> {
     const result = getOptionalString(this.json, 'result') ?? getOptionalString(this.json, 'copy-from');
     const id_suffix = getOptionalString(this.json, 'id_suffix');
     const abstract = getOptionalString(this.json, 'abstract');
+
     if (abstract) return [abstract];
     if (result) {
       if (id_suffix) return [result + '_' + id_suffix];
@@ -30,27 +32,68 @@ export class Recipe extends CddaItem<RecipeData> {
   doLoadJson(data: RecipeData, util: CddaJsonParseUtil): void {
     data.obsolete = util.getBoolean('obsolete');
     data.result = util.getCddaItemRef('result', jsonTypes.item);
-    data.byproducts = util
-      .getArray('byproducts', {} as [string, number | undefined])
-      .map((value) => [CddaItemRef.init(value[0], jsonTypes.item), value[1] ?? 1]);
+    data.byproducts = util.getArray(
+      'byproducts',
+      cddaItemRefWithNumberVersionFactory.getProduct(),
+      [],
+      jsonTypes.item,
+      1
+    );
     if (data.obsolete) return;
     data.time = util.getTime('time', 0.01);
     data.skillUse = util.getCddaItemRef('skill_used', jsonTypes.skill);
     data.difficulty = util.getNumber('difficulty');
-    data.skillRequire = util
-      .getArray('skills_required', <[string, number | undefined]>{})
-      .map((value) => [CddaItemRef.init(jsonTypes.skill, value[0]), value[1] ?? 0]);
+
+    const rowSkills = util.getOptionalUnknown('skills_required');
+
+    if (rowSkills) {
+      if (Array.isArray(rowSkills)) {
+        const skillRequires = Array.isArray(rowSkills[0]) ? rowSkills : [rowSkills];
+
+        data.skillRequire = skillRequires.map((autoLearn) =>
+          cddaItemRefWithNumberVersionFactory.getProduct().parseJson(autoLearn, jsonTypes.skill, 0)
+        );
+      } else {
+        myLogger.error('skills_required is ', rowSkills);
+        throw new Error('assert fail!');
+      }
+    }
+
     data.activity = util.getCddaSubItem(
       'activity_level',
       activityLevelVersionFactory.getProduct().parseJson(undefined)
     );
     data.neverLearn = util.getBoolean('never_learn');
-    data.autolearnRequire = util
-      .getArray('autolearn', <[string, number | undefined]>{})
-      .map((value) => [CddaItemRef.init(jsonTypes.skill, value[0]), value[1] ?? 0]);
-    data.decompLearn = util
-      .getArray('decomp_learn', <[string, number | undefined]>{})
-      .map((value) => [CddaItemRef.init(jsonTypes.skill, value[0]), value[1] ?? 0]);
+
+    const rowAutoLearns = util.getArray('autolearn', <unknown>{});
+    let autoLearns = new Array<unknown>();
+
+    if (isNotEmpty(rowAutoLearns) || rowAutoLearns[0] !== false) {
+      autoLearns = rowAutoLearns.map((item) => {
+        if (typeof item === 'boolean') return [data.skillUse.id, data.difficulty];
+        else if (typeof item === 'number') return [data.skillUse.id, item];
+        else return item;
+      });
+    }
+
+    data.autolearnRequire = autoLearns.map((autoLearn) =>
+      cddaItemRefWithNumberVersionFactory.getProduct().parseJson(autoLearn, jsonTypes.skill, 0)
+    );
+
+    const rowDecompLearn = util.getArray('autolearn', <unknown>{}) ?? false;
+    let decompLearn = new Array<unknown>();
+
+    if (isNotEmpty(rowDecompLearn) || rowDecompLearn[0] !== false) {
+      decompLearn = rowDecompLearn.map((item) => {
+        if (typeof item === 'boolean') return [data.skillUse.id, data.difficulty];
+        else if (typeof item === 'number') return [data.skillUse.id, item];
+        else return item;
+      });
+    }
+
+    data.decompLearn = decompLearn.map((autoLearn) =>
+      cddaItemRefWithNumberVersionFactory.getProduct().parseJson(autoLearn, jsonTypes.skill, 0)
+    );
     data.bookLearn = util.getCddaSubItem('book_learn', recipeBookLearnVersionFactory.getProduct());
     data.proficiencies = util.getArray('proficiencies', recipeProficiencyVersionFactory.getProduct());
     data.requirement = new Requirement();
@@ -86,17 +129,20 @@ export class Recipe extends CddaItem<RecipeData> {
       if (data.resultMult > 1) cardUtil.addField({ label: 'resultMult', content: data.resultMult });
       if (data.charges > 1) cardUtil.addField({ label: 'charges', content: data.charges });
       cardUtil.addField({ label: 'time', content: data.time });
-      cardUtil.addField({ label: 'skill', content: `${data.skillUse}(${data.difficulty})` });
-      cardUtil.addField({ label: 'otherSkill', content: data.skillRequire.map((item) => `${item[0]}(${item[1]})`) });
+
+      const skillView = cardUtil.addField({ label: 'skill' });
+
+      skillView.addText({ content: data.skillUse });
+      skillView.addText({ content: `(${data.difficulty})` });
+      if (isNotEmpty(data.skillRequire)) cardUtil.addField({ label: 'otherSkill', content: data.skillRequire });
       cardUtil.addField({ label: 'activity', content: data.activity });
       if (data.neverLearn) cardUtil.addField({ label: 'neverLearn', content: data.neverLearn });
       if (isNotEmpty(data.autolearnRequire))
         cardUtil.addField({
           label: 'autoLearn',
-          content: data.autolearnRequire.map((item) => `${item[0]}(${item[1]})`),
+          content: data.autolearnRequire,
         });
-      if (isNotEmpty(data.decompLearn))
-        cardUtil.addField({ label: 'decompLearn', content: data.decompLearn.map((item) => `${item[0]}(${item[1]})`) });
+      if (isNotEmpty(data.decompLearn)) cardUtil.addField({ label: 'decompLearn', content: data.decompLearn });
       if (isNotEmpty(data.bookLearn)) cardUtil.addField({ label: 'book', content: data.bookLearn });
       if (isNotEmpty(data.proficiencies))
         cardUtil.addField({ label: 'proficiency', content: data.proficiencies, ul: true });
@@ -114,17 +160,17 @@ export class Recipe extends CddaItem<RecipeData> {
 
 interface RecipeData {
   result?: CddaItemRef;
-  byproducts: [CddaItemRef, number][];
+  byproducts: CddaSubItem[];
   time: Time;
   skillUse: CddaItemRef;
   difficulty: number;
-  skillRequire: [CddaItemRef, number][];
+  skillRequire: CddaSubItem[];
 
   activity: CddaSubItem;
 
   neverLearn: boolean;
-  autolearnRequire: [CddaItemRef, number][];
-  decompLearn: [CddaItemRef, number][];
+  autolearnRequire: CddaSubItem[];
+  decompLearn: CddaSubItem[];
   bookLearn: CddaSubItem;
 
   proficiencies: CddaSubItem[];
