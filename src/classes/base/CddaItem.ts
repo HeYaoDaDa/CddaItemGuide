@@ -5,7 +5,7 @@ import { BaseMod } from 'src/classes/base/BaseMod';
 import { JsonItem } from 'src/classes/base/JsonItem';
 import { useConfigOptionsStore } from 'src/stores/configOptions';
 import { itemType2JsonType, jsonType2ItemType } from 'src/utils';
-import { getArray, getOptionalString } from 'src/utils/json';
+import { getArray, getOptionalString, paramConvert } from 'src/utils/json';
 import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { VNode } from 'vue';
@@ -106,13 +106,16 @@ export abstract class CddaItem<T extends object> implements ViewableInterface {
     this.finalized = true;
 
     // process all CddaSubItem's finalize
-    function callSubItemFinalize(item: unknown) {
-      if (typeof item === 'object') {
-        for (const i in item) {
-          callSubItemFinalize(i);
+    function callSubItemFinalize(item: object) {
+      const myItem = paramConvert(item);
+
+      for (const i in myItem) {
+        if (myItem.hasOwnProperty(i) && typeof myItem[i] === 'object') {
+          const value = myItem[i];
+          if (typeof value === 'object' && value) callSubItemFinalize(value);
         }
-        if (item instanceof CddaSubItem) item.finalize();
       }
+      if (myItem instanceof CddaSubItem) myItem.finalize();
     }
   }
 
