@@ -1,13 +1,12 @@
-import { ColGroupDef, ColDef } from 'ag-grid-community';
+import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { CddaItem } from 'src/classes/base/CddaItem';
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
 import { CddaItemRef, GettextString, Length, Volume, Weight } from 'src/classes/items';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
-import { isNotEmpty } from 'src/utils';
 import { CddaJsonParseUtil } from 'src/utils/json';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { toHitVersionFactory } from '../other/ToHit/ToHitVersionFactory';
-import MegerVNodes from 'src/components/base/MegerVNodes.vue';
+import { ItemMaterial } from './ItemMaterial/ItemMaterial';
 
 export class BaseItem extends CddaItem<BaseItemInterface> {
   doLoadJson(data: BaseItemInterface, util: CddaJsonParseUtil): void {
@@ -26,22 +25,14 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
     data.flags = util.getArray('flags', new CddaItemRef(), [], jsonTypes.subBodyPart);
     data.weaponCategory = util.getArray('weapon_category', new CddaItemRef(), [], jsonTypes.subBodyPart);
     data.techniques = util.getArray('techniques', new CddaItemRef(), [], jsonTypes.subBodyPart);
-    data.materials = [];
-    data.materialPortionsTotal = 0;
-    util.getArray('material', {} as unknown).forEach((temp) => {
-      let portion = 1;
+    data.materials = util.getArray('material', new ItemMaterial());
+  }
 
-      if (typeof temp === 'string') {
-        data.materials.push([CddaItemRef.init(temp, jsonTypes.material), 1]);
-      } else {
-        const material = temp as { type: string; portion?: number };
-
-        data.materials.push([CddaItemRef.init(material.type, jsonTypes.material), material.portion ?? 1]);
-        portion = material.portion ?? 1;
-      }
-
-      data.materialPortionsTotal += portion;
-    });
+  doFinalize(): void {
+    this.weight = 100;
+    this.isSearch = true;
+    this.data.materialPortionsTotal = 0;
+    this.data.materials.forEach((material) => (this.data.materialPortionsTotal += material.portion));
   }
 
   doGetName(): string | undefined {
@@ -54,6 +45,13 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
 
   doView(data: BaseItemInterface, util: ViewUtil): void {
     const cardUtil = util.addCard({ cddaItem: this, symbol: this.data.symbol, color: this.data.color });
+
+    cardUtil.addField({ label: 'material', content: data.materials });
+    cardUtil.addField({ label: 'weight', content: data.weight });
+    cardUtil.addField({ label: 'volume', content: data.volume });
+    cardUtil.addField({ label: 'length', content: data.longestSide });
+    cardUtil.addField({ label: 'category', content: data.category });
+    cardUtil.addField({ label: 'flag', content: data.flags });
   }
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
@@ -75,7 +73,7 @@ interface BaseItemInterface {
   symbol: string;
   color: string;
 
-  materials: [CddaItemRef, number][];
+  materials: ItemMaterial[];
   materialPortionsTotal: number;
 
   weight: Weight;
