@@ -9,6 +9,7 @@ import { CddaJsonParseUtil } from 'src/utils/json';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { toHitVersionFactory } from '../other/ToHit/ToHitVersionFactory';
 import { ItemMaterial } from './ItemMaterial/ItemMaterial';
+import { Pocket } from './Pocket/Pocket';
 
 export class BaseItem extends CddaItem<BaseItemInterface> {
   doLoadJson(data: BaseItemInterface, util: CddaJsonParseUtil): void {
@@ -28,6 +29,7 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
     data.weaponCategory = util.getArray('weapon_category', new CddaItemRef(), [], jsonTypes.subBodyPart);
     data.techniques = util.getArray('techniques', new CddaItemRef(), [], jsonTypes.subBodyPart);
     data.materials = util.getArray('material', new ItemMaterial());
+    data.pockets = util.getArray('pocket_data', new Pocket());
   }
 
   doFinalize(): void {
@@ -62,6 +64,11 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
     if (isNotEmpty(data.weaponCategory))
       meleeCardUtil.addField({ label: 'weaponCategory', content: data.weaponCategory });
     if (isNotEmpty(data.techniques)) meleeCardUtil.addField({ label: 'technique', content: data.techniques });
+    if (isNotEmpty(data.pockets)) {
+      const pocketCardUtil = util.addCard({ label: 'Pocket' });
+
+      pocketCardUtil.addField({ label: 'pocket', content: data.pockets, dl: true });
+    }
   }
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
@@ -109,4 +116,6 @@ interface BaseItemInterface {
   baseMovesPerAttack: number;
   weaponCategory: CddaItemRef[];
   techniques: CddaItemRef[];
+
+  pockets: Pocket[];
 }
