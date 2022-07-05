@@ -2,7 +2,9 @@ import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { CddaItem } from 'src/classes/base/CddaItem';
 import { CddaSubItem } from 'src/classes/base/CddaSubItem';
 import { CddaItemRef, GettextString, Length, Volume, Weight } from 'src/classes/items';
+import { Flag } from 'src/constants/flag';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
+import { isNotEmpty } from 'src/utils';
 import { CddaJsonParseUtil } from 'src/utils/json';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { toHitVersionFactory } from '../other/ToHit/ToHitVersionFactory';
@@ -44,14 +46,22 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
   }
 
   doView(data: BaseItemInterface, util: ViewUtil): void {
-    const cardUtil = util.addCard({ cddaItem: this, symbol: this.data.symbol, color: this.data.color });
+    const baseItemCardUtil = util.addCard({ cddaItem: this, symbol: this.data.symbol, color: this.data.color });
+    const meleeCardUtil = util.addCard({ label: 'Melee' });
 
-    cardUtil.addField({ label: 'material', content: data.materials });
-    cardUtil.addField({ label: 'weight', content: data.weight });
-    cardUtil.addField({ label: 'volume', content: data.volume });
-    cardUtil.addField({ label: 'length', content: data.longestSide });
-    cardUtil.addField({ label: 'category', content: data.category });
-    cardUtil.addField({ label: 'flag', content: data.flags });
+    baseItemCardUtil.addField({ label: 'material', content: data.materials });
+    baseItemCardUtil.addField({ label: 'weight', content: data.weight });
+    baseItemCardUtil.addField({ label: 'volume', content: data.volume });
+    baseItemCardUtil.addField({ label: 'length', content: data.longestSide });
+    baseItemCardUtil.addField({ label: 'category', content: data.category });
+    baseItemCardUtil.addField({ label: 'flag', content: data.flags });
+    meleeCardUtil.addField({ label: 'bash', content: data.bash });
+    meleeCardUtil.addField({ label: this.isStab() ? 'stab' : 'cut', content: data.cut });
+    meleeCardUtil.addField({ label: 'toHit', content: data.toHit });
+    meleeCardUtil.addField({ label: 'baseMovesPerAttack', content: data.baseMovesPerAttack });
+    if (isNotEmpty(data.weaponCategory))
+      meleeCardUtil.addField({ label: 'weaponCategory', content: data.weaponCategory });
+    if (isNotEmpty(data.techniques)) meleeCardUtil.addField({ label: 'technique', content: data.techniques });
   }
 
   gridColumnDefine(): (ColGroupDef | ColDef)[] {
@@ -64,6 +74,14 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
 
   private calcCategory(): CddaItemRef {
     return CddaItemRef.init('other', jsonTypes.itemCategory);
+  }
+
+  private hasFlag(flag: Flag) {
+    return this.data.flags.some((myflag) => myflag.id === flag);
+  }
+
+  private isStab() {
+    return this.hasFlag(Flag.SPEAR) || this.hasFlag(Flag.STAB);
   }
 }
 
