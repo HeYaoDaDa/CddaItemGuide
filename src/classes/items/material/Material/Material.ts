@@ -1,15 +1,15 @@
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { CddaItem, CddaSubItem } from 'src/classes';
-import { fuelVersionFactory } from 'src/classes/items/material/Fuel/FuelVersionFactory';
-import { materialBreathabilityVersionFactory } from 'src/classes/items/material/MaterialBreathability/MaterialBreathabilityVersionFactory';
-import { materialBurnVersionFactory } from 'src/classes/items/material/MaterialBurn/MaterialBurnVersionFactory';
 import { CddaItemRef, GettextString } from 'src/classes/items';
+import { fuelVersionFactory } from 'src/classes/items/material/Fuel/FuelVersionFactory';
+import { materialBurnVersionFactory } from 'src/classes/items/material/MaterialBurn/MaterialBurnVersionFactory';
 import MaterialCardVue from 'src/components/cddaItems/MaterialCard.vue';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { isEmpty } from 'src/utils';
 import { CddaJsonParseUtil } from 'src/utils/json/CddaJsonParseUtil';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { h } from 'vue';
+import { MaterialBreathability } from '../MaterialBreathability/MaterialBreathability';
 
 export class Material extends CddaItem<MaterialData> {
   data = {} as MaterialData;
@@ -34,10 +34,7 @@ export class Material extends CddaItem<MaterialData> {
     data.specificTeatLiquid = util.getNumber('specific_heat_solid', 2.108);
     data.latentHeat = util.getNumber('latent_heat', 334);
     data.freezePoint = util.getNumber('freezing_point');
-    data.breathability = util.getCddaSubItem(
-      'breathability',
-      materialBreathabilityVersionFactory.getProduct().parseJson(undefined)
-    );
+    data.breathability = util.getCddaSubItem('breathability', new MaterialBreathability().parseJson(undefined));
     data.salvagedInto = util.getOptionalCddaItemRef('salvaged_into', jsonTypes.item);
     data.repairedWith = util.getOptionalCddaItemRef('repaired_with', jsonTypes.item);
     data.edible = util.getBoolean('edible');
@@ -85,7 +82,7 @@ interface MaterialData {
   chipResist: number;
 
   density: number;
-  breathability: CddaSubItem;
+  breathability: MaterialBreathability;
   windResist?: number;
 
   specificTeatLiquid: number;

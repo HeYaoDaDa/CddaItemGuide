@@ -83,37 +83,34 @@ export class Pocket extends CddaSubItem {
       'ammo_restriction',
       ammoRestrictionItemVersionFactory.getProduct()
     );
+    this.minItemVolume = getVolume(jsonObject, 'min_item_volume');
+    this.maxItemVolume = getOptionalVolume(jsonObject, 'max_item_volume');
+    this.volumeCapacity = getVolume(jsonObject, 'max_contains_volume', 200000 * 1000);
+    this.weightCapacity = getWeight(jsonObject, 'max_contains_weight', 200000 * 1000 * 1000);
+    this.maxItemLength = getLength(jsonObject, 'max_item_length', Math.round(Math.cbrt(this.volumeCapacity.value)));
+    this.minItemLength = getLength(jsonObject, 'min_item_length');
+    this.extraEncumbrance = getNumber(jsonObject, 'extra_encumbrance');
+    this.volumeEncumberModifier = getNumber(jsonObject, 'volume_encumber_modifier', 1);
+    this.ripoff = getNumber(jsonObject, 'ripoff');
+    this.spoilMultiplier = getNumber(jsonObject, 'spoil_multiplier', 1);
+    this.weightMultiplier = getNumber(jsonObject, 'weight_multiplier', 1);
+    this.volumeMultiplier = getNumber(jsonObject, 'volume_multiplier', 1);
+    this.magazineWell = getVolume(jsonObject, 'magazine_well');
+    this.moves = getNumber(jsonObject, 'moves', 100);
+    this.fireProtection = getBoolean(jsonObject, 'fire_protection');
+    this.watertight = getBoolean(jsonObject, 'watertight');
+    this.airtight = getBoolean(jsonObject, 'airtight');
+    this.openContainer = getBoolean(jsonObject, 'open_container');
+    this.rigid = getBoolean(jsonObject, 'rigid');
+    this.holster = getBoolean(jsonObject, 'holster');
+    this.ablative = getBoolean(jsonObject, 'ablative');
 
-    if (isEmpty(this.ammoRestriction)) {
-      this.minItemVolume = getVolume(jsonObject, 'min_item_volume');
-      this.maxItemVolume = getOptionalVolume(jsonObject, 'max_item_volume');
-      this.volumeCapacity = getVolume(jsonObject, 'max_contains_volume', 200000 * 1000);
-      this.weightCapacity = getWeight(jsonObject, 'max_contains_weight', 200000 * 1000 * 1000);
-      this.maxItemLength = getLength(jsonObject, 'max_item_length', Math.round(Math.cbrt(this.volumeCapacity.value)));
-      this.minItemLength = getLength(jsonObject, 'min_item_length');
-      this.extraEncumbrance = getNumber(jsonObject, 'extra_encumbrance');
-      this.volumeEncumberModifier = getNumber(jsonObject, 'volume_encumber_modifier', 1);
-      this.ripoff = getNumber(jsonObject, 'ripoff');
-      this.spoilMultiplier = getNumber(jsonObject, 'spoil_multiplier', 1);
-      this.weightMultiplier = getNumber(jsonObject, 'weight_multiplier', 1);
-      this.volumeMultiplier = getNumber(jsonObject, 'volume_multiplier', 1);
-      this.magazineWell = getVolume(jsonObject, 'magazine_well');
-      this.moves = getNumber(jsonObject, 'moves', 100);
-      this.fireProtection = getBoolean(jsonObject, 'fire_protection');
-      this.watertight = getBoolean(jsonObject, 'watertight');
-      this.airtight = getBoolean(jsonObject, 'airtight');
-      this.openContainer = getBoolean(jsonObject, 'open_container');
-      this.rigid = getBoolean(jsonObject, 'rigid');
-      this.holster = getBoolean(jsonObject, 'holster');
-      this.ablative = getBoolean(jsonObject, 'ablative');
-
-      if (this.ablative) {
-        this.holster = true;
-      }
-
-      this.activityNoise = getOptionalCddaSubItem(jsonObject, 'activity_noise', pocketNoiseVersionFactory.getProduct());
-      this.sealedthis = getOptionalCddaSubItem(jsonObject, 'sealed_this', sealablethisVersionFactory.getProduct());
+    if (this.ablative) {
+      this.holster = true;
     }
+
+    this.activityNoise = getOptionalCddaSubItem(jsonObject, 'activity_noise', pocketNoiseVersionFactory.getProduct());
+    this.sealedthis = getOptionalCddaSubItem(jsonObject, 'sealed_this', sealablethisVersionFactory.getProduct());
 
     return this;
   }

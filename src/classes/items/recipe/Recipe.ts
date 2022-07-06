@@ -114,6 +114,7 @@ export class Recipe extends CddaItem<RecipeData> {
   doFinalize(): void {
     if (this.data.obsolete) return;
     this.data.normalRequirement = this.data.requirement.getNormalizeRequirmentInterface(1, this.data.usings);
+    this.data.proficiencies.forEach((value) => value.finalize());
   }
 
   doGetName(): string {

@@ -22,6 +22,20 @@ export class CddaItemIndexer {
   finalized = ref(false);
 
   findByTypeAndId(type: string, id: string): CddaItem<object>[] {
+    const jsonTypes = itemType2JsonType(type);
+    const result = new Array<CddaItem<object>>();
+
+    useConfigOptionsStore().mods.forEach((mod) =>
+      jsonTypes.forEach((fJsonType) => {
+        const find = this.byModIdAndJsonTypeAndId.get(mod.id)?.get(fJsonType)?.get(id);
+        if (find) result.push(find);
+      })
+    );
+
+    return result;
+  }
+
+  findByCurrentModAndTypeAndId(type: string, id: string): CddaItem<object>[] {
     return this.findByModsByTypeAndId(useUserConfigStore().modIds, type, id);
   }
 

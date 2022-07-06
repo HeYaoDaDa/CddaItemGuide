@@ -8,6 +8,7 @@ import { isNotEmpty } from 'src/utils';
 import { CddaJsonParseUtil } from 'src/utils/json';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { toHitVersionFactory } from '../other/ToHit/ToHitVersionFactory';
+import { Armor } from './Armor/Armor';
 import { ItemMaterial } from './ItemMaterial/ItemMaterial';
 import { Pocket } from './Pocket/Pocket';
 
@@ -30,6 +31,12 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
     data.techniques = util.getArray('techniques', new CddaItemRef(), [], jsonTypes.subBodyPart);
     data.materials = util.getArray('material', new ItemMaterial());
     data.pockets = util.getArray('pocket_data', new Pocket());
+
+    if (this.jsonType === jsonTypes.armor) {
+      data.armor = new Armor().parseJson(this.json, this);
+    } else {
+      data.armor = util.getOptionalCddaSubItem('armor_data', new Armor(), this);
+    }
   }
 
   doFinalize(): void {
@@ -37,6 +44,7 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
     this.isSearch = true;
     this.data.materialPortionsTotal = 0;
     this.data.materials.forEach((material) => (this.data.materialPortionsTotal += material.portion));
+    this.data.armor?.finalize();
   }
 
   doGetName(): string | undefined {
@@ -83,7 +91,7 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
     return CddaItemRef.init('other', jsonTypes.itemCategory);
   }
 
-  private hasFlag(flag: Flag) {
+  public hasFlag(flag: Flag) {
     return this.data.flags.some((myflag) => myflag.id === flag);
   }
 
@@ -118,4 +126,5 @@ interface BaseItemInterface {
   techniques: CddaItemRef[];
 
   pockets: Pocket[];
+  armor?: Armor;
 }
