@@ -2,9 +2,17 @@ import { CddaSubItem } from 'src/classes/base/CddaSubItem';
 import { CddaItemRef } from 'src/classes/items';
 import { BodyPart } from 'src/classes/items/bodyPart/BodyPart/BodyPart';
 import { SubBodyPart } from 'src/classes/items/bodyPart/SubBodyPart/SubBodyPart';
+import { breathabilityToNumber } from 'src/classes/items/material/MaterialBreathability/MaterialBreathability';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { isEmpty, isNotEmpty } from 'src/utils';
-import { getArrayWithType, getBoolean, getNumber, getOptionalNumber, getOptionalUnknown } from 'src/utils/json';
+import {
+  getArrayWithType,
+  getBoolean,
+  getNumber,
+  getOptionalNumber,
+  getOptionalUnknown,
+  getString,
+} from 'src/utils/json';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { ArmorMaterial } from '../ArmorMaterial/ArmorMaterial';
 
@@ -57,7 +65,9 @@ export class ArmorPortion extends CddaSubItem {
     this.avgThickness = getNumber(jsonObject, 'material_thickness', 0);
     this.environmentalProtection = getNumber(jsonObject, 'environmental_protection', 0);
     this.environmentalProtectionWithFilter = getNumber(jsonObject, 'environmental_protection_with_filter', 0);
-    this.breathability = getOptionalNumber(jsonObject, 'breathability');
+
+    const tempBreathability = getString(jsonObject, 'breathability');
+    if (tempBreathability) this.breathability = breathabilityToNumber(tempBreathability);
     this.isRigidLayerOnly = getBoolean(jsonObject, 'rigid_layer_only', false);
     this.armorMaterials = getArrayWithType(jsonObject, 'material', new ArmorMaterial());
     this.layers = getArrayWithType(jsonObject, 'layers', new CddaItemRef(), [], jsonTypes.flag);
