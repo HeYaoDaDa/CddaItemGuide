@@ -4,11 +4,11 @@
 
 <script setup lang="ts">
 import MergerVNode from 'src/components/base/MegerVNodes.vue';
-import { CddaItem } from 'src/classes';
+import { CddaSubItem } from 'src/classes';
 import { h } from 'vue';
 
 const props = defineProps<{
-  cddaItem: CddaItem<object>;
+  cddaSubItem: CddaSubItem;
 }>();
-const myRender = h(MergerVNode, {}, () => props.cddaItem.view());
+const myRender = h(MergerVNode, {}, () => props.cddaSubItem.view());
 </script>

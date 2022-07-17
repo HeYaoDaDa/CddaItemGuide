@@ -5,14 +5,7 @@ import { SubBodyPart } from 'src/classes/items/bodyPart/SubBodyPart/SubBodyPart'
 import { breathabilityToNumber } from 'src/classes/items/material/MaterialBreathability/MaterialBreathability';
 import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { isEmpty, isNotEmpty } from 'src/utils';
-import {
-  getArrayWithType,
-  getBoolean,
-  getNumber,
-  getOptionalNumber,
-  getOptionalUnknown,
-  getString,
-} from 'src/utils/json';
+import { getArrayWithType, getBoolean, getNumber, getOptionalUnknown, getString } from 'src/utils/json';
 import { ViewUtil } from 'src/utils/ViewUtil';
 import { ArmorMaterial } from '../ArmorMaterial/ArmorMaterial';
 

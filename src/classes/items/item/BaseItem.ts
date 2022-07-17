@@ -7,10 +7,12 @@ import { jsonTypes } from 'src/constants/jsonTypesConstant';
 import { isNotEmpty } from 'src/utils';
 import { CddaJsonParseUtil } from 'src/utils/json';
 import { ViewUtil } from 'src/utils/ViewUtil';
+import { h } from 'vue';
 import { toHitVersionFactory } from '../other/ToHit/ToHitVersionFactory';
 import { Armor } from './Armor/Armor';
 import { ItemMaterial } from './ItemMaterial/ItemMaterial';
 import { Pocket } from './Pocket/Pocket';
+import CddaSubItemView from 'src/components/base/CddaSubItemView.vue';
 
 export class BaseItem extends CddaItem<BaseItemInterface> {
   doLoadJson(data: BaseItemInterface, util: CddaJsonParseUtil): void {
@@ -76,6 +78,12 @@ export class BaseItem extends CddaItem<BaseItemInterface> {
       const pocketCardUtil = util.addCard({ label: 'Pocket' });
 
       pocketCardUtil.addField({ label: 'pocket', content: data.pockets, dl: true });
+    }
+
+    if (data.armor) {
+      const armorCardUtil = util.addCard({ label: 'armor' });
+
+      armorCardUtil.add(h(CddaSubItemView, { cddaSubItem: data.armor }));
     }
   }
 
